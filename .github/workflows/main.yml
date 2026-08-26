@@ -1,4 +1,4 @@
-name: Maine
+name: Main
 
 on:
   workflow_dispatch:
