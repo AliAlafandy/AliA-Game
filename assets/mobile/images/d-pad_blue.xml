@@ -27,5 +27,5 @@
 	<SubTexture name="power Idle0000" x="1150" y="213" width="122" height="122"/>
 	<SubTexture name="power Press0000" x="1150" y="335" width="122" height="122"/>
 	<SubTexture name="back0000" x="372" y="947" width="142" height="147"/>
-	<SubTexture name="stop0000" x="230" y="977" width="142" height="147"/>
+	<SubTexture name="pause0000" x="230" y="977" width="142" height="147"/>
 </TextureAtlas>
