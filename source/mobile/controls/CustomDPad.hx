@@ -35,14 +35,14 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		instance = this;
 
 		switch (ClientPrefs.data.controlsColor) {
-			case: "Yellow"
+			case "Yellow":
 				var pathYellow = Paths.getPath('images/d-pad_yellow.xml', "mobile");
 				var pathYellow2 = Paths.getPath('images/d-pad_yellow.png', "mobile");
 				trace(pathYellow);
 				trace(pathYellow2);
 				var customFramesYellow = Paths.getSparrowAtlas('d-pad_yellow' , "mobile");
 
-			case: "Blue"
+			case "Blue":
 				var pathBlue = Paths.getPath('images/d-pad_blue.xml', "mobile");
 				var pathBlue2 = Paths.getPath('images/d-pad_blue.png', "mobile");
 				trace(pathBlue);
