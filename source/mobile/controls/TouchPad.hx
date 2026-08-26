@@ -5,14 +5,14 @@ import flixel.util.FlxSignal.FlxTypedSignal;
 @:access(mobile.funkin.data.objects.TouchButton)
 class TouchPad extends MobileInputManager implements IMobileControls
 {
-	public var buttonLeft:TouchButton = new TouchButton(0, 0, [MobileInputID.LEFT, MobileInputID.NOTE_LEFT]);
-	public var buttonUp:TouchButton = new TouchButton(0, 0, [MobileInputID.UP, MobileInputID.NOTE_UP]);
-	public var buttonRight:TouchButton = new TouchButton(0, 0, [MobileInputID.RIGHT, MobileInputID.NOTE_RIGHT]);
-	public var buttonDown:TouchButton = new TouchButton(0, 0, [MobileInputID.DOWN, MobileInputID.NOTE_DOWN]);
-	public var buttonLeft2:TouchButton = new TouchButton(0, 0, [MobileInputID.LEFT2, MobileInputID.NOTE_LEFT]);
-	public var buttonUp2:TouchButton = new TouchButton(0, 0, [MobileInputID.UP2, MobileInputID.NOTE_UP]);
-	public var buttonRight2:TouchButton = new TouchButton(0, 0, [MobileInputID.RIGHT2, MobileInputID.NOTE_RIGHT]);
-	public var buttonDown2:TouchButton = new TouchButton(0, 0, [MobileInputID.DOWN2, MobileInputID.NOTE_DOWN]);
+	public var buttonLeft:TouchButton = new TouchButton(0, 0, [MobileInputID.LEFT, MobileInputID.GAME_LEFT]);
+	public var buttonUp:TouchButton = new TouchButton(0, 0, [MobileInputID.UP, MobileInputID.GAME_UP]);
+	public var buttonRight:TouchButton = new TouchButton(0, 0, [MobileInputID.RIGHT, MobileInputID.GAME_RIGHT]);
+	public var buttonDown:TouchButton = new TouchButton(0, 0, [MobileInputID.DOWN, MobileInputID.GAME_DOWN]);
+	public var buttonLeft2:TouchButton = new TouchButton(0, 0, [MobileInputID.LEFT2, MobileInputID.GAME_LEFT]);
+	public var buttonUp2:TouchButton = new TouchButton(0, 0, [MobileInputID.UP2, MobileInputID.GAME_UP]);
+	public var buttonRight2:TouchButton = new TouchButton(0, 0, [MobileInputID.RIGHT2, MobileInputID.GAME_RIGHT]);
+	public var buttonDown2:TouchButton = new TouchButton(0, 0, [MobileInputID.DOWN2, MobileInputID.GAME_DOWN]);
 	
 	public var buttonA:TouchButton = new TouchButton(0, 0, [MobileInputID.A]);
 	public var buttonB:TouchButton = new TouchButton(0, 0, [MobileInputID.B]);
@@ -44,10 +44,10 @@ class TouchPad extends MobileInputManager implements IMobileControls
 	public var buttonExtra:TouchButton = new TouchButton(0, 0, [MobileInputID.EXTRA_1]);
 	public var buttonExtra2:TouchButton = new TouchButton(0, 0, [MobileInputID.EXTRA_2]);
 
-	public var pauseButton:TouchButton = new TouchButton(0, 0, [MobileInputID.PAUSE]);
-	public var stopButton:TouchButton = new TouchButton(0, 0, [MobileInputID.STOP]);
 	public var jumpButton:TouchButton = new TouchButton(0, 0, [MobileInputID.JUMP]);
+	public var powerButton:TouchButton = new TouchButton(0, 0, [MobileInputID.POWER]);
 	public var backButton:TouchButton = new TouchButton(0, 0, [MobileInputID.BACK_M]);
+	public var pauseButton:TouchButton = new TouchButton(0, 0, [MobileInputID.PAUSE]);
 
 	public var instance:MobileInputManager;
 	public var onButtonDown:FlxTypedSignal<TouchButton->Void> = new FlxTypedSignal<TouchButton->Void>();
