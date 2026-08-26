@@ -465,8 +465,8 @@ class Paths
 		return modFolders('videos/' + key + '.' + VIDEO_EXT);
 	}
 
-	inline static public function modsSounds(key:String) {
-		return modFolders(key + '.' + SOUND_EXT);
+	inline static public function modsSounds(path:String, key:String) {
+		return modFolders(path + '/' + key + '.' + SOUND_EXT);
 	}
 
 	inline static public function modsImages(key:String) {
@@ -491,10 +491,12 @@ class Paths
 	{
 		return modFolders('shaders/'+key+'.frag');
 	}
+
 	inline static public function modsShaderVertex(key:String, ?library:String)
 	{
 		return modFolders('shaders/'+key+'.vert');
 	}
+
 	inline static public function modsAchievements(key:String) {
 		return modFolders('achievements/' + key + '.json');
 	}*/
