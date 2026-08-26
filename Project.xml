@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<!-- Application Settings -->
+	<app title="Ali Alafandy - Game" />
+	<app file="AliA_Game" />
+	<app packageName="com.alialafandy.aliagame" />
+	<app package="com.alialafandy.aliagame" />
+	<app main="Main" />
+	<app version="1.0.0" />
+	<app company="AliAlafandy" />
+
+	<set name="APP_ID" value="0x0100f6c013bbc000" />
+
+	<!-- <haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/> -->
+
+	<app preloader="flixel.system.FlxPreloader" />
+
+	<!-- Customization -->
+	<define name="MODS_ALLOWED" if="desktop || mobile" />
+	<define name="ELLAWY_ALLOWED" if="desktop || mobile" /> -->
+	<!-- <define name="ACHIEVEMENTS_ALLOWED" /> -->
+	<define name="DISCORD_ALLOWED" if="desktop" />
+	<define name="VIDEOS_ALLOWED" />
+
+	<!-- Window Settings -->
+	<window width="1280" height="720" background="#000000" hardware="true" vsync="false" fps="60" />
+
+	<window if="html5" resizable="true" />
+
+	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" vsync="false" allow-shaders="true" require-shaders="true" />
+
+	<window if="mobile" orientation="landscape" fullscreen="true" resizable="false" allow-shaders="true" require-shaders="true" allow-high-dpi="true" antialiasing="0" />
+
+	<window if="switch" orientation="landscape" fullscreen="true" width="0" height="0" resizable="true" />
+
+	<!-- Path Settings -->
+	<set name="BUILD_DIR" value="export/debug" if="debug" />
+	<set name="BUILD_DIR" value="export/release" unless="debug" />
+	<set name="BUILD_DIR" value="export/32bit" if="32bits" />
+
+	<classpath name="source" />
+
+	<!-- Game Assets & Etc. -->
+	<assets path="assets/characters" />
+	<assets path="assets/fonts" />
+	<assets path="assets/levels" />
+	<assets path="assets/menus" />
+
+	<assets path="assets/mobile" if="mobile"/>
+	<assets path="assets/videos" library="videos" if="VIDEOS_ALLOWED"/>
+
+	<assets path="assets/music" library="music"/>
+
+	<library name="videos" preload="true" if="VIDEOS_ALLOWED"/>
+	<library name="music" preload="true" />
+
+	<define name="CHECK_FOR_UPDATES" />
+
+	<section if="MODS_ALLOWED">
+		<assets path="mods" embed="false"/>
+	</section>
+
+	<!-- Libraries -->
+	<haxelib name="flixel" />
+	<haxelib name="flixel-ui" />
+	<haxelib name="flixel-addons" />
+	<haxelib name="tjson" />
+
+	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED"/>
+	<haxelib name="hxCodec" if="VIDEOS_ALLOWED"/>
+	<haxelib name="ellawy" if="ELLAWY_ALLOWED"/>
+
+	<haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc" />
+	<haxedef name="NO_PRECOMPILED_HEADERS" if="linux" />
+
+	<haxelib name="hxcpp-debug-server" if="debug"/>
+	<haxedef name="HXC_LIBVLC_LOGGING" if="VIDEOS_ALLOWED debug" />
+
+	<!-- Haxedefines -->
+	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />
+	<haxedef name="HXC_DEBUG_TRACE" if="debug" />
+	<haxedef name="FLX_NO_DEBUG" unless="debug" />
+	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
+
+	<section if="cpp">
+		<haxedef name="HXCPP_CHECK_POINTER" />
+		<haxedef name="HXCPP_STACK_LINE" />
+		<haxedef name="HXCPP_STACK_TRACE" />
+		<haxedef name="HXCPP_CATCH_SEGV" />
+	</section>
+
+	<app path="export\32bit\windows\bin" if="32bits" />
+
+	<config:ios category_type="public.app-category.music-games" />
+	<config:mac category_type="public.app-category.music-games" />
+
+	<config:android install-location="auto" minimum-sdk-version="21" target-sdk-version="35" permissions="android.permission.WRITE_EXTERNAL_STORAGE android.permission.READ_EXTERNAL_STORAGE android.permission.INTERNET" />
+
+	<certificate path="key.keystore" password="psychengine" alias="psychport" alias-password="psychengine" if="android" unless="debug" />
+
+	<!--Disable deprecated warnings-->
+	<haxedef name="message.reporting" value="pretty" />
+	<haxedef name='no-deprecation-warnings' />
+
+	<haxedef name="SHARE_MOBILE_FILES" if="mobile" />
+
+	<haxedef name="no-deprecation-warnings" />
+
+	<haxedef name="loop_unroll_max_cost" value="25" />
+	<haxedef name="DISABLED_MACRO_SUPERLATIVE" if="android" />
+
+	<haxeflag name="--macro" value="allowPackage('flash')" />
+	<haxeflag name="--macro" value="include('my.pack')" />
+
+	<!-- Custom -->
+	<assets path="documents/app/iconAPP.png" rename="icon.png" if="linux" />
+
+	<icon path="documents/app/iconOG.png" if="desktop" />
+	<icon path="documents/app/iconAPP.png" if="mobile" />
+</project>

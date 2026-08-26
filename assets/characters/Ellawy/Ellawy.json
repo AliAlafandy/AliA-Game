@@ -1,0 +1,68 @@
+{
+	"name": "Ali Alafandy",
+	"anim": {
+		[
+			"name": "idle",
+			"image": "Ellawy",
+			"prefix": "Ellawy Idle0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "walking",
+			"image": "Ellawy",
+			"prefix": "Ellawy Walking0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "running",
+			"image": "Ellawy",
+			"prefix": "Ellawy Running0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "jumping",
+			"image": "Ellawy",
+			"prefix": "Ellawy Jumping0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "under",
+			"image": "Ellawy",
+			"prefix": "Ellawy Under0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "flash",
+			"image": "Ellawy",
+			"prefix": "Ellawy Flash0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "gameOver",
+			"image": "Ellawy",
+			"prefix": "Ellawy GameOver0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		]
+	}
+}

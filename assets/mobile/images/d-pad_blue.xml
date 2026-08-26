@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="d-pad_blue.png">
+	<!-- Created with Adobe Animate version 21.0.6.41649 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="pad0000" x="0" y="0" width="286" height="287"/>
+	<SubTexture name="touch Idle0000" x="286" y="0" width="230" height="230"/>
+	<SubTexture name="touch Left0000" x="516" y="0" width="230" height="230"/>
+	<SubTexture name="touch Down0000" x="746" y="0" width="230" height="230"/>
+	<SubTexture name="touch Up0000" x="976" y="0" width="230" height="230"/>
+	<SubTexture name="touch Right0000" x="0" y="287" width="230" height="230"/>
+	<SubTexture name="touch LD0000" x="230" y="257" width="230" height="230"/>
+	<SubTexture name="touch LU0000" x="460" y="230" width="230" height="230"/>
+	<SubTexture name="touch UR0000" x="690" y="230" width="230" height="230"/>
+	<SubTexture name="touch DR0000" x="920" y="230" width="230" height="230"/>
+	<SubTexture name="touch DU0000" x="0" y="517" width="230" height="230"/>
+	<SubTexture name="touch LR0000" x="230" y="487" width="230" height="230"/>
+	<SubTexture name="touch LDU0000" x="460" y="460" width="230" height="230"/>
+	<SubTexture name="touch LDR0000" x="690" y="460" width="230" height="230"/>
+	<SubTexture name="touch LUR0000" x="920" y="460" width="230" height="230"/>
+	<SubTexture name="touch DUR0000" x="0" y="747" width="230" height="230"/>
+	<SubTexture name="touch Full0000" x="230" y="717" width="230" height="230"/>
+	<SubTexture name="arrows0000" x="460" y="691" width="199" height="199"/>
+	<SubTexture name="jump Pad0000" x="660" y="690" width="248" height="248"/>
+	<SubTexture name="jump Idle0000" x="908" y="690" width="187" height="187"/>
+	<SubTexture name="jump Press0000" x="0" y="977" width="187" height="187"/>
+	<SubTexture name="power Pad0000" x="1095" y="673" width="173" height="173"/>
+	<SubTexture name="power Idle0000" x="1150" y="213" width="122" height="122"/>
+	<SubTexture name="power Press0000" x="1150" y="335" width="122" height="122"/>
+	<SubTexture name="back0000" x="372" y="947" width="142" height="147"/>
+	<SubTexture name="stop0000" x="230" y="977" width="142" height="147"/>
+</TextureAtlas>

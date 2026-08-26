@@ -1,0 +1,68 @@
+{
+	"name": "Ahmed Alafandy",
+	"anim": {
+		[
+			"name": "idle",
+			"image": "Hamedo",
+			"prefix": "Hamedo Idle0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "walking",
+			"image": "Hamedo",
+			"prefix": "Hamedo Walking0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "running",
+			"image": "Hamedo",
+			"prefix": "Hamedo Running0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "jumping",
+			"image": "Hamedo",
+			"prefix": "Hamedo Jumping0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "under",
+			"image": "Hamedo",
+			"prefix": "Hamedo Under0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "flying",
+			"image": "Hamedo",
+			"prefix": "Hamedo Fliying0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "gameOver",
+			"image": "Hamedo",
+			"prefix": "Hamedo GameOver0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		]
+	}
+}

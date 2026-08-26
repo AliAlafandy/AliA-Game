@@ -1,0 +1,103 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      os:
+        required: true
+        type: string
+      buildArgs:
+        required: true
+        type: string
+      artifactName:
+        required: true
+        type: string
+      artifactPath:
+        required: true
+        type: string
+
+env:
+  HAXE_VERSION: 4.3.7
+  PROJECT_NAME: AliA
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
+jobs:
+  build:
+    name: Build # ${{ inputs.name }}
+    runs-on: ${{ inputs.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: ${{ env.HAXE_VERSION }}
+
+      - name: Update APT
+        if: inputs.name == 'Linux'
+        run: |
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          sudo apt-get update --fix-missing
+
+      - name: Install libDependencies
+        if: inputs.name == 'Linux'
+        run: |
+          sudo apt-get install -y \
+            libvlc-dev \
+            libvlccore-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            libpulse-dev
+
+      - name: Setup XCode
+        if: inputs.name == 'MacOS' || inputs.name == 'iOS' || startsWith(inputs.name, 'Android')
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.4'
+
+      - name: Install Libraries
+        run: |
+          haxelib install hmm --quiet
+          haxelib run hmm install --quiet
+
+      - name: Configure Android
+        if: startsWith(inputs.name, 'Android')
+        run: |
+          haxelib run lime config ANDROID_SDK "$ANDROID_HOME"
+          haxelib run lime config ANDROID_NDK_ROOT "$ANDROID_NDK_LATEST_HOME"
+          haxelib run lime config JAVA_HOME "$JAVA_HOME_17_arm64"
+          haxelib run lime config ANDROID_SETUP true
+
+      - name: Compile
+        run: |
+          haxelib run lime build ${{ inputs.buildArgs }}
+
+      - name: Make IPA
+        if: inputs.name == 'iOS'
+        shell: bash
+        run: |
+          set -e
+          cd export/release/ios/build/Release-iphoneos
+          rm -rf Payload
+          mkdir Payload
+          APP=$(find . -maxdepth 1 -type d -name "*.app" | head -n 1)
+
+          if [ -z "$APP" ]; then
+            echo "ERROR: iOS .app was not generated."
+            exit 1
+          fi
+
+          mv "$APP" Payload/
+          zip -r "${{ env.PROJECT_NAME }}.ipa" Payload
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifactName }}
+          path: ${{ inputs.artifactPath }}
+          if-no-files-found: error

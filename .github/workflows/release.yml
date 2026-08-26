@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  Build:
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            os: windows-2022
+            buildArgs: windows
+            artifactName: Windows x64
+            artifactPath: export\release\windows\bin\*
+          - name: Windows x32
+            os: windows-2022
+            buildArgs: "windows -32 -D HXCPP_M32 -D 32bits"
+            artifactName: Windows x32
+            artifactPath: export\32bit\windows\bin\*
+          - name: Linux
+            os: ubuntu-22.04
+            buildArgs: linux
+            artifactName: Linux
+            artifactPath: export/release/linux/bin/*
+          - name: MacOS
+            os: macos-15
+            buildArgs: mac
+            artifactName: MacOS
+            artifactPath: export/release/macos/bin/*
+          - name: Android x64
+            os: macos-15
+            buildArgs: "android -ONLY_ARM64"
+            artifactName: Android x64
+            artifactPath: "export/release/android/bin/app/build/outputs/apk/release/*.apk"
+          - name: Android x32
+            os: macos-15
+            buildArgs: "android -ONLY_ARMV7"
+            artifactName: Android x32
+            artifactPath: "export/release/android/bin/app/build/outputs/apk/release/*.apk"
+          - name: iOS
+            os: macos-15
+            buildArgs: "ios -nosign"
+            artifactName: iOS
+            artifactPath: "export/release/ios/build/Release-iphoneos/*.ipa"
+    uses: ./.github/workflows/build.yml
+    with:
+      name: ${{ matrix.name }}
+      os: ${{ matrix.os }}
+      buildArgs: ${{ matrix.buildArgs }}
+      artifactName: ${{ matrix.artifactName }}
+      artifactPath: ${{ matrix.artifactPath }}
+
+  Release:
+    name: Create GitHub Release
+    needs: Build
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release
+
+      - name: Prepare release files
+        shell: bash
+        run: |
+          set -e
+          mkdir -p dist
+          find release -type f -exec cp {} dist/ \;
+          echo "Release files:"
+          find dist -type f -maxdepth 1 -print
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }} # AliA Game ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            dist/*

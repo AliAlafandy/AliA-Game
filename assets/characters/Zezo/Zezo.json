@@ -1,0 +1,68 @@
+{
+	"name": "Ahmed Zezo",
+	"anim": {
+		[
+			"name": "idle",
+			"image": "Zezo",
+			"prefix": "Zezo Idle0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "walking",
+			"image": "Zezo",
+			"prefix": "Zezo Walking0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "running",
+			"image": "Zezo",
+			"prefix": "Zezo Running0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "jumping",
+			"image": "Zezo",
+			"prefix": "Zezo Jumping0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "under",
+			"image": "Zezo",
+			"prefix": "Zezo Under0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "disappearance",
+			"image": "Zezo",
+			"prefix": "Zezo Disappearance0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "gameOver",
+			"image": "Zezo",
+			"prefix": "Zezo GameOver0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		]
+	}
+}
