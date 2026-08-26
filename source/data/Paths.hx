@@ -122,7 +122,7 @@ class Paths
 		return getSharedPath(file);
 	}
 
-	static public function getLibraryPath(file:String, library = "images")
+	static public function getLibraryPath(file:String, library:String)
 	{
 		return '$library/$file';
 	}
@@ -141,17 +141,17 @@ class Paths
 
 	inline static public function txt(key:String, ?library:String)
 	{
-		return getPath('data/$key.txt', TEXT, library);
+		return getPath('$key.txt', TEXT, library);
 	}
 
 	inline static public function xml(key:String, ?library:String)
 	{
-		return getPath('data/$key.xml', TEXT, library);
+		return getPath('$key.xml', TEXT, library);
 	}
 
 	inline static public function json(key:String, ?library:String)
 	{
-		return getPath('data/$key.json', TEXT, library);
+		return getPath('$key.json', TEXT, library);
 	}
 
 	inline static public function shaderFragment(key:String, ?library:String)
@@ -164,7 +164,7 @@ class Paths
 	}
 	inline static public function ellawy(key:String, ?library:String)
 	{
-		return getPath('$key.ellawy', TEXT, library);
+		return getPath('scripts/$key.ellawy', TEXT, library);
 	}
 
 	static public function video(key:String)
@@ -373,9 +373,9 @@ class Paths
 		var xml:String = modsXml(key);
 		if(FileSystem.exists(xml)) xmlExists = true;
 
-		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath('images/$key.xml', library)));
+		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath('$key.xml', library)));
 		#else
-		return FlxAtlasFrames.fromSparrow(imageLoaded, getPath('images/$key.xml', library));
+		return FlxAtlasFrames.fromSparrow(imageLoaded, getPath('$key.xml', library));
 		#end
 	}
 
@@ -388,9 +388,9 @@ class Paths
 		var txt:String = modsTxt(key);
 		if(FileSystem.exists(txt)) txtExists = true;
 
-		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, (txtExists ? File.getContent(txt) : getPath('images/$key.txt', library)));
+		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, (txtExists ? File.getContent(txt) : getPath('$key.txt', library)));
 		#else
-		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, getPath('images/$key.txt', library));
+		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, getPath('$key.txt', library));
 		#end
 	}
 
@@ -403,9 +403,9 @@ class Paths
 		var json:String = modsImagesJson(key);
 		if(FileSystem.exists(json)) jsonExists = true;
 
-		return FlxAtlasFrames.fromTexturePackerJson(imageLoaded, (jsonExists ? File.getContent(json) : getPath('images/$key.json', library)));
+		return FlxAtlasFrames.fromTexturePackerJson(imageLoaded, (jsonExists ? File.getContent(json) : getPath('$key.json', library)));
 		#else
-		return FlxAtlasFrames.fromTexturePackerJson(imageLoaded, getPath('images/$key.json', library));
+		return FlxAtlasFrames.fromTexturePackerJson(imageLoaded, getPath('$key.json', library));
 		#end
 	}
 
@@ -458,7 +458,7 @@ class Paths
 	}
 
 	inline static public function modsJson(key:String) {
-		return modFolders('data/' + key + '.json');
+		return modFolders(path + '/' + key + '.json');
 	}
 
 	inline static public function modsVideo(key:String) {
@@ -470,19 +470,19 @@ class Paths
 	}
 
 	inline static public function modsImages(key:String) {
-		return modFolders('images/' + key + '.png');
+		return modFolders(path + '/' + key + '.png');
 	}
 
 	inline static public function modsXml(key:String) {
-		return modFolders('images/' + key + '.xml');
+		return modFolders(path + '/' + key + '.xml');
 	}
 
 	inline static public function modsTxt(key:String) {
-		return modFolders('images/' + key + '.txt');
+		return modFolders(path + '/' + key + '.txt');
 	}
 
 	inline static public function modsImagesJson(key:String) {
-		return modFolders('images/' + key + '.json');
+		return modFolders(path + '/' + key + '.json');
 	}
 
 	/* Goes unused for now
@@ -581,89 +581,6 @@ class Paths
 			return null;
 		}
 	}
-	#end
-
-	#if flxanimate
-	public static function loadAnimateAtlas(spr:FlxAnimate, folderOrImg:Dynamic, spriteJson:Dynamic = null, animationJson:Dynamic = null)
-	{
-		var changedAnimJson = false;
-		var changedAtlasJson = false;
-		var changedImage = false;
-		
-		if(spriteJson != null)
-		{
-			changedAtlasJson = true;
-			spriteJson = File.getContent(spriteJson);
-		}
-
-		if(animationJson != null) 
-		{
-			changedAnimJson = true;
-			animationJson = File.getContent(animationJson);
-		}
-
-		// is folder or image path
-		if(Std.isOfType(folderOrImg, String))
-		{
-			var originalPath:String = folderOrImg;
-			for (i in 0...10)
-			{
-				var st:String = '$i';
-				if(i == 0) st = '';
-
-				if(!changedAtlasJson)
-				{
-					spriteJson = getTextFromFile('images/$originalPath/spritemap$st.json');
-					if(spriteJson != null)
-					{
-						//trace('found Sprite Json');
-						changedImage = true;
-						changedAtlasJson = true;
-						folderOrImg = Paths.image('$originalPath/spritemap$st');
-						break;
-					}
-				}
-				else if(Paths.fileExists('images/$originalPath/spritemap$st.png', IMAGE))
-				{
-					//trace('found Sprite PNG');
-					changedImage = true;
-					folderOrImg = Paths.image('$originalPath/spritemap$st');
-					break;
-				}
-			}
-
-			if(!changedImage)
-			{
-				//trace('Changing folderOrImg to FlxGraphic');
-				changedImage = true;
-				folderOrImg = Paths.image(originalPath);
-			}
-
-			if(!changedAnimJson)
-			{
-				//trace('found Animation Json');
-				changedAnimJson = true;
-				animationJson = getTextFromFile('images/$originalPath/Animation.json');
-			}
-		}
-
-		//trace(folderOrImg);
-		//trace(spriteJson);
-		//trace(animationJson);
-		spr.loadAtlasEx(folderOrImg, spriteJson, animationJson);
-	}
-
-	/*private static function getContentFromFile(path:String):String
-	{
-		var onAssets:Bool = false;
-		var path:String = Paths.getPath(path, TEXT, true);
-		if(FileSystem.exists(path) || (onAssets = true && Assets.exists(path, TEXT)))
-		{
-			//trace('Found text: $path');
-			return !onAssets ? File.getContent(path) : Assets.getText(path);
-		}
-		return null;
-	}*/
 	#end
 
 	public static function readDirectory(directory:String):Array<String>
