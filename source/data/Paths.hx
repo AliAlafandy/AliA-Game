@@ -457,7 +457,7 @@ class Paths
 		return modFolders('fonts/' + key);
 	}
 
-	inline static public function modsJson(key:String) {
+	inline static public function modsJson(path:String, key:String) {
 		return modFolders(path + '/' + key + '.json');
 	}
 
@@ -469,19 +469,19 @@ class Paths
 		return modFolders(path + '/' + key + '.' + SOUND_EXT);
 	}
 
-	inline static public function modsImages(key:String) {
+	inline static public function modsImages(path:String, key:String) {
 		return modFolders(path + '/' + key + '.png');
 	}
 
-	inline static public function modsXml(key:String) {
+	inline static public function modsXml(path:String, key:String) {
 		return modFolders(path + '/' + key + '.xml');
 	}
 
-	inline static public function modsTxt(key:String) {
+	inline static public function modsTxt(path:String, key:String) {
 		return modFolders(path + '/' + key + '.txt');
 	}
 
-	inline static public function modsImagesJson(key:String) {
+	inline static public function modsImagesJson(path:String, key:String) {
 		return modFolders(path + '/' + key + '.json');
 	}
 
