@@ -123,9 +123,9 @@ class ClientPrefs {
 		'ui_down' => [S, DOWN],
 		'ui_right' => [D, RIGHT],
 
-		'accept' => [JUMP, A],
+		'accept' => [JUMP, Z],
 		'back' => [BACK_M , B],
-		'pause' => [STOP, P],
+		'pause' => [PAUSE, P],
 	];
 	public static var defaultMobileBinds:Map<String, Array<MobileInputID>> = null;
 	#end
