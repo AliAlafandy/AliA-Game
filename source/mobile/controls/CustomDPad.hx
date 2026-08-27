@@ -26,9 +26,12 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 	public var arrows:TouchButton;
 
 	public var jumpBG:TouchButton;
-	public var jumpButton:TouchButton;
+	public var jumpPad:TouchButton;
 
 	public var powerBG:TouchButton;
+	public var powerPad:TouchButton;
+
+	public var jumpButton:TouchButton;
 	public var powerButton:TouchButton;
 
 	public var backButton:TouchButton;
