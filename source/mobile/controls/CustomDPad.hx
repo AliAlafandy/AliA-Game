@@ -53,6 +53,8 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		trace(path2);
 		var customFrames = Paths.getSparrowAtlas('d-pad_' + color , 'mobile');
 
+		var offset:Float = 10;
+
 		padBG = new TouchButton(X, Y, []);
 		if (customFrames != null)
 		{
@@ -60,14 +62,14 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			padBG.animation.addByPrefix('bg', 'pad0000', 0, false);
 			padBG.animation.play('bg');
 		}
-		padBG.scale.set(1, 1);
+		padBG.scale.set(0.75, 0.75);
 		padBG.updateHitbox();
 		// padBG.scrollFactor.set();
 		padBG.alpha = ClientPrefs.data.controlsAlpha;
 		padBG.antialiasing = ClientPrefs.data.antialiasing;
 		add(padBG);
 
-		dPad = new TouchButton(padBG.x + 5, padBG.y + 5, []);
+		dPad = new TouchButton(padBG.x + offset, padBG.y + offset, []);
 		if (customFrames != null)
 		{
 			dPad.frames = customFrames;
@@ -89,21 +91,21 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			dPad.animation.addByPrefix('full', 'touch Full0000', 0, false);
 			dPad.animation.play('idle');
 		}
-		dPad.scale.set(1, 1);
+		dPad.scale.set(0.75, 0.75);
 		dPad.updateHitbox();
 		// dPad.scrollFactor.set();
 		dPad.alpha = ClientPrefs.data.controlsAlpha;
 		dPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(dPad);
 
-		arrows = new TouchButton(dPad.x, dPad.y, []);
+		arrows = new TouchButton(dPad.x + offset, dPad.y + offset, []);
 		if (customFrames != null)
 		{
 			arrows.frames = customFrames;
 			arrows.animation.addByPrefix('arrows', 'arrows0000', 0, false);
 			arrows.animation.play('arrows');
 		}
-		arrows.scale.set(1, 1);
+		arrows.scale.set(0.75, 0.75);
 		arrows.updateHitbox();
 		// arrows.scrollFactor.set();
 		arrows.alpha = ClientPrefs.data.controlsAlpha;
@@ -122,14 +124,14 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			jumpBG.animation.addByPrefix('bg', 'jump Pad0000', 0, false);
 			jumpBG.animation.play('bg');
 		}
-		jumpBG.scale.set(1, 1);
+		jumpBG.scale.set(0.75, 0.75);
 		jumpBG.updateHitbox();
 		// jumpBG.scrollFactor.set();
 		jumpBG.alpha = ClientPrefs.data.controlsAlpha;
 		jumpBG.antialiasing = ClientPrefs.data.antialiasing;
 		add(jumpBG);
 
-		jumpPad = new TouchButton(jumpBG.x + 5, jumpBG.y + 5, []);
+		jumpPad = new TouchButton(jumpBG.x + offset, jumpBG.y + offset, []);
 		if (customFrames != null)
 		{
 			jumpPad.frames = customFrames;
@@ -137,7 +139,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			jumpPad.animation.addByPrefix('press', 'jump Press0000', 0, false);
 			jumpPad.animation.play('idle');
 		}
-		jumpPad.scale.set(1, 1);
+		jumpPad.scale.set(0.75, 0.75);
 		jumpPad.updateHitbox();
 		// jumpPad.scrollFactor.set();
 		jumpPad.alpha = ClientPrefs.data.controlsAlpha;
@@ -151,14 +153,14 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			powerBG.animation.addByPrefix('bg', 'power Pad0000', 0, false);
 			powerBG.animation.play('bg');
 		}
-		powerBG.scale.set(1, 1);
+		powerBG.scale.set(0.75, 0.75);
 		powerBG.updateHitbox();
 		// powerBG.scrollFactor.set();
 		powerBG.alpha = ClientPrefs.data.controlsAlpha;
 		powerBG.antialiasing = ClientPrefs.data.antialiasing;
 		add(powerBG);
 
-		powerPad = new TouchButton(powerBG.x + 5, powerBG.y + 5, []);
+		powerPad = new TouchButton(powerBG.x + offset, powerBG.y + offset, []);
 		if (customFrames != null)
 		{
 			powerPad.frames = customFrames;
@@ -166,45 +168,45 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			powerPad.animation.addByPrefix('press', 'power Press0000', 0, false);
 			powerPad.animation.play('idle');
 		}
-		powerPad.scale.set(1, 1);
+		powerPad.scale.set(0.75, 0.75);
 		powerPad.updateHitbox();
 		// powerPad.scrollFactor.set();
 		powerPad.alpha = ClientPrefs.data.controlsAlpha;
 		powerPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(powerPad);
 
-		backPad = new TouchButton(X + 10, Y + 10, []);
+		backPad = new TouchButton(X - 5, Y - 10, []);
 		if (customFrames != null)
 		{
 			backPad.frames = customFrames;
 			backPad.animation.addByPrefix('back', 'back0000', 0, false);
 			backPad.animation.play('back');
 		}
-		backPad.scale.set(1, 1);
+		backPad.scale.set(0.75, 0.75);
 		backPad.updateHitbox();
 		// backPad.scrollFactor.set();
 		backPad.alpha = ClientPrefs.data.controlsAlpha;
 		backPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(backPad);
 
-		pausePad = new TouchButton(FlxG.width - 90 + X, Y + 10, []);
+		pausePad = new TouchButton(FlxG.width - 70 - X, Y - 10, []);
 		if (customFrames != null)
 		{
 			pausePad.frames = customFrames;
 			pausePad.animation.addByPrefix('stop', 'pause0000', 0, false);
 			pausePad.animation.play('stop');
 		}
-		pausePad.scale.set(1, 1);
+		pausePad.scale.set(0.75, 0.75);
 		pausePad.updateHitbox();
 		// pausePad.scrollFactor.set();
 		pausePad.alpha = ClientPrefs.data.controlsAlpha;
 		pausePad.antialiasing = ClientPrefs.data.antialiasing;
 		add(pausePad);
 
-		jumpButton = createCustomButton(FlxG.width - 250, FlxG.height - 150, 'jump Idle0000', [MobileInputID.JUMP, MobileInputID.Z], customFrames);
-		powerButton = createCustomButton(FlxG.width - 130, FlxG.height - 250, 'power Idle0000', [MobileInputID.POWER, MobileInputID.C], customFrames);
+		jumpButton = createCustomButton(FlxG.width - 200, FlxG.height - 100, 'jump Idle0000', [MobileInputID.JUMP, MobileInputID.Z], customFrames);
+		powerButton = createCustomButton(FlxG.width - 100, FlxG.height - 200, 'power Idle0000', [MobileInputID.POWER, MobileInputID.C], customFrames);
 		backButton = createCustomButton(10, 10, 'back0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
-		pauseButton = createCustomButton(FlxG.width - 90, 10, 'pause0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
+		pauseButton = createCustomButton(FlxG.width - 70, 10, 'pause0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
 
 		add(buttonLeft);
 		add(buttonDown);
