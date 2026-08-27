@@ -1,4 +1,4 @@
-package data;
+package data.scripts;
 
 import flixel.FlxBasic;
 
