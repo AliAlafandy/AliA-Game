@@ -19,6 +19,10 @@ import states.TitleState;
 	public var storageType:String = 'EXTERNAL_DATA';
 	#end
 
+	public var extraButtons:String = "NONE";
+	public var hitboxPos:Bool = true;
+	public var dynamicColors:Bool = true;
+
 	public var extraButtons:String = 'NONE';
 	public var autoPause:Bool = true;
 	public var screensaver:Bool = false;
@@ -27,6 +31,8 @@ import states.TitleState;
 	#if android
 	public var pauseButton:Bool = true;
 	#end
+
+	public var hitboxType:String = "Gradient";
 
 	public var vsync:Bool = false;
 	public var gameOverVibration:Bool = false;
