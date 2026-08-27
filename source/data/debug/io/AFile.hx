@@ -1,4 +1,4 @@
-package data.io;
+package data.debug.io;
 
 import openfl.Assets;
 
