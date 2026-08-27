@@ -51,16 +51,16 @@ import js.html.*;
 #end
 
 import data.controls.Controls;
-import data.controls.InputFormater;
+import data.controls.InputFormatter;
 
 import data.backend.Paths;
-import data.backend.Controls;
 import data.backend.CoolUtil;
-import data.backend.CustomFadeTransition;
+import data.objects.CustomFadeTransition;
 import data.backend.GameState;
 import data.backend.GameSubState;
 import data.backend.ClientPrefs;
 import data.backend.Mods;
+import data.backend.StageData;
 
 #if android
 import mobile.StorageUtil;
