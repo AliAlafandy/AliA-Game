@@ -37,8 +37,6 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 	public var backButton:TouchButton;
 	public var pauseButton:TouchButton;
 
-	public var scale:Int = ClientPrefs.data.controlsSize;
-
 	public function new(X:Float, Y:Float)
 	{
 		super();
@@ -60,7 +58,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			padBG.animation.addByPrefix('bg', 'pad0000', 0, false);
 			padBG.animation.play('bg');
 		}
-		padBG.scale.set(scale, scale);
+		padBG.scale.set(1, 1);
 		padBG.updateHitbox();
 		// padBG.scrollFactor.set();
 		padBG.alpha = ClientPrefs.data.controlsAlpha;
@@ -89,7 +87,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			dPad.animation.addByPrefix('full', 'touch Full0000', 0, false);
 			dPad.animation.play('idle');
 		}
-		dPad.scale.set(scale, scale);
+		dPad.scale.set(1, 1);
 		dPad.updateHitbox();
 		// dPad.scrollFactor.set();
 		dPad.alpha = ClientPrefs.data.controlsAlpha;
@@ -103,7 +101,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			arrows.animation.addByPrefix('arrows', 'arrows0000', 0, false);
 			arrows.animation.play('arrows');
 		}
-		arrows.scale.set(scale, scale);
+		arrows.scale.set(1, 1);
 		arrows.updateHitbox();
 		// arrows.scrollFactor.set();
 		arrows.alpha = ClientPrefs.data.controlsAlpha;
@@ -122,7 +120,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			jumpBG.animation.addByPrefix('bg', 'jump Pad0000', 0, false);
 			jumpBG.animation.play('bg');
 		}
-		jumpBG.scale.set(scale, scale);
+		jumpBG.scale.set(1, 1);
 		jumpBG.updateHitbox();
 		// jumpBG.scrollFactor.set();
 		jumpBG.alpha = ClientPrefs.data.controlsAlpha;
@@ -137,7 +135,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			jumpPad.animation.addByPrefix('press', 'jump Press0000', 0, false);
 			jumpPad.animation.play('idle');
 		}
-		jumpPad.scale.set(scale, scale);
+		jumpPad.scale.set(1, 1);
 		jumpPad.updateHitbox();
 		// jumpPad.scrollFactor.set();
 		jumpPad.alpha = ClientPrefs.data.controlsAlpha;
@@ -151,7 +149,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			powerBG.animation.addByPrefix('bg', 'power Pad0000', 0, false);
 			powerBG.animation.play('bg');
 		}
-		powerBG.scale.set(scale, scale);
+		powerBG.scale.set(1, 1);
 		powerBG.updateHitbox();
 		// powerBG.scrollFactor.set();
 		powerBG.alpha = ClientPrefs.data.controlsAlpha;
@@ -166,7 +164,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			powerPad.animation.addByPrefix('press', 'power Press0000', 0, false);
 			powerPad.animation.play('idle');
 		}
-		powerPad.scale.set(scale, scale);
+		powerPad.scale.set(1, 1);
 		powerPad.updateHitbox();
 		// powerPad.scrollFactor.set();
 		powerPad.alpha = ClientPrefs.data.controlsAlpha;
