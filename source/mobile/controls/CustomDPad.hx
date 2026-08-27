@@ -35,13 +35,12 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		instance = this;
 
 		var color:String;
-		switch (ClientPrefs.data.controlsColor) {
-			case 'Yellow':
-				color = 'yellow';
 
-			case 'Blue':
-				color = 'blue';
-		}
+		if (ClientPrefs.data.controlsColor == 'Yellow')
+			color = 'yellow';
+
+		if (ClientPrefs.data.controlsColor == 'Blue')
+			color = 'blue';
 
 		var path = Paths.getPath('d-pad_' + color + '.xml', 'mobile');
 		var path2 = Paths.getPath('d-pad_' + color + '.png', 'mobile');
