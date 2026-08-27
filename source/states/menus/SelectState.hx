@@ -33,6 +33,11 @@ class SelectState extends GameState {
          14);
         t.screenCenter();
         add(t);
+
+        #if mobile
+		addCustomDPad();
+		addCustomDPadCam();
+		#end
     }
 
     override public function update(elapsed:Float) {
