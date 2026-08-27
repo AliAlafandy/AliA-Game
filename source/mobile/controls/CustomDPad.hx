@@ -69,7 +69,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		buttonUp = createCustomButton(X + 100, Y, 'touch Up', [MobileInputID.GAME_UP, MobileInputID.UP, MobileInputID.UP2], customFrames);
 		buttonRight = createCustomButton(X + 200, Y + 100, 'touch Right', [MobileInputID.GAME_RIGHT, MobileInputID.RIGHT, MobileInputID.RIGHT2], customFrames);
 
-		jumpButton = createCustomButton(FlxG.width - 250, FlxG.height - 150, 'jump Idle', [MobileInputID.JUMP, MobileInputID.Z, MobileInputID.A], customFrames);
+		jumpButton = createCustomButton(FlxG.width - 250, FlxG.height - 150, 'jump Idle', [MobileInputID.JUMP, MobileInputID.Z], customFrames);
 		powerButton = createCustomButton(FlxG.width - 330, FlxG.height - 250, 'power Idle', [MobileInputID.POWER, MobileInputID.C], customFrames);
 		backButton = createCustomButton(380, 150, 'back', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
 		pauseButton = createCustomButton(FlxG.width - 130, 150, 'pause', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
