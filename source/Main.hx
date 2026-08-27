@@ -1,7 +1,7 @@
 import data.debug.FPSCounter;
 import data.debug.CrashHandler;
-import data.audio.Audio;
 
+import data.backend.Audio;
 import flixel.graphics.FlxGraphic;
 import flixel.FlxGame;
 import flixel.FlxG;
