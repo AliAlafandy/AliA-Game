@@ -2,25 +2,59 @@ package data.controls;
 
 import flixel.input.gamepad.FlxGamepadButton;
 import flixel.input.gamepad.FlxGamepadInputID;
+import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.mappings.FlxGamepadMapping;
 import flixel.input.keyboard.FlxKey;
+import flixel.math.FlxMath;
 
 import data.backend.GameState;
 import data.backend.GameSubState;
 
+enum abstract InputState(Int)
+{
+	var IDLE = 0;
+	var PRESSED = 1;
+	var HELD = 2;
+	var RELEASED = 3;
+}
+
+class ActionBinding
+{
+	public var name:String;
+	public var keyboardKeys:Array<FlxKey> = [];
+	public var gamepadButtons:Array<FlxGamepadInputID> = [];
+	#if mobile
+	public var mobileButtons:Array<MobileInputID> = [];
+	#end
+	public var state:InputState = IDLE;
+	public var bufferedFrames:Int = 0;
+	public var heldTime:Float = 0;
+	public var analogAxis:Null<FlxGamepadInputID> = null;
+	public var analogThreshold:Float = 0.5;
+	public var analogInverted:Bool = false;
+
+	public function new(name:String)
+	{
+		this.name = name;
+	}
+}
+
 class Controls
 {
-	//Keeping same use cases on stuff for it to be easier to understand/use
-	//I'd have removed it but this makes it a lot less annoying to use in my opinion
+	public static inline var INPUT_BUFFER_FRAMES:Int = 5;
+	public static inline var ANALOG_DEADZONE:Float = 0.18;
 
-	//You do NOT have to create these variables/getters for adding new keys,
-	//but you will instead have to use:
-	//   controls.justPressed("ui_up")   instead of   controls.UI_UP
+	public var actions:Map<String, ActionBinding> = new Map();
+	public var keyboardBinds:Map<String, Array<FlxKey>>;
+	public var gamepadBinds:Map<String, Array<FlxGamepadInputID>>;
+	#if mobile
+	public var mobileBinds:Map<String, Array<MobileInputID>>;
+	#end
 
-	//Dumb but easily usable code, or Smart but complicated? Your choice.
-	//Also idk how to use macros they're weird as fuck lol
+	public var controllerMode:Bool = false;
+	public var activeGamepad:FlxGamepad;
+	public static var instance:Controls;
 
-	// Pressed buttons (directions)
 	public var UI_UP_P(get, never):Bool;
 	public var UI_DOWN_P(get, never):Bool;
 	public var UI_LEFT_P(get, never):Bool;
@@ -38,7 +72,6 @@ class Controls
 	private function get_GAME_LEFT_P() return justPressed('game_left');
 	private function get_GAME_RIGHT_P() return justPressed('game_right');
 
-	// Held buttons (directions)
 	public var UI_UP(get, never):Bool;
 	public var UI_DOWN(get, never):Bool;
 	public var UI_LEFT(get, never):Bool;
@@ -56,7 +89,6 @@ class Controls
 	private function get_GAME_LEFT() return pressed('game_left');
 	private function get_GAME_RIGHT() return pressed('game_right');
 
-	// Released buttons (directions)
 	public var UI_UP_R(get, never):Bool;
 	public var UI_DOWN_R(get, never):Bool;
 	public var UI_LEFT_R(get, never):Bool;
@@ -74,8 +106,6 @@ class Controls
 	private function get_GAME_LEFT_R() return justReleased('game_left');
 	private function get_GAME_RIGHT_R() return justReleased('game_right');
 
-
-	// Pressed buttons (others)
 	public var ACCEPT(get, never):Bool;
 	public var BACK(get, never):Bool;
 	public var PAUSE(get, never):Bool;
@@ -83,75 +113,238 @@ class Controls
 	private function get_BACK() return justPressed('back');
 	private function get_PAUSE() return justPressed('pause');
 
-	//Gamepad, Keyboard & Mobile stuff
-	public var keyboardBinds:Map<String, Array<FlxKey>>;
-	public var gamepadBinds:Map<String, Array<FlxGamepadInputID>>;
 	#if mobile
-	public var mobileBinds:Map<String, Array<MobileInputID>>;
+	public var isInSubstate:Bool = false;
+	public var requestedInstance(get, default):Dynamic;
+	public var requestedMobileC(get, default):IMobileControls;
+	public var mobileC(get, never):Bool;
 	#end
 
-	public function justPressed(key:String)
+	public function new()
 	{
-		var result:Bool = (FlxG.keys.anyJustPressed(keyboardBinds[key]) == true);
-		if(result) controllerMode = false;
+		gamepadBinds = ClientPrefs.gamepadBinds;
+		keyboardBinds = ClientPrefs.keyBinds;
+		#if mobile mobileBinds = ClientPrefs.mobileBinds; #end
 
-		return result || _myGamepadJustPressed(gamepadBinds[key]) == true #if mobile || mobileCJustPressed(mobileBinds[key]) == true || touchPadJustPressed(mobileBinds[key]) == true || customDPadJustPressed(mobileBinds[key]) == true #end;
+		for (key in keyboardBinds.keys())
+			registerAction(key);
 	}
 
-	public function pressed(key:String)
+	public function registerAction(name:String):ActionBinding
 	{
-		var result:Bool = (FlxG.keys.anyPressed(keyboardBinds[key]) == true);
-		if(result) controllerMode = false;
+		if (actions.exists(name))
+			return actions.get(name);
 
-		return result || _myGamepadPressed(gamepadBinds[key]) == true #if mobile || mobileCPressed(mobileBinds[key]) == true || touchPadPressed(mobileBinds[key]) == true || customDPadPressed(mobileBinds[key]) == true #end;
+		var binding = new ActionBinding(name);
+		binding.keyboardKeys = keyboardBinds.exists(name) ? keyboardBinds.get(name) : [];
+		binding.gamepadButtons = gamepadBinds.exists(name) ? gamepadBinds.get(name) : [];
+		#if mobile
+		binding.mobileButtons = mobileBinds.exists(name) ? mobileBinds.get(name) : [];
+		#end
+		actions.set(name, binding);
+		return binding;
 	}
 
-	public function justReleased(key:String)
+	public function rebindKeyboard(action:String, keys:Array<FlxKey>):Void
 	{
-		var result:Bool = (FlxG.keys.anyJustReleased(keyboardBinds[key]) == true);
-		if(result) controllerMode = false;
-
-		return result || _myGamepadJustReleased(gamepadBinds[key]) == true #if mobile || mobileCJustReleased(mobileBinds[key]) == true || touchPadJustReleased(mobileBinds[key]) == true || customDPadJustReleased(mobileBinds[key]) == true #end;
+		keyboardBinds.set(action, keys);
+		if (actions.exists(action))
+			actions.get(action).keyboardKeys = keys;
 	}
 
-	public var controllerMode:Bool = false;
+	public function rebindGamepad(action:String, buttons:Array<FlxGamepadInputID>):Void
+	{
+		gamepadBinds.set(action, buttons);
+		if (actions.exists(action))
+			actions.get(action).gamepadButtons = buttons;
+	}
+
+	public function update(elapsed:Float):Void
+	{
+		for (binding in actions)
+			updateBinding(binding, elapsed);
+	}
+
+	private function updateBinding(binding:ActionBinding, elapsed:Float):Void
+	{
+		var rawPressed = rawJustPressed(binding.keyboardKeys, binding.gamepadButtons #if mobile , binding.mobileButtons #end);
+		var rawHeld = rawPressedState(binding.keyboardKeys, binding.gamepadButtons #if mobile , binding.mobileButtons #end);
+		var rawReleased = rawJustReleased(binding.keyboardKeys, binding.gamepadButtons #if mobile , binding.mobileButtons #end);
+
+		if (binding.analogAxis != null && activeGamepad != null)
+		{
+			var value = analogValue(binding.analogAxis, binding.analogInverted);
+			if (Math.abs(value) >= binding.analogThreshold)
+			{
+				rawHeld = true;
+				controllerMode = true;
+			}
+		}
+
+		if (rawPressed)
+		{
+			binding.state = PRESSED;
+			binding.bufferedFrames = INPUT_BUFFER_FRAMES;
+			binding.heldTime = 0;
+		}
+		else if (rawHeld)
+		{
+			binding.state = HELD;
+			binding.heldTime += elapsed;
+		}
+		else if (rawReleased)
+		{
+			binding.state = RELEASED;
+			binding.heldTime = 0;
+		}
+		else
+		{
+			binding.state = IDLE;
+		}
+
+		if (binding.bufferedFrames > 0 && !rawPressed)
+			binding.bufferedFrames--;
+	}
+
+	public function justPressed(key:String):Bool
+	{
+		var result = FlxG.keys.anyJustPressed(keyboardBinds[key]) == true;
+		if (result) controllerMode = false;
+
+		return result || _myGamepadJustPressed(gamepadBinds[key]) == true
+			#if mobile || mobileCJustPressed(mobileBinds[key]) == true || touchPadJustPressed(mobileBinds[key]) == true || customDPadJustPressed(mobileBinds[key]) == true #end;
+	}
+
+	public function pressed(key:String):Bool
+	{
+		var result = FlxG.keys.anyPressed(keyboardBinds[key]) == true;
+		if (result) controllerMode = false;
+
+		return result || _myGamepadPressed(gamepadBinds[key]) == true
+			#if mobile || mobileCPressed(mobileBinds[key]) == true || touchPadPressed(mobileBinds[key]) == true || customDPadPressed(mobileBinds[key]) == true #end;
+	}
+
+	public function justReleased(key:String):Bool
+	{
+		var result = FlxG.keys.anyJustReleased(keyboardBinds[key]) == true;
+		if (result) controllerMode = false;
+
+		return result || _myGamepadJustReleased(gamepadBinds[key]) == true
+			#if mobile || mobileCJustReleased(mobileBinds[key]) == true || touchPadJustReleased(mobileBinds[key]) == true || customDPadJustReleased(mobileBinds[key]) == true #end;
+	}
+
+	public function isBuffered(action:String):Bool
+	{
+		return actions.exists(action) && actions.get(action).bufferedFrames > 0;
+	}
+
+	public function consumeBuffer(action:String):Bool
+	{
+		if (!actions.exists(action))
+			return false;
+
+		var binding = actions.get(action);
+		if (binding.bufferedFrames > 0)
+		{
+			binding.bufferedFrames = 0;
+			return true;
+		}
+		return false;
+	}
+
+	public function heldTimeOf(action:String):Float
+	{
+		return actions.exists(action) ? actions.get(action).heldTime : 0;
+	}
+
+	public function bindAnalog(action:String, axis:FlxGamepadInputID, threshold:Float = 0.5, inverted:Bool = false):Void
+	{
+		var binding = registerAction(action);
+		binding.analogAxis = axis;
+		binding.analogThreshold = threshold;
+		binding.analogInverted = inverted;
+	}
+
+	private function analogValue(axis:FlxGamepadInputID, inverted:Bool):Float
+	{
+		if (activeGamepad == null)
+			return 0;
+
+		var value = activeGamepad.getAxis(axis);
+		if (Math.abs(value) < ANALOG_DEADZONE)
+			return 0;
+
+		return inverted ? -value : value;
+	}
+
+	private function rawJustPressed(keys:Array<FlxKey>, gpButtons:Array<FlxGamepadInputID> #if mobile , mBinds:Array<MobileInputID> #end):Bool
+	{
+		var result = keys != null && FlxG.keys.anyJustPressed(keys);
+		if (result) controllerMode = false;
+
+		return result || _myGamepadJustPressed(gpButtons)
+			#if mobile || mobileCJustPressed(mBinds) || touchPadJustPressed(mBinds) || customDPadJustPressed(mBinds) #end;
+	}
+
+	private function rawPressedState(keys:Array<FlxKey>, gpButtons:Array<FlxGamepadInputID> #if mobile , mBinds:Array<MobileInputID> #end):Bool
+	{
+		var result = keys != null && FlxG.keys.anyPressed(keys);
+		if (result) controllerMode = false;
+
+		return result || _myGamepadPressed(gpButtons)
+			#if mobile || mobileCPressed(mBinds) || touchPadPressed(mBinds) || customDPadPressed(mBinds) #end;
+	}
+
+	private function rawJustReleased(keys:Array<FlxKey>, gpButtons:Array<FlxGamepadInputID> #if mobile , mBinds:Array<MobileInputID> #end):Bool
+	{
+		var result = keys != null && FlxG.keys.anyJustReleased(keys);
+		if (result) controllerMode = false;
+
+		return result || _myGamepadJustReleased(gpButtons)
+			#if mobile || mobileCJustReleased(mBinds) || touchPadJustReleased(mBinds) || customDPadJustReleased(mBinds) #end;
+	}
+
 	private function _myGamepadJustPressed(keys:Array<FlxGamepadInputID>):Bool
 	{
-		if(keys != null)
+		if (keys != null)
 		{
 			for (key in keys)
 			{
-				if (FlxG.gamepads.anyJustPressed(key) == true)
+				if (FlxG.gamepads.anyJustPressed(key))
 				{
 					controllerMode = true;
+					activeGamepad = FlxG.gamepads.getFirstActiveGamepad();
 					return true;
 				}
 			}
 		}
 		return false;
 	}
+
 	private function _myGamepadPressed(keys:Array<FlxGamepadInputID>):Bool
 	{
-		if(keys != null)
+		if (keys != null)
 		{
 			for (key in keys)
 			{
-				if (FlxG.gamepads.anyPressed(key) == true)
+				if (FlxG.gamepads.anyPressed(key))
 				{
 					controllerMode = true;
+					activeGamepad = FlxG.gamepads.getFirstActiveGamepad();
 					return true;
 				}
 			}
 		}
 		return false;
 	}
+
 	private function _myGamepadJustReleased(keys:Array<FlxGamepadInputID>):Bool
 	{
-		if(keys != null)
+		if (keys != null)
 		{
 			for (key in keys)
 			{
-				if (FlxG.gamepads.anyJustReleased(key) == true)
+				if (FlxG.gamepads.anyJustReleased(key))
 				{
 					controllerMode = true;
 					return true;
@@ -162,124 +355,92 @@ class Controls
 	}
 
 	#if mobile
-	public var isInSubstate:Bool = false; // don't worry about this it becomes true and false on it's own in MusicBeatSubstate
-	public var requestedInstance(get, default):Dynamic; // is set to MusicBeatState or MusicBeatSubstate when the constructor is called
-	public var requestedMobileC(get, default):IMobileControls; // for PlayState and EditorPlayState (hitbox and touchPad)
-	public var mobileC(get, never):Bool;
-
 	private function customDPadPressed(keys:Array<MobileInputID>):Bool
-    {
-        if (keys != null && requestedInstance.customDPad != null)
-        {
-            if (requestedInstance.customDPad.anyPressed(keys) == true)
-            {
-                controllerMode = true;
-                return true;
-            }
-        }
-        return false;
-    }
+	{
+		if (keys != null && requestedInstance.customDPad != null && requestedInstance.customDPad.anyPressed(keys))
+		{
+			controllerMode = true;
+			return true;
+		}
+		return false;
+	}
 
-    private function customDPadJustPressed(keys:Array<MobileInputID>):Bool
-    {
-        if (keys != null && requestedInstance.customDPad != null)
-        {
-            if (requestedInstance.customDPad.anyJustPressed(keys) == true)
-            {
-                controllerMode = true;
-                return true;
-            }
-        }
-        return false;
-    }
+	private function customDPadJustPressed(keys:Array<MobileInputID>):Bool
+	{
+		if (keys != null && requestedInstance.customDPad != null && requestedInstance.customDPad.anyJustPressed(keys))
+		{
+			controllerMode = true;
+			return true;
+		}
+		return false;
+	}
 
-    private function customDPadJustReleased(keys:Array<MobileInputID>):Bool
-    {
-        if (keys != null && requestedInstance.customDPad != null)
-        {
-            if (requestedInstance.customDPad.anyJustReleased(keys) == true)
-            {
-                controllerMode = true;
-                return true;
-            }
-        }
-        return false;
-    }
+	private function customDPadJustReleased(keys:Array<MobileInputID>):Bool
+	{
+		if (keys != null && requestedInstance.customDPad != null && requestedInstance.customDPad.anyJustReleased(keys))
+		{
+			controllerMode = true;
+			return true;
+		}
+		return false;
+	}
 
 	private function touchPadPressed(keys:Array<MobileInputID>):Bool
 	{
-		if (keys != null && requestedInstance.touchPad != null)
+		if (keys != null && requestedInstance.touchPad != null && requestedInstance.touchPad.anyPressed(keys))
 		{
-			if (requestedInstance.touchPad.anyPressed(keys) == true)
-			{
-				controllerMode = true; // !!DO NOT DISABLE THIS IF YOU DONT WANT TO KILL THE INPUT FOR MOBILE!!
-				return true;
-			}
+			controllerMode = true;
+			return true;
 		}
 		return false;
 	}
 
 	private function touchPadJustPressed(keys:Array<MobileInputID>):Bool
 	{
-		if (keys != null && requestedInstance.touchPad != null)
+		if (keys != null && requestedInstance.touchPad != null && requestedInstance.touchPad.anyJustPressed(keys))
 		{
-			if (requestedInstance.touchPad.anyJustPressed(keys) == true)
-			{
-				controllerMode = true;
-				return true;
-			}
+			controllerMode = true;
+			return true;
 		}
 		return false;
 	}
 
 	private function touchPadJustReleased(keys:Array<MobileInputID>):Bool
 	{
-		if (keys != null && requestedInstance.touchPad != null)
+		if (keys != null && requestedInstance.touchPad != null && requestedInstance.touchPad.anyJustReleased(keys))
 		{
-			if (requestedInstance.touchPad.anyJustReleased(keys) == true)
-			{
-				controllerMode = true;
-				return true;
-			}
+			controllerMode = true;
+			return true;
 		}
 		return false;
 	}
 
 	private function mobileCPressed(keys:Array<MobileInputID>):Bool
 	{
-		if (keys != null && requestedMobileC != null)
+		if (keys != null && requestedMobileC != null && requestedMobileC.instance.anyPressed(keys))
 		{
-			if (requestedMobileC.instance.anyPressed(keys))
-			{
-				controllerMode = true;
-				return true;
-			}
+			controllerMode = true;
+			return true;
 		}
 		return false;
 	}
 
 	private function mobileCJustPressed(keys:Array<MobileInputID>):Bool
 	{
-		if (keys != null && requestedMobileC != null)
+		if (keys != null && requestedMobileC != null && requestedMobileC.instance.anyJustPressed(keys))
 		{
-			if (requestedMobileC.instance.anyJustPressed(keys))
-			{
-				controllerMode = true;
-				return true;
-			}
+			controllerMode = true;
+			return true;
 		}
 		return false;
 	}
 
 	private function mobileCJustReleased(keys:Array<MobileInputID>):Bool
 	{
-		if (keys != null && requestedMobileC != null)
+		if (keys != null && requestedMobileC != null && requestedMobileC.instance.anyJustReleased(keys))
 		{
-			if (requestedMobileC.instance.anyJustReleased(keys))
-			{
-				controllerMode = true;
-				return true;
-			}
+			controllerMode = true;
+			return true;
 		}
 		return false;
 	}
@@ -287,10 +448,7 @@ class Controls
 	@:noCompletion
 	private function get_requestedInstance():Dynamic
 	{
-		if (isInSubstate)
-			return GameSubState.instance;
-		else
-			return GameState.getState();
+		return isInSubstate ? GameSubState.instance : GameState.getState();
 	}
 
 	@:noCompletion
@@ -302,20 +460,7 @@ class Controls
 	@:noCompletion
 	private function get_mobileC():Bool
 	{
-		if (ClientPrefs.data.controlsAlpha >= 0.1)
-			return true;
-		else
-			return false;
+		return ClientPrefs.data.controlsAlpha >= 0.1;
 	}
-
 	#end
-
-	public static var instance:Controls;
-
-	public function new()
-	{
-		gamepadBinds = ClientPrefs.gamepadBinds;
-		keyboardBinds = ClientPrefs.keyBinds;
-		#if mobile mobileBinds = ClientPrefs.mobileBinds; #end
-	}
 }
