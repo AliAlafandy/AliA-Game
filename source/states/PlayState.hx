@@ -44,37 +44,18 @@ class PlayState extends GameState
 
 		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'scripts/'))
 		{
-		    for (file in Paths.readDirectory(folder))
-		    {		
-		        #if HSCRIPT_ALLOWED
-		        if (file.toLowerCase().endsWith('.hx'))
-		        {
-		            initHScript(folder + file);
-		        }
-		        #end
-		
-		        #if ELLAWY_ALLOWED
-		        if (file.toLowerCase().endsWith('.ellawy'))
-		        {
-		            var filePath = folder + file;
-		            try
-		            {
-		                var haxeCode = ellawy.Compiler.compileFile(filePath);
-		
-		                var hxPath = filePath.substr(0, filePath.lastIndexOf('.')) + '.hx';
-		                sys.io.File.saveContent(hxPath, haxeCode);
-	
-		                initHScript(hxPath);
-		            }
-		            catch (e:Dynamic)
-		            {
-		                trace('Error compiling .ellawy script ($filePath): $e');
-		            }
-		        }
-		        #end
-		    }
+			for (file in Paths.readDirectory(folder))
+			{		
+				#if HSCRIPT_ALLOWED
+				var lowerFile = file.toLowerCase();
+				if (lowerFile.endsWith('.hx') || lowerFile.endsWith('.ellawy'))
+				{
+					initHScript(folder + file);
+				}
+				#end
+			}
 		}
-
+		
         FlxG.camera.bgColor = FlxColor.BLACK;
 
         player = new Player(0, 0, 'Ellawy', true);
@@ -155,6 +136,7 @@ class PlayState extends GameState
 				scriptToLoad = ellawyPath;
 			}
 		}
+		#end
 
 		if(FileSystem.exists(scriptToLoad))
 		{
@@ -163,7 +145,6 @@ class PlayState extends GameState
 			initHScript(scriptToLoad);
 			return true;
 		}
-		#end
 		return false;
 	}
 
@@ -173,8 +154,7 @@ class PlayState extends GameState
 		{
 			var finalFilePath:String = file;
 
-			
-			ELLAWY_ALLOWED
+			#if ELLAWY_ALLOWED
 			if (file.toLowerCase().endsWith('.ellawy'))
 			{
 				var sourceCode = sys.io.File.getContent(file);
