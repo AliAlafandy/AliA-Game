@@ -1,6 +1,6 @@
 #if !macro
 #if DISCORD_ALLOWED
-import data.backend.DiscordRPC;
+import data.debug.DiscordRPC;
 #end
 
 #if ELLAWY_ALLOWED
@@ -12,17 +12,18 @@ import data.backend.Achievements;
 #end
 
 #if mobile
+import mobile.StorageUtil;
+import mobile.TouchUtil;
+
 import mobile.controls.MobileControls;
 import mobile.controls.IMobileControls;
 import mobile.controls.TouchPad;
 import mobile.controls.TouchButton;
 import mobile.controls.CustomDPad;
 
-import mobile.data.StorageUtil;
 import mobile.data.MobileInputID;
 import mobile.data.MobileData;
 import mobile.data.MobileInputManager;
-import mobile.data.TouchUtil;
 #end
 
 #if sys
@@ -51,6 +52,7 @@ import js.html.*;
 
 import data.controls.Controls;
 import data.controls.InputFormater;
+
 import data.backend.Paths;
 import data.backend.Controls;
 import data.backend.CoolUtil;
@@ -61,7 +63,7 @@ import data.backend.ClientPrefs;
 import data.backend.Mods;
 
 #if android
-import mobile.data.StorageUtil;
+import mobile.StorageUtil;
 #end
 
 import data.objects.BGSprite;
