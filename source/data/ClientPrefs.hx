@@ -11,7 +11,7 @@ import states.TitleState;
 @:structInit class SaveVariables {
 	// Mobile
 	public var controlsColor:String = 'Yellow';
-	public var controlsSize:Float = 0.75;
+	public var controlsSize:Float;
 	public var controlsAlpha:Float = FlxG.onMobile ? 0.6 : 0;
 
 	public var antialiasing:Bool = false;
