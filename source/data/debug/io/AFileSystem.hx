@@ -3,7 +3,7 @@ package data.debug.io;
 import openfl.Assets;
 
 #if mobile
-import mobile.data.StorageUtil;
+import mobile.StorageUtil;
 #end
 
 #if sys
