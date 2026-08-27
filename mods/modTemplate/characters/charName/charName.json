@@ -1,0 +1,14 @@
+{
+	"name": "charName"
+	"anim": {
+		[
+			"name": "Idle",
+			"image": "charName",
+			"prefix": "charName Idle0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		]
+	}
+}

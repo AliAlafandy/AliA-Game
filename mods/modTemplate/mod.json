@@ -1,0 +1,11 @@
+{
+	"metaData":
+	{
+		"name": "Mod Template",
+		"author": "Ali Alafandy",
+		"description": "For making mods.",
+		"URL": "https://yoursocial.etc/",
+		"modVersion": "1.0.0",
+		"engineVersion": "1.0.0"
+	}
+}

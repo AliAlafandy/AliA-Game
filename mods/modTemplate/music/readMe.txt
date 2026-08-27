@@ -1,0 +1,1 @@
+There you can put your musics folders.

@@ -1,0 +1,33 @@
+# Made by Ali Alafandy
+
+local customCode = "..."; # "..." can replace by String, Float, Int, Bool and etc.
+
+function onStartGame()
+{
+	# can make a custom script when the game starting.
+}
+end
+
+function onLoadGame()
+{
+	# can make a custom script when the game loading.
+}
+end
+
+function onMenuGame()
+{
+	# can make a custom script when the game on the menu.
+}
+end
+
+function onGame()
+{
+	# can make a custom script when you playing.
+}
+end
+
+function onEndGame()
+{
+	# can make a custom script when the game finished.
+}
+end
