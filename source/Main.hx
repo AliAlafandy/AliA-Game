@@ -1,18 +1,21 @@
 import data.debug.FPSCounter;
 import data.debug.CrashHandler;
+import data.audio.Audio;
 
 import flixel.graphics.FlxGraphic;
 import flixel.FlxGame;
+import flixel.FlxG;
 import flixel.FlxState;
 import haxe.io.Path;
 import openfl.Assets;
 import openfl.Lib;
 import openfl.display.Sprite;
-import openfl.events.Event;
 import openfl.display.StageScaleMode;
+import openfl.events.Event;
+import openfl.events.KeyboardEvent;
+import openfl.events.UncaughtErrorEvent;
 import lime.system.System as LimeSystem;
 import lime.app.Application;
-import openfl.events.KeyboardEvent;
 
 #if mobile
 import mobile.StorageUtil;
@@ -30,14 +33,19 @@ import lime.graphics.Image;
 #end
 
 class Main extends Sprite {
-    var game = {
-		width: 1280, // WINDOW width
-		height: 720, // WINDOW height
-		initialState: TitleState, // initial game state
-		zoom: -1.0, // game state bounds
-		framerate: 60, // default framerate
-		skipSplash: true, // if the default flixel splash screen should be skipped
-		startFullscreen: false // if the game should start at fullscreen mode
+
+	static inline var WINDOW_WIDTH:Int = 1280;
+	static inline var WINDOW_HEIGHT:Int = 720;
+	static inline var TARGET_FRAMERATE:Int = 60;
+
+	var game = {
+		width: WINDOW_WIDTH,
+		height: WINDOW_HEIGHT,
+		initialState: TitleState,
+		zoom: -1.0,
+		framerate: TARGET_FRAMERATE,
+		skipSplash: true,
+		startFullscreen: false
 	};
 
 	public static var fpsVar:FPSCounter;
@@ -48,28 +56,30 @@ class Main extends Sprite {
 	public static final platform:String = "PCs";
 	#end
 
-    public static function main():Void
+	public static function main():Void
 	{
 		Lib.current.addChild(new Main());
 		#if cpp
-        cpp.NativeGc.enable(true);
-        cpp.NativeGc.run(true);
-        #end
+		cpp.NativeGc.enable(true);
+		cpp.NativeGc.run(true);
+		#end
 	}
 
-    public function new() {
-        super();
+	public function new() {
+		super();
 
 		#if mobile
 		MobileData.init();
 		#if android
 		StorageUtil.requestPermissions();
 		#end
-		//Sys.setCwd(StorageUtil.getStorageDirectory());
 		#end
-		CrashHandler.init();
 
-        if (stage != null)
+		CrashHandler.init();
+		setupUncaughtErrorHandling();
+		Audio.init();
+
+		if (stage != null)
 		{
 			init();
 		}
@@ -77,9 +87,9 @@ class Main extends Sprite {
 		{
 			addEventListener(Event.ADDED_TO_STAGE, init);
 		}
-    }
+	}
 
-    private function init(?E:Event):Void
+	private function init(?e:Event):Void
 	{
 		if (hasEventListener(Event.ADDED_TO_STAGE))
 		{
@@ -89,7 +99,34 @@ class Main extends Sprite {
 		setupGame();
 	}
 
-    private function setupGame():Void
+	private function setupUncaughtErrorHandling():Void
+	{
+		#if !flash
+		if (loaderInfo != null && loaderInfo.uncaughtErrorEvents != null)
+		{
+			loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
+		}
+		#end
+	}
+
+	private function onUncaughtError(e:UncaughtErrorEvent):Void
+	{
+		var message = "Unknown error";
+
+		if (Std.isOfType(e.error, Error))
+		{
+			message = cast(e.error, Error).message;
+		}
+		else
+		{
+			message = Std.string(e.error);
+		}
+
+		CrashHandler.report(message);
+		e.preventDefault();
+	}
+
+	private function setupGame():Void
 	{
 		#if (openfl <= "9.2.0")
 		var stageWidth:Int = Lib.current.stage.stageWidth;
@@ -107,23 +144,27 @@ class Main extends Sprite {
 		if (game.zoom == -1.0)
 			game.zoom = 1.0;
 		#end
-	
+
 		Controls.instance = new Controls();
 		ClientPrefs.loadDefaultKeys();
-		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
-		addChild(new FlxGame(game.width, game.height, game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
+
+		#if ACHIEVEMENTS_ALLOWED
+		Achievements.load();
+		#end
+
+		addChild(new FlxGame(game.width, game.height, game.initialState,
+			#if (flixel < "5.0.0") game.zoom, #end
+			game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 
 		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
+
 		Lib.current.stage.align = "tl";
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
-		if(fpsVar != null) {
-			fpsVar.visible = ClientPrefs.data.showFPS;
-		}
+		fpsVar.visible = ClientPrefs.data.showFPS;
 
 		#if linux
-		var icon = Image.fromFile("icon.png");
-		Lib.current.stage.window.setIcon(icon);
+		setupLinuxIcon();
 		#end
 
 		#if desktop
@@ -147,31 +188,58 @@ class Main extends Sprite {
 		LimeSystem.allowScreenTimeout = ClientPrefs.data.screensaver;
 		#end
 
-		// shader coords fix
-		FlxG.signals.gameResized.add(function (w, h) {
-			if(fpsVar != null)
-				fpsVar.positionFPS(10, 3, Math.min(Lib.current.stage.stageWidth / FlxG.width, Lib.current.stage.stageHeight / FlxG.height));
-		     if (FlxG.cameras != null) {
-			   for (cam in FlxG.cameras.list) {
-				if (cam != null && cam.filters != null)
-					resetSpriteCache(cam.flashSprite);
-			   }
-			}
+		FlxG.signals.gameResized.add(onGameResized);
+	}
 
-			if (FlxG.game != null)
+	#if linux
+	private function setupLinuxIcon():Void
+	{
+		try
+		{
+			var icon = Image.fromFile("icon.png");
+			Lib.current.stage.window.setIcon(icon);
+		}
+		catch (e:Dynamic) {}
+	}
+	#end
+
+	private function onGameResized(w:Int, h:Int):Void
+	{
+		if (fpsVar != null)
+		{
+			var scale = Math.min(Lib.current.stage.stageWidth / FlxG.width, Lib.current.stage.stageHeight / FlxG.height);
+			fpsVar.positionFPS(10, 3, scale);
+		}
+
+		if (FlxG.cameras != null)
+		{
+			for (cam in FlxG.cameras.list)
+			{
+				if (cam != null && cam.filters != null)
+				{
+					resetSpriteCache(cam.flashSprite);
+				}
+			}
+		}
+
+		if (FlxG.game != null)
+		{
 			resetSpriteCache(FlxG.game);
-		});
+		}
 	}
 
 	static function resetSpriteCache(sprite:Sprite):Void {
 		@:privateAccess {
-		        sprite.__cacheBitmap = null;
+			sprite.__cacheBitmap = null;
 			sprite.__cacheBitmapData = null;
 		}
 	}
 
-	function toggleFullScreen(event:KeyboardEvent){
-		if(Controls.instance.justReleased('fullscreen'))
+	function toggleFullScreen(event:KeyboardEvent):Void
+	{
+		if (Controls.instance.justReleased('fullscreen'))
+		{
 			FlxG.fullscreen = !FlxG.fullscreen;
+		}
 	}
 }
