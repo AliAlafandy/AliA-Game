@@ -62,7 +62,7 @@ class TitleState extends GameState
 	{
 		var person = new FlxText(0, 0, 0, "Ali Alafandy", 24);
         person.screenCenter(X);
-		person.color = 0xFF00000FF;
+		person.color = 0xFF0000FF;
         person.y = 240;
         add(person);
 
@@ -77,7 +77,11 @@ class TitleState extends GameState
         });
 	}
 
-	var pressedAny:Array<FlxG> = [FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed];
+	var pressedAny(get, never):Bool;
+	function get_pressedAny():Bool
+	{
+		return FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed;
+	}
 
     override public function update(elapsed:Float) {
         super.update(elapsed);
