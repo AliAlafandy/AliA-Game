@@ -1,4 +1,4 @@
-package data;
+package data.backend;
 
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -18,7 +18,7 @@ import flash.media.Sound;
 import haxe.Json;
 
 #if MODS_ALLOWED
-import data.Mods;
+import data.backend.Mods;
 #end
 
 class Paths
