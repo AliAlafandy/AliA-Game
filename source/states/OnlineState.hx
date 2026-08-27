@@ -7,6 +7,8 @@ import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 
 import online.Network;
+import online.mods.ModInstaller;
+import online.mods.ModInstaller.InstallResult;
 
 class OnlineState extends GameState {
 
@@ -103,16 +105,11 @@ class OnlineState extends GameState {
                 btn.text = total > 0 ? Std.int(loaded / total * 100) + "%" : "...";
             },
             function(path) {
-                try {
-                    ZipInstaller.install(path);
-                    ModLoader.loadAllMods();
-                    btn.text = "Installed";
-                } catch (e:Dynamic) {
-                    btn.text = "Install failed";
-                }
+                handleInstall(path, btn);
             },
             function(reason) {
                 btn.text = "Failed";
+                btn.onUp.callback = function() downloadMod(url, btn);
             }
         );
         #else
@@ -121,6 +118,38 @@ class OnlineState extends GameState {
     }
 
     #if sys
+    function handleInstall(zipPath:String, btn:FlxButton):Void {
+        var result = ModInstaller.install(zipPath);
+
+        switch (result) {
+            case Success(meta):
+                ModLoader.loadAllMods();
+                btn.text = "Installed";
+
+            case AlreadyInstalled(meta):
+                btn.text = "Reinstall?";
+                btn.onUp.callback = function() {
+                    var overwrite = ModInstaller.install(zipPath, true);
+                    switch (overwrite) {
+                        case Success(_):
+                            ModLoader.loadAllMods();
+                            btn.text = "Installed";
+                        case _:
+                            btn.text = "Failed";
+                    }
+                };
+
+            case InvalidZip(reason):
+                btn.text = "Invalid ZIP";
+
+            case MissingMeta:
+                btn.text = "Missing mod.json";
+
+            case Failed(reason):
+                btn.text = "Install failed";
+        }
+    }
+
     function getModsDirectory():String {
         return #if mobile StorageUtil.getStorageDirectory() + #end "mods";
     }
