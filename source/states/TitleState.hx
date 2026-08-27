@@ -82,7 +82,7 @@ class TitleState extends GameState
     override public function update(elapsed:Float) {
         super.update(elapsed);
 
-		if (initialized && !transitioning && skippedIntro)
+		if (initialized && !transitioning && skippedIntro) {
         	if (pressedAny) {
 				transitioning = true;
 				new FlxTimer().start(1, function(tmr:FlxTimer)
