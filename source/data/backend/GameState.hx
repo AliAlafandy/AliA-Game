@@ -9,7 +9,7 @@ class GameState extends FlxUIState
 	public var controls(get, never):Controls;
 	private function get_controls()
 	{
-		return data.Controls.instance;
+		return data.controls.Controls.instance;
 	}
 
     #if mobile
