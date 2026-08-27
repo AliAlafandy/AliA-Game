@@ -127,12 +127,12 @@ class TypedTouchButton<T:FlxSprite> extends FlxSprite implements IFlxInput
 	/**
 	 * The alpha's the button should use depednging on the status.
 	**/
-	public var statusAlphas:Array<Float> = [1.0, 1.0, 0.6];
+	public var statusAlphas:Array<Float> = [1.0, 1.0, 1.0]; //X, X, 0.6
 
 	/**
 	 * The brightness the button should use depednging on the status.
 	**/
-	public var statusBrightness:Array<Float> = [1.0, 0.95, 0.7];
+	public var statusBrightness:Array<Float> = [1.0, 1.0, 1.0]; //X, 0.95, 0.7
 
 	/**
 	 * How much to add/substract from the current indicator value for the label.
