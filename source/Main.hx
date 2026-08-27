@@ -1,4 +1,5 @@
 import data.debug.FPSCounter;
+import data.debug.CrashHandler;
 
 import flixel.graphics.FlxGraphic;
 import flixel.FlxGame;
@@ -66,7 +67,7 @@ class Main extends Sprite {
 		#end
 		//Sys.setCwd(StorageUtil.getStorageDirectory());
 		#end
-		data.debug.CrashHandler.init();
+		CrashHandler.init();
 
         if (stage != null)
 		{
