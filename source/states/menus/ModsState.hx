@@ -60,6 +60,11 @@ class ModsState extends GameState {
             // ModLoader.loadAllMods();
         });
         add(reloadBtn);
+
+		#if mobile
+		addCustomDPad();
+		addCustomDPadCam();
+		#end
     }
 
     /*function installAllZips() {
