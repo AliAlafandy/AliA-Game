@@ -1,4 +1,4 @@
-package mobile.data;
+package mobile;
 
 import lime.system.System as LimeSystem;
 import haxe.io.Path;
