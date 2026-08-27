@@ -1,3 +1,5 @@
+package;
+
 import data.debug.FPSCounter;
 import data.debug.CrashHandler;
 
