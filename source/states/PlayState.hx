@@ -55,7 +55,7 @@ class PlayState extends GameState
     {
         super.create();
 
-		debugGroup = new flixel.group.FlxTypedGroup.FlxTypedGroup<flixel.text.FlxText>();
+		debugGroup = new FlxTypedGroup<FlxText>();
 		add(debugGroup);
 
 		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'scripts/'))
