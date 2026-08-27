@@ -123,7 +123,9 @@ class ClientPrefs {
 		'ui_down' => [S, DOWN],
 		'ui_right' => [D, RIGHT],
 
-		'accept' => [JUMP, Z],
+		'accept' => [JUMP, A],
+		'jump' => [JUMP, Z],
+		'power' => [POWER, C],
 		'back' => [BACK_M , B],
 		'pause' => [PAUSE, P],
 	];
