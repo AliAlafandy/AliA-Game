@@ -35,9 +35,10 @@ class TitleState extends GameState
 	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
 	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
     public var initialized:Bool = false;
-    //public var startIntro:Bool = false;
+    public var transitioning:Bool = false;
 
-    override public function create() {
+    override public function create()
+	{
         var title = new FlxText(0, 0, 0, "Ali Alafandy Game", 24);
         title.screenCenter(X);
         title.y = 140;
@@ -49,15 +50,59 @@ class TitleState extends GameState
         add(press);
 
         FlxG.sound.playMusic(Paths.music('themes/start_nice'));
+
+		new FlxTimer().start(1, function(tmr:FlxTimer)
+        {
+            startVideo('alafandy_intro');
+            trace('starting video...');
+        });
     }
+
+	public function startIntro()
+	{
+		var person = new FlxText(0, 0, 0, "Ali Alafandy", 24);
+        person.screenCenter(X);
+		person.color = 0xFF00000FF;
+        person.y = 240;
+        add(person);
+
+		var t = new FlxText(0, 0, 0, "Present", 12);
+        t.screenCenter(X);
+        t.y = 480;
+        add(t);
+
+		new FlxTimer().start(1, function(tmr:FlxTimer)
+        {
+            skipIntro();
+        });
+	}
+
+	var pressedAny:String = FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed;
 
     override public function update(elapsed:Float) {
         super.update(elapsed);
-        if (FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed) {   
-			startVideo('alafandy_intro');
-			trace('starting video...');
+
+		if (initialized && !transitioning && skippedIntro)
+        	if (pressedAny) {
+				transitioning = true;
+				new FlxTimer().start(1, function(tmr:FlxTimer)
+        		{
+            		GameState.switchState(new MenuState());
+        		});
+			}
         }
+
+		if (initialized && pressedAny && !skippedIntro) {
+			skipIntro();
+		}
     }
+
+	var skippedIntro:Bool = false;
+	public function skipIntro()
+	{
+		if (!skippedIntro)
+			skippedIntro = true;
+	}
 
     public function startVideo(name:String)
     {
@@ -70,6 +115,8 @@ class TitleState extends GameState
         #end
         {
             FlxG.log.warn('Couldnt find video file: ' + name);
+			startIntro();
+			initialized = true;
             return;
         }
         var video:VideoHandler = new VideoHandler();
@@ -79,17 +126,17 @@ class TitleState extends GameState
             video.onEndReached.add(function()
             {
                 video.dispose();
-                //startIntro();
+                startIntro();
                 initialized = true;
-				GameState.switchState(new MenuState());
                 return;
             }, true);
             #else
             // Older versions
             video.playVideo(filepath);
             video.finishCallback = function()
-            {
-				GameState.switchState(new MenuState());
+			{
+				startIntro();
+				initialized = true;
                 return;
             }
             #end
