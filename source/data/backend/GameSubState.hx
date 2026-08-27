@@ -22,8 +22,43 @@ class GameSubState extends FlxSubState
     #if mobile
 	public var touchPad:TouchPad;
 	public var touchPadCam:FlxCamera;
+	public var customDPad:CustomDPad;
+	public var customDPadCam:FlxCamera;
 	public var mobileControls:IMobileControls;
 	public var mobileControlsCam:FlxCamera;
+
+	public function addCustomDPad():Void
+	{
+		customDPad = new CustomDPad(30, FlxG.height - 370);
+		customDPad.visible = true;
+		add(customDPad);
+	}
+
+	public function addCustomDPadCam(defaultDrawTarget:Bool = false):Void
+	{
+		if (customDPad != null)
+		{
+			customDPadCam = new FlxCamera();
+			customDPadCam.bgColor.alpha = 0;
+			FlxG.cameras.add(customDPadCam, defaultDrawTarget);
+			customDPad.cameras = [customDPadCam];
+		}
+	}
+
+	public function removeCustomPad()
+	{
+		if (customDPad != null)
+		{
+			remove(customDPad);
+			customDPad = FlxDestroyUtil.destroy(customDPad);
+		}
+
+		if(customDPadCam != null)
+		{
+			FlxG.cameras.remove(customDPadCam);
+			customDPadCam = FlxDestroyUtil.destroy(customDPadCam);
+		}
+	}
 
 	public function addTouchPad(DPad:String, Action:String)
 	{
@@ -110,6 +145,7 @@ class GameSubState extends FlxSubState
         #if mobile
 		controls.isInSubstate = false;
 		removeTouchPad();
+		removeCustomPad();
 		removeMobileControls();
         #end
 		
