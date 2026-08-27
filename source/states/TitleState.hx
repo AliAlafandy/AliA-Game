@@ -51,7 +51,7 @@ class TitleState extends GameState
 
         FlxG.sound.playMusic(Paths.music('themes/start_nice'));
 
-		if (initialized)
+		if (initialized) {
 			startIntro();
 		} else {
 			new FlxTimer().start(1, function(tmr:FlxTimer)
