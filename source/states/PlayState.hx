@@ -30,6 +30,11 @@ class PlayState extends GameState
     public var manager:MobileInputManager;
     #end
 
+	#if HSCRIPT_ALLOWED
+	public var hscriptArray:Array<HScript> = [];
+	public var instancesExclude:Array<String> = [];
+	#end
+
 	public var debugGroup:flixel.group.FlxTypedGroup.FlxTypedGroup<flixel.text.FlxText>;
 
 	public var instance:Playstate;
