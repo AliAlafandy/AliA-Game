@@ -1,4 +1,4 @@
-package mobile.data;
+package mobile;
 
 import flixel.FlxObject;
 import flixel.input.touch.FlxTouch;
