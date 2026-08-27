@@ -23,7 +23,7 @@ import states.menus.ModsState;
 #end
 
 #if DISCORD_ALLOWED
-import data.DiscordRPC;
+import data.debug.DiscordRPC;
 #end
 
 class MenuState extends GameState
