@@ -1,4 +1,4 @@
-package data.backend;
+package data.objects;
 
 import flixel.util.FlxGradient;
 import flixel.FlxSubState;
