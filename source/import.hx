@@ -26,8 +26,8 @@ import mobile.data.TouchUtil;
 #end
 
 #if sys
-import data.io.AFile as File;
-import data.io.File2System as FileSystem;
+import data.debug.io.AFile as File;
+import data.debug.io.AFileSystem as FileSystem;
 #end
   
 #if android
@@ -49,6 +49,8 @@ import sys.io.*;
 import js.html.*;
 #end
 
+import data.controls.Controls;
+import data.controls.InputFormater;
 import data.backend.Paths;
 import data.backend.Controls;
 import data.backend.CoolUtil;
