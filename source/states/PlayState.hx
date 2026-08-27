@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.group.FlxGroup.FlxTypedGroup;
 
 import data.objects.Player;
 
@@ -35,7 +36,7 @@ class PlayState extends GameState
 	public var instancesExclude:Array<String> = [];
 	#end
 
-	public var debugGroup:flixel.group.FlxTypedGroup.FlxTypedGroup<flixel.text.FlxText>;
+	public var debugGroup:FlxTypedGroup<flixel.text.FlxText>;
 
 	public var instance:Playstate;
 
