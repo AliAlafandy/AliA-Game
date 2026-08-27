@@ -76,7 +76,7 @@ class MobileData
 		return touchPad;
 	}
 
-	public static function setButtonsColors(buttonsInstance:Dynamic):Dynamic
+	/*public static function setButtonsColors(buttonsInstance:Dynamic):Dynamic
 	{
 		// Dynamic Controls Color
 		var data:Dynamic;
@@ -97,7 +97,7 @@ class MobileData
 		}
 
 		return buttonsInstance;
-	}
+	}*/
 
 	public static function readDirectory(folder:String, map:Dynamic)
 	{
