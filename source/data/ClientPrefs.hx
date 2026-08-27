@@ -10,25 +10,24 @@ import states.TitleState;
 // Add a variable here and it will get automatically saved
 @:structInit class SaveVariables {
 	// Mobile
-	public var controlsColor:String = "Yellow";
+	public var controlsColor:String = 'Yellow';
 	public var controlsAlpha:Float = FlxG.onMobile ? 0.6 : 0;
 
 	public var antialiasing:Bool = false;
 
 	#if android
-	public var storageType:String = "EXTERNAL_DATA";
+	public var storageType:String = 'EXTERNAL_DATA';
 	#end
 
-	public var extraButtons:String = "NONE";
-	public var hitboxPos:Bool = true;
-	public var dynamicColors:Bool = true;
+	public var extraButtons:String = 'NONE';
 	public var autoPause:Bool = true;
 	public var screensaver:Bool = false;
 	public var wideScreen:Bool = false;
+
 	#if android
 	public var pauseButton:Bool = true;
 	#end
-	public var hitboxType:String = "Gradient";
+
 	public var vsync:Bool = false;
 	public var gameOverVibration:Bool = false;
 
