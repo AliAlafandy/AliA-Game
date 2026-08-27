@@ -51,11 +51,15 @@ class TitleState extends GameState
 
         FlxG.sound.playMusic(Paths.music('themes/start_nice'));
 
-		new FlxTimer().start(1, function(tmr:FlxTimer)
-        {
-            startVideo('alafandy_intro');
-            trace('starting video...');
-        });
+		if (initialized)
+			startIntro();
+		} else {
+			new FlxTimer().start(1, function(tmr:FlxTimer)
+        	{
+            	startVideo('alafandy_intro');
+            	trace('starting video...');
+        	});
+		}
     }
 
 	public function startIntro()
@@ -77,11 +81,7 @@ class TitleState extends GameState
         });
 	}
 
-	var pressedAny(get, never):Bool;
-	function get_pressedAny():Bool
-	{
-		return FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed;
-	}
+	var pressedAny:Bool = FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed;
 
     override public function update(elapsed:Float) {
         super.update(elapsed);
