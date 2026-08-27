@@ -156,6 +156,10 @@ class PlayState extends GameState
         }
         #end
 
+		#if HSCRIPT_ALLOWED
+		callOnScripts('onUpdate', [elapsed]);
+		#end
+
         super.update(elapsed);
     }
 
@@ -165,7 +169,11 @@ class PlayState extends GameState
         {
             FlxG.switchState(new MenuState());
         }
-    }
+
+		#if HSCRIPT_ALLOWED
+		callOnScripts('onhandleInput');
+		#end
+	}
 
 	#if HSCRIPT_ALLOWED
 	public function startScriptsNamed(scriptFile:String)
@@ -206,9 +214,10 @@ class PlayState extends GameState
 			#if ELLAWY_ALLOWED
 			if (file.toLowerCase().endsWith('.ellawy'))
 			{
+				trace('Found Ellawy File: $file');
 				var sourceCode = sys.io.File.getContent(file);
 				var compiledHaxe = ellawy.Compiler.compileSource(sourceCode, file);
-				
+				trace('Compiled file: $file');
 				var cachePath = file.substr(0, file.lastIndexOf('.')) + '_cache.hx';
 				sys.io.File.saveContent(cachePath, compiledHaxe);
 				finalFilePath = cachePath;
@@ -219,6 +228,7 @@ class PlayState extends GameState
 			if(newScript.parsingException != null)
 			{
 				addTextToDebug('ERROR ON LOADING ($file): ${newScript.parsingException.message}', FlxColor.RED);
+				trace('ERROR ON LOADING : $file');
 				newScript.destroy();
 				return;
 			}
@@ -226,6 +236,7 @@ class PlayState extends GameState
 			hscriptArray.push(newScript);
 			if(newScript.exists('onCreate'))
 			{
+				trace('Calling onCreate for script: $file');
 				var callValue = newScript.call('onCreate');
 				if(!callValue.succeeded)
 				{
@@ -342,7 +353,7 @@ class PlayState extends GameState
 			{
 				script.call('onDestroy');
 				
-				#if (sys && ELLAWY_ALLOWED)
+				#if sys
 				var originPath:String = script.origin;
 				if (originPath != null && originPath.endsWith('_cache.hx'))
 				{
