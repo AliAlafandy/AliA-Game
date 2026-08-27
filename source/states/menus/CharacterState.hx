@@ -28,6 +28,11 @@ class CharacterState extends GameState {
         txt.screenCenter();
         add(txt);
         updateChar();
+
+        #if mobile
+		addCustomDPad();
+		addCustomDPadCam();
+		#end
     }
 
     function updateChar() {
