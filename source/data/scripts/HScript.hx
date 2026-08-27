@@ -1,6 +1,15 @@
 package data.scripts;
 
 import flixel.FlxBasic;
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.FlxCamera;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
+import flixel.math.FlxMath;
+import flixel.input.gamepad.FlxGamepadInputID;
 
 #if HSCRIPT_ALLOWED
 import tea.SScript;
@@ -38,13 +47,13 @@ class HScript extends SScript
 		super.preset();
 
 		// Commonly used classes
-		set('FlxG', flixel.FlxG);
-		set('FlxMath', flixel.math.FlxMath);
-		set('FlxSprite', flixel.FlxSprite);
-		set('FlxCamera', flixel.FlxCamera);
-		set('FlxTimer', flixel.util.FlxTimer);
-		set('FlxTween', flixel.tweens.FlxTween);
-		set('FlxEase', flixel.tweens.FlxEase);
+		set('FlxG', FlxG);
+		set('FlxMath', FlxMath);
+		set('FlxSprite', FlxSprite);
+		set('FlxCamera', FlxCamera);
+		set('FlxTimer', FlxTimer);
+		set('FlxTween', FlxTween);
+		set('FlxEase', FlxEase);
 		set('PlayState', PlayState);
 		set('Paths', Paths);
 		set('StorageUtil', StorageUtil);
@@ -96,8 +105,8 @@ class HScript extends SScript
 			}
 			return false;
 		});
-		set('debugPrint', function(text:String, ?color:flx.util.FlxColor = null) {
-			if(color == null) color = flx.util.FlxColor.WHITE;
+		set('debugPrint', function(text:String, ?color:FlxColor = null) {
+			if(color == null) color = FlxColor.WHITE;
 			if (PlayState.instance != null && Reflect.hasField(PlayState.instance, 'addTextToDebug')) {
 				PlayState.instance.addTextToDebug(text, color);
 			} else {
@@ -106,45 +115,45 @@ class HScript extends SScript
 		});
 
 		// Keyboard & Gamepads
-		set('keyboardJustPressed', function(name:String) return Reflect.getProperty(flx.FlxG.keys.justPressed, name));
-		set('keyboardPressed', function(name:String) return Reflect.getProperty(flx.FlxG.keys.pressed, name));
-		set('keyboardReleased', function(name:String) return Reflect.getProperty(flx.FlxG.keys.justReleased, name));
+		set('keyboardJustPressed', function(name:String) return Reflect.getProperty(FlxG.keys.justPressed, name));
+		set('keyboardPressed', function(name:String) return Reflect.getProperty(FlxG.keys.pressed, name));
+		set('keyboardReleased', function(name:String) return Reflect.getProperty(FlxG.keys.justReleased, name));
 
-		set('anyGamepadJustPressed', function(name:String) return flx.FlxG.gamepads.anyJustPressed(name));
-		set('anyGamepadPressed', function(name:String) flx.FlxG.gamepads.anyPressed(name));
-		set('anyGamepadReleased', function(name:String) return flx.FlxG.gamepads.anyJustReleased(name));
+		set('anyGamepadJustPressed', function(name:String) return FlxG.gamepads.anyJustPressed(name));
+		set('anyGamepadPressed', function(name:String) FlxG.gamepads.anyPressed(name));
+		set('anyGamepadReleased', function(name:String) return FlxG.gamepads.anyJustReleased(name));
 
 		set('gamepadAnalogX', function(id:Int, ?leftStick:Bool = true)
 		{
-			var controller = flx.FlxG.gamepads.getByID(id);
+			var controller = FlxG.gamepads.getByID(id);
 			if (controller == null) return 0.0;
 
-			return controller.getXAxis(leftStick ? LEFT_ANALOG_STICK : RIGHT_ANALOG_STICK);
+			return controller.getXAxis(leftStick ? FlxGamepadInputID.LEFT_ANALOG_STICK : FlxGamepadInputID.RIGHT_ANALOG_STICK);
 		});
 		set('gamepadAnalogY', function(id:Int, ?leftStick:Bool = true)
 		{
-			var controller = flx.FlxG.gamepads.getByID(id);
+			var controller = FlxG.gamepads.getByID(id);
 			if (controller == null) return 0.0;
 
-			return controller.getYAxis(leftStick ? LEFT_ANALOG_STICK : RIGHT_ANALOG_STICK);
+			return controller.getYAxis(leftStick ? FlxGamepadInputID.LEFT_ANALOG_STICK : FlxGamepadInputID.RIGHT_ANALOG_STICK);
 		});
 		set('gamepadJustPressed', function(id:Int, name:String)
 		{
-			var controller = flx.FlxG.gamepads.getByID(id);
+			var controller = FlxG.gamepads.getByID(id);
 			if (controller == null) return false;
 
 			return Reflect.getProperty(controller.justPressed, name) == true;
 		});
 		set('gamepadPressed', function(id:Int, name:String)
 		{
-			var controller = flx.FlxG.gamepads.getByID(id);
+			var controller = FlxG.gamepads.getByID(id);
 			if (controller == null) return false;
 
 			return Reflect.getProperty(controller.pressed, name) == true;
 		});
 		set('gamepadReleased', function(id:Int, name:String)
 		{
-			var controller = flx.FlxG.gamepads.getByID(id);
+			var controller = FlxG.gamepads.getByID(id);
 			if (controller == null) return false;
 
 			return Reflect.getProperty(controller.justReleased, name) == true;
@@ -194,18 +203,18 @@ class HScript extends SScript
 			}
 			catch (e:Dynamic) {
 				var msg:String = e.message.substr(0, e.message.indexOf('\n'));
-				if(PlayState.instance != null && Reflect.hasField(PlayState.instance, 'addTextToDebug')) PlayState.instance.addTextToDebug('$origin - $msg', flx.util.FlxColor.RED);
+				if(PlayState.instance != null && Reflect.hasField(PlayState.instance, 'addTextToDebug')) PlayState.instance.addTextToDebug('$origin - $msg', FlxColor.RED);
 				else trace('$origin - $msg');
 			}
 		});
 		set('this', this);
-		set('game', flx.FlxG.state);
+		set('game', FlxG.state);
 		
-		set('add', flx.FlxG.state.add);
-		set('insert', flx.FlxG.state.insert);
-		set('remove', flx.FlxG.state.remove);
+		set('add', FlxG.state.add);
+		set('insert', FlxG.state.insert);
+		set('remove', FlxG.state.remove);
 
-		if(PlayState.instance == flx.FlxG.state)
+		if(PlayState.instance == FlxG.state)
 		{
 			var excludeList:Array<String> = Reflect.field(PlayState.instance, 'instancesExclude');
 			if (excludeList == null) excludeList = [];
@@ -227,7 +236,7 @@ class HScript extends SScript
 
 		if(!exists(funcToRun)) {
 			if (PlayState.instance != null && Reflect.hasField(PlayState.instance, 'addTextToDebug'))
-				PlayState.instance.addTextToDebug(origin + ' - No HScript function named: $funcToRun', flx.util.FlxColor.RED);
+				PlayState.instance.addTextToDebug(origin + ' - No HScript function named: $funcToRun', FlxColor.RED);
 			return null;
 		}
 
@@ -238,7 +247,7 @@ class HScript extends SScript
 			if (e != null) {
 				var msg:String = e.toString();
 				if (PlayState.instance != null && Reflect.hasField(PlayState.instance, 'addTextToDebug'))
-					PlayState.instance.addTextToDebug('$origin - $msg', flx.util.FlxColor.RED);
+					PlayState.instance.addTextToDebug('$origin - $msg', FlxColor.RED);
 			}
 			return null;
 		}
