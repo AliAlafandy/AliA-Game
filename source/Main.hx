@@ -66,7 +66,7 @@ class Main extends Sprite {
 		#end
 		//Sys.setCwd(StorageUtil.getStorageDirectory());
 		#end
-		data.CrashHandler.init();
+		data.debug.CrashHandler.init();
 
         if (stage != null)
 		{
