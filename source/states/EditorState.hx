@@ -55,6 +55,11 @@ class EditorState extends GameState
 
         info.setFormat(null, 20, FlxColor.WHITE, CENTER);
         add(info);
+
+        #if mobile
+		addCustomDPad();
+		addCustomDPadCam();
+		#end
     }
 
     override public function update(elapsed:Float):Void
