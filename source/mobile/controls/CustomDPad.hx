@@ -60,7 +60,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		dpadBg.scale.set(0.55, 0.55);
 		dpadBg.updateHitbox();
 		// dpadBg.scrollFactor.set();
-		dpadBg.alpha = 0.75;
+		dpadBg.alpha = ClientPrefs.data.controlsAlpha;
 		dpadBg.antialiasing = ClientPrefs.data.antialiasing;
 		add(dpadBg);
 		
