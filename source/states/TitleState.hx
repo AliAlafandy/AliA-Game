@@ -49,18 +49,13 @@ class TitleState extends GameState
         add(press);
 
         FlxG.sound.playMusic(Paths.music('themes/start_nice'));
-
-        new FlxTimer().start(1, function(tmr:FlxTimer)
-        {
-            startVideo('alafandy_intro');
-            trace('starting video...');
-        });
     }
 
     override public function update(elapsed:Float) {
         super.update(elapsed);
-        if (FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed) {
-            GameState.switchState(new MenuState());
+        if (FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed) {   
+			startVideo('alafandy_intro');
+			trace('starting video...');
         }
     }
 
@@ -86,6 +81,7 @@ class TitleState extends GameState
                 video.dispose();
                 //startIntro();
                 initialized = true;
+				GameState.switchState(new MenuState());
                 return;
             }, true);
             #else
@@ -93,6 +89,7 @@ class TitleState extends GameState
             video.playVideo(filepath);
             video.finishCallback = function()
             {
+				GameState.switchState(new MenuState());
                 return;
             }
             #end
