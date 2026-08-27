@@ -10,6 +10,10 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.math.FlxMath;
 import flixel.input.gamepad.FlxGamepadInputID;
+import flixel.group.FlxGroup.FlxTypedGroup;
+#if mobile
+import mobile.StorageUtil;
+#end
 
 #if HSCRIPT_ALLOWED
 import tea.SScript;
@@ -56,7 +60,9 @@ class HScript extends SScript
 		set('FlxEase', FlxEase);
 		set('PlayState', PlayState);
 		set('Paths', Paths);
+		#if mobile
 		set('StorageUtil', StorageUtil);
+		#end
 		set('ClientPrefs', ClientPrefs);
 		#if ACHIEVEMENTS_ALLOWED
 		set('Achievements', Achievements);
