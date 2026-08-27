@@ -1,4 +1,4 @@
-package data.io;
+package data.debug.io;
 
 import openfl.Assets;
 
@@ -11,7 +11,7 @@ import sys.FileSystem;
 import sys.FileStat;
 #end
 
-class File2System
+class AFileSystem
 {
 	inline static function cwd(path:String):String
 	{
