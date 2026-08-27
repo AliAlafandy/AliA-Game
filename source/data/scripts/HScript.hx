@@ -75,6 +75,9 @@ class HScript extends SScript
 		#if flxanimate
 		set('FlxAnimate', FlxAnimate);
 		#end
+		set('trace', function(v:Dynamic, ?infos:haxe.PosInfos) {
+		    haxe.Log.trace(v, infos);
+		});
 
 		// Safe utility bindings
 		set('Reflect', Reflect);
