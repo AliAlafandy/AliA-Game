@@ -19,7 +19,6 @@ import states.TitleState;
 	public var storageType:String = 'EXTERNAL_DATA';
 	#end
 
-	public var extraButtons:String = "NONE";
 	public var hitboxPos:Bool = true;
 	public var dynamicColors:Bool = true;
 
