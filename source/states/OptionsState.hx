@@ -81,7 +81,7 @@ class OptionsState extends GameState
 
         if (controls.BACK)
         {
-            FlxG.switchState(new MenuState());
+            GameState.switchState(new MenuState());
         }
     }
 
