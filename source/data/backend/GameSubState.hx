@@ -17,7 +17,7 @@ class GameSubState extends FlxSubState
 	private var controls(get, never):Controls;
 
 	inline function get_controls():Controls
-		return data.Controls.instance;
+		return data.controls.Controls.instance;
 
     #if mobile
 	public var touchPad:TouchPad;
