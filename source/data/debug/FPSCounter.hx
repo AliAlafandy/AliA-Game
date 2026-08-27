@@ -31,7 +31,8 @@ class FPSCounter extends TextField
 	public var memoryMegas(get, never):Float;
 	public var peakMemoryMegas(default, null):Float;
 
-	//public var visible(default, set):Bool;
+	public var visible(get, set):Bool;
+	@:isVar public var visible(get, set):Bool = true;
 	public var updateInterval:Float = 500;
 
 	public var os:String = '';
