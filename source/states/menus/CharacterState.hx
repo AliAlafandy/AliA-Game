@@ -43,8 +43,8 @@ class CharacterState extends GameState {
     override public function update(elapsed:Float) {
         super.update(elapsed);
 
-        if (controls.UI_LEFT) index--;
-        if (controls.UI_RIGHT) index++;
+        if (controls.UI_LEFT_P) index--;
+        if (controls.UI_RIGHT_P) index++;
         index = (index + chars.length) % chars.length;
         updateChar();
 
