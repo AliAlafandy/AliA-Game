@@ -31,8 +31,7 @@ class FPSCounter extends TextField
 	public var memoryMegas(get, never):Float;
 	public var peakMemoryMegas(default, null):Float;
 
-	public var visible(get, set):Bool;
-	@:isVar public var visible(get, set):Bool = true;
+	public var _visible:Bool = true;
 	public var updateInterval:Float = 500;
 
 	public var os:String = '';
@@ -146,13 +145,21 @@ class FPSCounter extends TextField
 	inline function get_memoryMegas():Float
 		return cast(OpenFlSystem.totalMemory, UInt);
 
+	override function get_visible():Bool
+	{
+		return _visible;
+	}
+
 	override function set_visible(value:Bool):Bool
 	{
-		visible = value;
+		if (_visible == value) return value;
+		_visible = value;
+		
 		if (!value)
 			text = "";
 		else
 			updateText();
+			
 		return super.set_visible(value);
 	}
 
