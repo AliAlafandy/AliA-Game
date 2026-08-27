@@ -62,7 +62,7 @@ class PlayState extends GameState
 			{		
 				#if HSCRIPT_ALLOWED
 				var lowerFile = file.toLowerCase();
-				if (lowerFile.endsWith('.hx') || lowerFile.endsWith('.ellawy'))
+				if (lowerFile.endsWith('.ellawy'))
 				{
 					initHScript(folder + file);
 				}
@@ -168,21 +168,21 @@ class PlayState extends GameState
 	#if HSCRIPT_ALLOWED
 	public function startScriptsNamed(scriptFile:String)
 	{
+		if (!scriptFile.toLowerCase().endsWith('.ellawy'))
+		{
+			var lastDot = scriptFile.lastIndexOf('.');
+			if (lastDot != -1)
+				scriptFile = scriptFile.substr(0, lastDot) + '.ellawy';
+			else
+				scriptFile += '.ellawy';
+		}
+
 		#if MODS_ALLOWED
 		var scriptToLoad:String = Paths.modFolders(scriptFile);
 		if(!FileSystem.exists(scriptToLoad))
 			scriptToLoad = Paths.getSharedPath(scriptFile);
 		#else
 		var scriptToLoad:String = Paths.getSharedPath(scriptFile);
-		#end
-
-		#if ELLAWY_ALLOWED
-		if(!FileSystem.exists(scriptToLoad)) {
-			var ellawyPath = scriptToLoad.substr(0, scriptToLoad.lastIndexOf('.')) + '.ellawy';
-			if(FileSystem.exists(ellawyPath)) {
-				scriptToLoad = ellawyPath;
-			}
-		}
 		#end
 
 		if(FileSystem.exists(scriptToLoad))
