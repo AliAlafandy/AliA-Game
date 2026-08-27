@@ -23,6 +23,7 @@ import tea.SScript;
 class PlayState extends GameState
 {
     public var player:Player;
+	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
 
     private var elapsedTime:Float = 0;
     private var rpcTimer:Float = 0;
