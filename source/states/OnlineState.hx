@@ -7,8 +7,8 @@ import haxe.Http;
 import haxe.Json;
 import sys.FileSystem;
 import sys.io.File;
-import modding.ZipInstaller;
-import modding.ModLoader;
+// import modding.ZipInstaller;
+// import modding.ModLoader;
 
 class OnlineState extends GameState {
     var mods:Array<Dynamic> = [];
