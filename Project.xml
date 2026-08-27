@@ -21,6 +21,7 @@
 	<!-- <define name="ACHIEVEMENTS_ALLOWED" /> -->
 	<define name="DISCORD_ALLOWED" if="desktop" />
 	<define name="VIDEOS_ALLOWED" />
+	<define name="HSCRIPT_ALLOWED"/>
 
 	<!-- Window Settings -->
 	<window width="1280" height="720" background="#000000" hardware="true" vsync="false" fps="60" />
