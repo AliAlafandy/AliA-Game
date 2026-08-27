@@ -38,6 +38,39 @@ class PlayState extends GameState
     {
         super.create();
 
+		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'scripts/'))
+		{
+		    for (file in Paths.readDirectory(folder))
+		    {		
+		        #if HSCRIPT_ALLOWED
+		        if (file.toLowerCase().endsWith('.hx'))
+		        {
+		            initHScript(folder + file);
+		        }
+		        #end
+		
+		        #if ELLAWY_ALLOWED
+		        if (file.toLowerCase().endsWith('.ellawy'))
+		        {
+		            var filePath = folder + file;
+		            try
+		            {
+		                var haxeCode = ellawy.Compiler.compileFile(filePath);
+		
+		                var hxPath = filePath.substr(0, filePath.lastIndexOf('.')) + '.hx';
+		                sys.io.File.saveContent(hxPath, haxeCode);
+	
+		                initHScript(hxPath);
+		            }
+		            catch (e:Dynamic)
+		            {
+		                trace('Error compiling .ellawy script ($filePath): $e');
+		            }
+		        }
+		        #end
+		    }
+		}
+
         FlxG.camera.bgColor = FlxColor.BLACK;
 
         player = new Player(0, 0, 'Ellawy', true);
