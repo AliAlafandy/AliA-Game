@@ -38,7 +38,7 @@ class PlayState extends GameState
 
 	public var debugGroup:FlxTypedGroup<flixel.text.FlxText>;
 
-	public var instance:PlayState;
+	public static var instance:PlayState;
 
     public function new():Void
     {
