@@ -1,7 +1,6 @@
 package states;
 
 import flixel.FlxG;
-import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -13,7 +12,7 @@ import mobile.data.MobileInputManager;
 #end
 
 #if DISCORD_ALLOWED
-import data.DiscordRPC;
+import data.debug.DiscordRPC;
 #end
 
 #if HSCRIPT_ALLOWED
