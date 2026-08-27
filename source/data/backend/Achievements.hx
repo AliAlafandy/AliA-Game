@@ -1,4 +1,4 @@
-package data;
+package data.backend;
 
 #if ACHIEVEMENTS_ALLOWED
 // import data.objects.AchievementPopup;
