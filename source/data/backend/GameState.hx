@@ -1,4 +1,4 @@
-package data;
+package data.backend;
 
 import flixel.addons.ui.FlxUIState;
 import flixel.addons.transition.FlxTransitionableState;
