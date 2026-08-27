@@ -45,7 +45,6 @@ class HScript extends SScript
 		set('FlxTimer', flixel.util.FlxTimer);
 		set('FlxTween', flixel.tweens.FlxTween);
 		set('FlxEase', flixel.tweens.FlxEase);
-		//set('FlxColor', CustomFlxColor);
 		set('PlayState', PlayState);
 		set('Paths', Paths);
 		set('StorageUtil', StorageUtil);
@@ -62,28 +61,48 @@ class HScript extends SScript
 		set('FlxAnimate', FlxAnimate);
 		#end
 
+		// Safe utility bindings
+		set('Reflect', Reflect);
+		set('getPropertySafe', function(obj:Dynamic, field:String, ?defaultValue:Dynamic = null):Dynamic {
+			if (obj != null && Reflect.hasField(obj, field)) {
+				var val = Reflect.field(obj, field);
+				return val != null ? val : defaultValue;
+			}
+			return defaultValue;
+		});
+
 		// Functions & Variables
 		set('setVar', function(name:String, value:Dynamic) {
-			PlayState.instance.variables.set(name, value);
+			if (PlayState.instance != null && Reflect.hasField(PlayState.instance, 'variables')) {
+				PlayState.instance.variables.set(name, value);
+			}
 			return value;
 		});
 		set('getVar', function(name:String) {
 			var result:Dynamic = null;
-			if(PlayState.instance.variables.exists(name)) result = PlayState.instance.variables.get(name);
+			if (PlayState.instance != null && Reflect.hasField(PlayState.instance, 'variables')) {
+				if(PlayState.instance.variables.exists(name)) result = PlayState.instance.variables.get(name);
+			}
 			return result;
 		});
 		set('removeVar', function(name:String)
 		{
-			if(PlayState.instance.variables.exists(name))
-			{
-				PlayState.instance.variables.remove(name);
-				return true;
+			if (PlayState.instance != null && Reflect.hasField(PlayState.instance, 'variables')) {
+				if(PlayState.instance.variables.exists(name))
+				{
+					PlayState.instance.variables.remove(name);
+					return true;
+				}
 			}
 			return false;
 		});
 		set('debugPrint', function(text:String, ?color:flx.util.FlxColor = null) {
 			if(color == null) color = flx.util.FlxColor.WHITE;
-			PlayState.instance.addTextToDebug(text, color);
+			if (PlayState.instance != null && Reflect.hasField(PlayState.instance, 'addTextToDebug')) {
+				PlayState.instance.addTextToDebug(text, color);
+			} else {
+				trace(text);
+			}
 		});
 
 		// Keyboard & Gamepads
@@ -175,7 +194,7 @@ class HScript extends SScript
 			}
 			catch (e:Dynamic) {
 				var msg:String = e.message.substr(0, e.message.indexOf('\n'));
-				if(PlayState.instance != null) PlayState.instance.addTextToDebug('$origin - $msg', flx.util.FlxColor.RED);
+				if(PlayState.instance != null && Reflect.hasField(PlayState.instance, 'addTextToDebug')) PlayState.instance.addTextToDebug('$origin - $msg', flx.util.FlxColor.RED);
 				else trace('$origin - $msg');
 			}
 		});
@@ -188,7 +207,9 @@ class HScript extends SScript
 
 		if(PlayState.instance == flx.FlxG.state)
 		{
-			setSpecialObject(PlayState.instance, false, PlayState.instance.instancesExclude);
+			var excludeList:Array<String> = Reflect.field(PlayState.instance, 'instancesExclude');
+			if (excludeList == null) excludeList = [];
+			setSpecialObject(PlayState.instance, false, excludeList);
 		}
 
 		if(varsToBring != null) {
@@ -205,7 +226,8 @@ class HScript extends SScript
 		if (funcToRun == null) return null;
 
 		if(!exists(funcToRun)) {
-			PlayState.instance.addTextToDebug(origin + ' - No HScript function named: $funcToRun', flx.util.FlxColor.RED);
+			if (PlayState.instance != null && Reflect.hasField(PlayState.instance, 'addTextToDebug'))
+				PlayState.instance.addTextToDebug(origin + ' - No HScript function named: $funcToRun', flx.util.FlxColor.RED);
 			return null;
 		}
 
@@ -215,7 +237,8 @@ class HScript extends SScript
 			final e = callValue.exceptions[0];
 			if (e != null) {
 				var msg:String = e.toString();
-				PlayState.instance.addTextToDebug('$origin - $msg', flx.util.FlxColor.RED);
+				if (PlayState.instance != null && Reflect.hasField(PlayState.instance, 'addTextToDebug'))
+					PlayState.instance.addTextToDebug('$origin - $msg', flx.util.FlxColor.RED);
 			}
 			return null;
 		}
@@ -231,57 +254,6 @@ class HScript extends SScript
 	{
 		origin = null;
 		super.destroy();
-	}
-}
-
-class CustomFlxColor {
-	public static var TRANSPARENT(default, null):Int = flx.util.FlxColor.TRANSPARENT;
-	public static var BLACK(default, null):Int = flx.util.FlxColor.BLACK;
-	public static var WHITE(default, null):Int = flx.util.FlxColor.WHITE;
-	public static var GRAY(default, null):Int = flx.util.FlxColor.GRAY;
-
-	public static var GREEN(default, null):Int = flx.util.FlxColor.GREEN;
-	public static var LIME(default, null):Int = flx.util.FlxColor.LIME;
-	public static var YELLOW(default, null):Int = flx.util.FlxColor.YELLOW;
-	public static var ORANGE(default, null):Int = flx.util.FlxColor.ORANGE;
-	public static var RED(default, null):Int = flx.util.FlxColor.RED;
-	public static var PURPLE(default, null):Int = flx.util.FlxColor.PURPLE;
-	public static var BLUE(default, null):Int = flx.util.FlxColor.BLUE;
-	public static var BROWN(default, null):Int = flx.util.FlxColor.BROWN;
-	public static var PINK(default, null):Int = flx.util.FlxColor.PINK;
-	public static var MAGENTA(default, null):Int = flx.util.FlxColor.MAGENTA;
-	public static var CYAN(default, null):Int = flx.util.FlxColor.CYAN;
-
-	public static function fromInt(Value:Int):Int 
-	{
-		return cast flx.util.FlxColor.fromInt(Value);
-	}
-
-	public static function fromRGB(Red:Int, Green:Int, Blue:Int, Alpha:Int = 255):Int
-	{
-		return cast flx.util.FlxColor.fromRGB(Red, Green, Blue, Alpha);
-	}
-	public static function fromRGBFloat(Red:Float, Green:Float, Blue:Float, Alpha:Float = 1):Int
-	{	
-		return cast flx.util.FlxColor.fromRGBFloat(Red, Green, Blue, Alpha);
-	}
-
-	public static inline function fromCMYK(Cyan:Float, Magenta:Float, Yellow:Float, Black:Float, Alpha:Float = 1):Int
-	{
-		return cast flx.util.FlxColor.fromCMYK(Cyan, Magenta, Yellow, Black, Alpha);
-	}
-
-	public static function fromHSB(Hue:Float, Sat:Float, Brt:Float, Alpha:Float = 1):Int
-	{	
-		return cast flx.util.FlxColor.fromHSB(Hue, Sat, Brt, Alpha);
-	}
-	public static function fromHSL(Hue:Float, Sat:Float, Light:Float, Alpha:Float = 1):Int
-	{	
-		return cast flx.util.FlxColor.fromHSL(Hue, Sat, Light, Alpha);
-	}
-	public static function fromString(str:String):Int
-	{
-		return cast flx.util.FlxColor.fromString(str);
 	}
 }
 #end
