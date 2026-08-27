@@ -1,4 +1,4 @@
-package data;
+package data.backend;
 
 import haxe.Json;
 import sys.FileSystem;
