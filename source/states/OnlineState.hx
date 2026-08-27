@@ -5,20 +5,11 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import haxe.Http;
-import haxe.Json;
 
-#if sys
-import sys.FileSystem;
-import sys.io.File;
-#end
-
-import modding.ZipInstaller;
-import modding.ModLoader;
+import online.Network;
 
 class OnlineState extends GameState {
 
-    static inline var MOD_LIST_URL:String = "https://alialafandy.github.io/AliA-Online/mods.json";
     static inline var ENTRY_HEIGHT:Int = 60;
     static inline var LIST_START_Y:Int = 80;
 
@@ -62,23 +53,17 @@ class OnlineState extends GameState {
     }
 
     function loadModList():Void {
-        var http = new Http(MOD_LIST_URL);
+        Network.fetchJson("https://alialafandy.github.io/AliA-Online/mods.json", onModsLoaded, onModsFailed);
+    }
 
-        http.onData = function(data:String) {
-            try {
-                mods = Json.parse(data);
-                statusText.text = mods.length == 0 ? "No mods available" : "";
-                renderList();
-            } catch (e:Dynamic) {
-                statusText.text = "Failed to parse mods list";
-            }
-        };
+    function onModsLoaded(data:Dynamic):Void {
+        mods = data;
+        statusText.text = mods.length == 0 ? "No mods available" : "";
+        renderList();
+    }
 
-        http.onError = function(e) {
-            statusText.text = "Failed to load mods list";
-        };
-
-        http.request();
+    function onModsFailed(reason:String):Void {
+        statusText.text = "Failed to load mods list";
     }
 
     function renderList():Void {
@@ -106,34 +91,30 @@ class OnlineState extends GameState {
 
     function downloadMod(url:String, btn:FlxButton):Void {
         #if sys
-        btn.text = "Downloading...";
         btn.onUp.callback = null;
+        btn.text = "0%";
 
         var dir = getModsDirectory();
-        if (!FileSystem.exists(dir)) FileSystem.createDirectory(dir);
-
         var fileName = url.split("/").pop();
         var savePath = dir + "/" + fileName;
 
-        var http = new Http(url);
-
-        http.onBytes = function(bytes) {
-            File.saveBytes(savePath, bytes);
-
-            try {
-                ZipInstaller.install(savePath);
-                ModLoader.loadAllMods();
-                btn.text = "Installed";
-            } catch (e:Dynamic) {
-                btn.text = "Install failed";
+        Network.downloadFile(url, savePath,
+            function(loaded, total) {
+                btn.text = total > 0 ? Std.int(loaded / total * 100) + "%" : "...";
+            },
+            function(path) {
+                try {
+                    ZipInstaller.install(path);
+                    ModLoader.loadAllMods();
+                    btn.text = "Installed";
+                } catch (e:Dynamic) {
+                    btn.text = "Install failed";
+                }
+            },
+            function(reason) {
+                btn.text = "Failed";
             }
-        };
-
-        http.onError = function(e) {
-            btn.text = "Download failed";
-        };
-
-        http.request();
+        );
         #else
         btn.text = "Unsupported";
         #end
