@@ -43,6 +43,11 @@ class OptionsState extends GameState
         add(text);
 
         refresh();
+
+		#if mobile
+		addCustomDPad();
+		addCustomDPadCam();
+		#end
     }
 
     override public function update(elapsed:Float):Void
