@@ -8,10 +8,28 @@ import flixel.util.FlxSignal.FlxTypedSignal;
 
 class CustomDPad extends MobileInputManager implements IMobileControls
 {
+	public var padBG:TouchButton;
+	public var dPad:TouchButton;
+	public var arrows:TouchButton;
+
 	public var buttonLeft:TouchButton;
 	public var buttonUp:TouchButton;
 	public var buttonRight:TouchButton;
 	public var buttonDown:TouchButton;
+
+	public var jumpBG:TouchButton;
+	public var jumpPad:TouchButton;
+
+	public var powerBG:TouchButton;
+	public var powerPad:TouchButton;
+
+	public var backPad:TouchButton;
+	public var pausePad:TouchButton;
+
+	public var jumpButton:TouchButton;
+	public var powerButton:TouchButton;
+	public var backButton:TouchButton;
+	public var pauseButton:TouchButton;
 	
 	public var buttonExtra:TouchButton = null;
 	public var buttonExtra2:TouchButton = null;
@@ -20,22 +38,6 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 
 	public var onButtonDown:FlxTypedSignal<TouchButton->Void> = new FlxTypedSignal<TouchButton->Void>();
 	public var onButtonUp:FlxTypedSignal<TouchButton->Void> = new FlxTypedSignal<TouchButton->Void>();
-
-	public var padBG:TouchButton;
-	public var dPad:TouchButton;
-	public var arrows:TouchButton;
-
-	public var jumpBG:TouchButton;
-	public var jumpPad:TouchButton;
-
-	public var powerBG:TouchButton;
-	public var powerPad:TouchButton;
-
-	public var jumpButton:TouchButton;
-	public var powerButton:TouchButton;
-
-	public var backButton:TouchButton;
-	public var pauseButton:TouchButton;
 
 	public function new(X:Float, Y:Float)
 	{
@@ -65,7 +67,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		padBG.antialiasing = ClientPrefs.data.antialiasing;
 		add(padBG);
 
-		dPad = new TouchButton(X, Y, []);
+		dPad = new TouchButton(padBG.x + 5, padBG.y + 5, []);
 		if (customFrames != null)
 		{
 			dPad.frames = customFrames;
@@ -94,7 +96,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		dPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(dPad);
 
-		arrows = new TouchButton(X, Y, []);
+		arrows = new TouchButton(dPad.x, dPad.y, []);
 		if (customFrames != null)
 		{
 			arrows.frames = customFrames;
@@ -171,11 +173,38 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		powerPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(powerPad);
 
+		backPad = new TouchButton(X, Y, []);
+		if (customFrames != null)
+		{
+			backPad.frames = customFrames;
+			backPad.animation.addByPrefix('back', 'back0000', 0, false);
+			backPad.animation.play('back');
+		}
+		backPad.scale.set(1, 1);
+		backPad.updateHitbox();
+		// backPad.scrollFactor.set();
+		backPad.alpha = ClientPrefs.data.controlsAlpha;
+		backPad.antialiasing = ClientPrefs.data.antialiasing;
+		add(backPad);
+
+		pausePad = new TouchButton(X, Y, []);
+		if (customFrames != null)
+		{
+			pausePad.frames = customFrames;
+			pausePad.animation.addByPrefix('stop', 'pause0000', 0, false);
+			pausePad.animation.play('stop');
+		}
+		pausePad.scale.set(1, 1);
+		pausePad.updateHitbox();
+		// pausePad.scrollFactor.set();
+		pausePad.alpha = ClientPrefs.data.controlsAlpha;
+		pausePad.antialiasing = ClientPrefs.data.antialiasing;
+		add(pausePad);
+
 		jumpButton = createCustomButton(FlxG.width - 250, FlxG.height - 150, 'null0000', [MobileInputID.JUMP, MobileInputID.Z], customFrames);
 		powerButton = createCustomButton(FlxG.width - 130, FlxG.height - 250, 'null0000', [MobileInputID.POWER, MobileInputID.C], customFrames);
-
-		backButton = createCustomButton(10, 10, 'back0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
-		pauseButton = createCustomButton(FlxG.width - 10, 10, 'pause0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
+		backButton = createCustomButton(10, 10, 'null0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
+		pauseButton = createCustomButton(FlxG.width - 90, 10, 'null0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
 
 		add(buttonLeft);
 		add(buttonDown);
