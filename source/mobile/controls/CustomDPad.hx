@@ -36,18 +36,18 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 
 		switch (ClientPrefs.data.controlsColor) {
 			case "Yellow":
-				var pathYellow = Paths.getPath('images/d-pad_yellow.xml', "mobile");
-				var pathYellow2 = Paths.getPath('images/d-pad_yellow.png', "mobile");
-				trace(pathYellow);
-				trace(pathYellow2);
-				var customFramesYellow = Paths.getSparrowAtlas('d-pad_yellow' , "mobile");
+				var path = Paths.getPath('d-pad_yellow.xml', "mobile");
+				var path2 = Paths.getPath('d-pad_yellow.png', "mobile");
+				trace(path);
+				trace(path2);
+				var customFrames = Paths.getSparrowAtlas('d-pad_yellow' , "mobile");
 
 			case "Blue":
-				var pathBlue = Paths.getPath('images/d-pad_blue.xml', "mobile");
-				var pathBlue2 = Paths.getPath('images/d-pad_blue.png', "mobile");
-				trace(pathBlue);
-				trace(pathBlue2);
-				var customFramesBlue = Paths.getSparrowAtlas('d-pad_blue' , "mobile");
+				var path = Paths.getPath('d-pad_blue.xml', "mobile");
+				var path2 = Paths.getPath('d-pad_blue.png', "mobile");
+				trace(path);
+				trace(path2);
+				var customFrames = Paths.getSparrowAtlas('d-pad_blue' , "mobile");
 		}
 
 		dpadBg = new TouchButton(X, Y, []);
@@ -82,7 +82,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		add(jumpButton);
 		add(powerButton);
 		add(backButton);
-		add(stopButton);
+		add(pauseButton);
 
 		updateTrackedButtons();
 	}
