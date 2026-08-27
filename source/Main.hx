@@ -14,7 +14,7 @@ import lime.app.Application;
 import openfl.events.KeyboardEvent;
 
 #if mobile
-import mobile.data.StorageUtil;
+import mobile.StorageUtil;
 #end
 
 import states.TitleState;
