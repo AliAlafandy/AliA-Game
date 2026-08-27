@@ -3,8 +3,7 @@ package states;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.group.FlxGroup.*;
+import flixel.text.FlxText;
 import flixel.group.FlxGroup;
 
 import data.objects.Player;
@@ -39,7 +38,7 @@ class PlayState extends GameState
 	public var instancesExclude:Array<String> = [];
 	#end
 
-	public var debugGroup:FlxTypedGroup<flixel.text.FlxText>;
+	public var debugGroup:FlxTypedGroup<FlxText>;
 
 	public static var instance:PlayState;
 
