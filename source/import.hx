@@ -1,6 +1,6 @@
 #if !macro
 #if DISCORD_ALLOWED
-import data.DiscordRPC;
+import data.backend.DiscordRPC;
 #end
 
 #if ELLAWY_ALLOWED
@@ -8,7 +8,7 @@ import ellawy.*;
 #end
 
 #if ACHIEVEMENTS_ALLOWED
-import data.Achievements;
+import data.backend.Achievements;
 #end
 
 #if mobile
@@ -17,6 +17,7 @@ import mobile.controls.IMobileControls;
 import mobile.controls.TouchPad;
 import mobile.controls.TouchButton;
 import mobile.controls.CustomDPad;
+
 import mobile.data.StorageUtil;
 import mobile.data.MobileInputID;
 import mobile.data.MobileData;
@@ -48,14 +49,14 @@ import sys.io.*;
 import js.html.*;
 #end
 
-import data.Paths;
-import data.Controls;
-import data.CoolUtil;
-import data.CustomFadeTransition;
-import data.GameState;
-import data.GameSubState;
-import data.ClientPrefs;
-import data.Mods;
+import data.backend.Paths;
+import data.backend.Controls;
+import data.backend.CoolUtil;
+import data.backend.CustomFadeTransition;
+import data.backend.GameState;
+import data.backend.GameSubState;
+import data.backend.ClientPrefs;
+import data.backend.Mods;
 
 #if android
 import mobile.data.StorageUtil;
