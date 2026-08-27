@@ -12,7 +12,7 @@ class GameState extends FlxUIState
 		return data.controls.Controls.instance;
 	}
 
-    #if mobile
+	#if mobile
 	public var touchPad:TouchPad;
 	public var touchPadCam:FlxCamera;
 	public var customDPad:CustomDPad;
@@ -22,12 +22,16 @@ class GameState extends FlxUIState
 
 	public function addTouchPad(DPad:String, Action:String)
 	{
+		if (touchPad != null) return;
+
 		touchPad = new TouchPad(DPad, Action);
 		add(touchPad);
 	}
 
 	public function addCustomDPad():Void
 	{
+		if (customDPad != null) return;
+
 		customDPad = new CustomDPad(30, FlxG.height - 370);
 		customDPad.visible = true;
 		add(customDPad);
@@ -35,13 +39,53 @@ class GameState extends FlxUIState
 
 	public function addCustomDPadCam(defaultDrawTarget:Bool = false):Void
 	{
-		if (customDPad != null)
+		if (customDPad == null || customDPadCam != null) return;
+
+		customDPadCam = createOverlayCamera(defaultDrawTarget);
+		customDPad.cameras = [customDPadCam];
+	}
+
+	public function addTouchPadCamera(defaultDrawTarget:Bool = false):Void
+	{
+		if (touchPad == null || touchPadCam != null) return;
+
+		touchPadCam = createOverlayCamera(defaultDrawTarget);
+		touchPad.cameras = [touchPadCam];
+	}
+
+	public function addMobileControls(defaultDrawTarget:Bool = false):Void
+	{
+		if (mobileControls != null) return;
+
+		var isCustomDPad:Bool = false;
+
+		switch (MobileData.mode)
 		{
-			customDPadCam = new FlxCamera();
-			customDPadCam.bgColor.alpha = 0;
-			FlxG.cameras.add(customDPadCam, defaultDrawTarget);
-			customDPad.cameras = [customDPadCam];
+			case 0:
+				mobileControls = new TouchPad('RIGHT_FULL', 'NONE');
+			case 1:
+				mobileControls = new TouchPad('LEFT_FULL', 'NONE');
+			case 2:
+				mobileControls = MobileData.getTouchPadCustom(new TouchPad('RIGHT_FULL', 'NONE'));
+			case 3:
+				mobileControls = new CustomDPad(30, FlxG.height - 370);
+				isCustomDPad = true;
+			default:
+				mobileControls = new TouchPad('RIGHT_FULL', 'NONE');
 		}
+
+		if (mobileControls == null || mobileControls.instance == null) return;
+
+		if (!isCustomDPad)
+		{
+			mobileControls.instance = MobileData.setButtonsColors(mobileControls.instance);
+		}
+
+		mobileControlsCam = createOverlayCamera(defaultDrawTarget);
+
+		mobileControls.instance.cameras = [mobileControlsCam];
+		mobileControls.instance.visible = false;
+		add(mobileControls.instance);
 	}
 
 	public function removeCustomPad()
@@ -52,7 +96,7 @@ class GameState extends FlxUIState
 			customDPad = FlxDestroyUtil.destroy(customDPad);
 		}
 
-		if(customDPadCam != null)
+		if (customDPadCam != null)
 		{
 			FlxG.cameras.remove(customDPadCam);
 			customDPadCam = FlxDestroyUtil.destroy(customDPadCam);
@@ -67,42 +111,11 @@ class GameState extends FlxUIState
 			touchPad = FlxDestroyUtil.destroy(touchPad);
 		}
 
-		if(touchPadCam != null)
+		if (touchPadCam != null)
 		{
 			FlxG.cameras.remove(touchPadCam);
 			touchPadCam = FlxDestroyUtil.destroy(touchPadCam);
 		}
-	}
-
-	public function addMobileControls(defaultDrawTarget:Bool = false):Void
-	{
-		var isCustomDPad:Bool = false;
-	
-		switch (MobileData.mode)
-		{
-			case 0: 
-				mobileControls = new TouchPad('RIGHT_FULL', 'NONE');
-			case 1:
-				mobileControls = new TouchPad('LEFT_FULL', 'NONE');
-			case 2:
-				mobileControls = MobileData.getTouchPadCustom(new TouchPad('RIGHT_FULL', 'NONE'));
-			case 3: 
-				mobileControls = new CustomDPad(30, FlxG.height - 370);
-				isCustomDPad = true; 
-		}
-	
-		if (!isCustomDPad && mobileControls != null && mobileControls.instance != null)
-		{
-			mobileControls.instance = MobileData.setButtonsColors(mobileControls.instance);
-		}
-	
-		mobileControlsCam = new FlxCamera();
-		mobileControlsCam.bgColor.alpha = 0;
-		FlxG.cameras.add(mobileControlsCam, defaultDrawTarget);
-	
-		mobileControls.instance.cameras = [mobileControlsCam];
-		mobileControls.instance.visible = false;
-		add(mobileControls.instance);
 	}
 
 	public function removeMobileControls()
@@ -121,21 +134,18 @@ class GameState extends FlxUIState
 		}
 	}
 
-	public function addTouchPadCamera(defaultDrawTarget:Bool = false):Void
+	private function createOverlayCamera(defaultDrawTarget:Bool):FlxCamera
 	{
-		if (touchPad != null)
-		{
-			touchPadCam = new FlxCamera();
-			touchPadCam.bgColor.alpha = 0;
-			FlxG.cameras.add(touchPadCam, defaultDrawTarget);
-			touchPad.cameras = [touchPadCam];
-		}
+		var cam:FlxCamera = new FlxCamera();
+		cam.bgColor.alpha = 0;
+		FlxG.cameras.add(cam, defaultDrawTarget);
+		return cam;
 	}
-    #end
+	#end
 
 	override function destroy()
 	{
-        #if mobile
+		#if mobile
 		removeTouchPad();
 		removeMobileControls();
 		removeCustomPad();
@@ -143,59 +153,71 @@ class GameState extends FlxUIState
 		super.destroy();
 	}
 
-
-	override function create() {
+	override function create()
+	{
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;
 
 		super.create();
 
-		if(!skip) {
+		if (!skip)
+		{
 			openSubState(new CustomFadeTransition(0.6, true));
 		}
+
 		FlxTransitionableState.skipNextTransOut = false;
 		timePassedOnState = 0;
 	}
 
-    public static var timePassedOnState:Float = 0;
+	public static var timePassedOnState:Float = 0;
+
 	override function update(elapsed:Float)
 	{
-        timePassedOnState += elapsed;
+		timePassedOnState += elapsed;
 		super.update(elapsed);
 	}
 
-    public static function switchState(nextState:FlxState = null) {
-		if(nextState == null) nextState = FlxG.state;
-		if(nextState == FlxG.state)
+	public static function switchState(nextState:FlxState = null)
+	{
+		if (nextState == null) nextState = FlxG.state;
+
+		if (nextState == FlxG.state)
 		{
 			resetState();
 			return;
 		}
 
-		if(FlxTransitionableState.skipNextTransIn) FlxG.switchState(nextState);
-		else startTransition(nextState);
+		if (FlxTransitionableState.skipNextTransIn)
+			FlxG.switchState(nextState);
+		else
+			startTransition(nextState);
+
 		FlxTransitionableState.skipNextTransIn = false;
 	}
 
-	public static function resetState() {
-		if(FlxTransitionableState.skipNextTransIn) FlxG.resetState();
-		else startTransition();
+	public static function resetState()
+	{
+		if (FlxTransitionableState.skipNextTransIn)
+			FlxG.resetState();
+		else
+			startTransition();
+
 		FlxTransitionableState.skipNextTransIn = false;
 	}
 
-	// Custom made Trans in
 	public static function startTransition(nextState:FlxState = null)
 	{
-		if(nextState == null)
-			nextState = FlxG.state;
+		if (nextState == null) nextState = FlxG.state;
 
 		FlxG.state.openSubState(new CustomFadeTransition(0.6, false));
-		if(nextState == FlxG.state)
+
+		if (nextState == FlxG.state)
 			CustomFadeTransition.finishCallback = function() FlxG.resetState();
 		else
 			CustomFadeTransition.finishCallback = function() FlxG.switchState(nextState);
 	}
 
-	public static function getState():GameState {
-		return cast (FlxG.state, GameState);
+	public static function getState():GameState
+	{
+		return Std.downcast(FlxG.state, GameState);
 	}
 }
