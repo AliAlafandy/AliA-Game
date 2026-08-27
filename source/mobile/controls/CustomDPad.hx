@@ -37,7 +37,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 	public var backButton:TouchButton;
 	public var pauseButton:TouchButton;
 
-	public var scale:Float = ClientPrefs.data.controlsSize;
+	public var scale:Float = 0.75;
 
 	public function new(X:Float, Y:Float)
 	{
