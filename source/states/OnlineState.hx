@@ -1,12 +1,15 @@
 package states;
 
-import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import haxe.Http;
 import haxe.Json;
+
+#if sys
 import sys.FileSystem;
 import sys.io.File;
+#end
+
 // import modding.ZipInstaller;
 // import modding.ModLoader;
 
