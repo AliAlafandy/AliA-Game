@@ -1,3 +1,5 @@
+package data;
+
 import flixel.FlxBasic;
 
 #if HSCRIPT_ALLOWED
