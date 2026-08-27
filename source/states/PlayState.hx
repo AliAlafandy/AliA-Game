@@ -16,7 +16,7 @@ import data.DiscordRPC;
 #end
 
 #if HSCRIPT_ALLOWED
-import data.scritps.HScript;
+import data.scripts.HScript;
 #end
 
 class PlayState extends GameState
