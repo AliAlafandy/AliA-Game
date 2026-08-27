@@ -77,7 +77,7 @@ class TitleState extends GameState
         });
 	}
 
-	var pressedAny:String = FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed;
+	var pressedAny:Array<FlxG> = [FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed];
 
     override public function update(elapsed:Float) {
         super.update(elapsed);
