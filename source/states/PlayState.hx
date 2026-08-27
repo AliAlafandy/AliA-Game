@@ -30,9 +30,14 @@ class PlayState extends GameState
     public var manager:MobileInputManager;
     #end
 
+	public var debugGroup:flixel.group.FlxTypedGroup.FlxTypedGroup<flixel.text.FlxText>;
+
+	public var instance:Playstate;
+
     public function new():Void
     {
         super();
+		instance = this;
         #if mobile
         manager = new MobileInputManager();
         #end
@@ -41,6 +46,9 @@ class PlayState extends GameState
     override public function create():Void
     {
         super.create();
+
+		debugGroup = new flixel.group.FlxTypedGroup.FlxTypedGroup<flixel.text.FlxText>();
+		add(debugGroup);
 
 		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'scripts/'))
 		{
@@ -91,6 +99,39 @@ class PlayState extends GameState
         DiscordClient.changePresence('Play - Ali Alafandy Game',null);
         #end
     }
+
+	#if HSCRIPT_ALLOWED
+	public function addTextToDebug(text:String, color:FlxColor) {
+		if (debugGroup == null) return;
+
+		var newText:flixel.text.FlxText = debugGroup.recycle(flixel.text.FlxText, function() {
+			var txt = new flixel.text.FlxText(10, 0, 0, "", 12);
+			txt.setFormat(null, 12, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+			return txt;
+		});
+
+		newText.text = text;
+		newText.color = color;
+		newText.alpha = 1;
+		newText.setPosition(10, 8);
+
+		debugGroup.forEachAlive(function(spr:flixel.text.FlxText) {
+			if (spr != newText) {
+				spr.y += newText.height + 2;
+			}
+		});
+
+		debugGroup.add(newText);
+
+		flixel.util.FlxTimer.wait(6, function() {
+			if (newText != null && newText.alive) {
+				newText.kill();
+			}
+		});
+
+		Sys.println(text);
+	}
+	#end
 
     override public function update(elapsed:Float):Void
     {
