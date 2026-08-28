@@ -249,14 +249,14 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 
 		if (jumpButton.justPressed || jumpButton.pressed)
 		{
-			dPad.animation.play('press');
+			jumpPad.animation.play('press');
 		} else {
 			jumpPad.animation.play('idle');
 		}
 
 		if (powerButton.justPressed || powerButton.pressed)
 		{
-			dPad.animation.play('press');
+			powerPad.animation.play('press');
 		} else {
 			powerPad.animation.play('idle');
 		}
