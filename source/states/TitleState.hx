@@ -39,17 +39,10 @@ class TitleState extends GameState
 
     override public function create()
 	{
-        var title = new FlxText(0, 0, 0, "Ali Alafandy Game", 24);
-        title.screenCenter(X);
-        title.y = 140;
-        add(title);
+		super.create():
 
-        var press = new FlxText(0, 0, 0, "Press Any Button", 12);
-        press.screenCenter(X);
-        press.y = 200;
-        add(press);
-
-        FlxG.sound.playMusic(Paths.music('themes/start_nice'));
+		Paths.clearStoredMemory();
+		ClientPrefs.loadPrefs();
 
 		if (initialized) {
 			startIntro();
@@ -75,6 +68,38 @@ class TitleState extends GameState
         t.y = 480;
         add(t);
 
+		if (initialized)
+			skipIntro();
+		else
+			initialized = true;
+
+		new FlxTimer().start(1, function(tmr:FlxTimer)
+        {
+            startGame();
+        });
+	}
+
+	public function startGame()
+	{
+		var title = new FlxText(0, 0, 0, "Ali Alafandy Game", 24);
+        title.screenCenter(X);
+        title.y = 140;
+        add(title);
+
+        var press = new FlxText(0, 0, 0, "Press Any Button", 12);
+        press.screenCenter(X);
+        press.y = 200;
+        add(press);
+
+        FlxG.sound.playMusic(Paths.music('themes/start_nice'));
+
+		Paths.clearUnusedMemory();
+
+		if (initialized)
+			skipIntro();
+		else
+			initialized = true;
+
 		new FlxTimer().start(1, function(tmr:FlxTimer)
         {
             skipIntro();
@@ -85,6 +110,16 @@ class TitleState extends GameState
 
     override public function update(elapsed:Float) {
         super.update(elapsed);
+
+		#if FLX_TOUCH
+		for (touch in FlxG.touches.list)
+		{
+			if (touch.justPressed)
+			{
+				pressedEnter = true;
+			}
+		}
+		#end
 
 		if (initialized && !transitioning && skippedIntro) {
         	if (pressedAny) {
