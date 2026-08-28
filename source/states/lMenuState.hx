@@ -12,7 +12,6 @@ class lMenuState extends GameState {
     var index:Int = 0;
     var items:Array<String> = [
         "Play",
-
         "Online",
 
         #if MODS_ALLOWED
@@ -63,8 +62,7 @@ class lMenuState extends GameState {
             switch(items[index]) {
                 case "Play": GameState.switchState(new SelectState());
 
-                case 'Online':
-							FlxG.switchState(new SelectState());
+                case 'Online': GameState.switchState(new OnlineState());
 
                 #if MODS_ALLOWED
                 case "Mods": GameState.switchState(new ModsState());
