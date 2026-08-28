@@ -2,6 +2,8 @@ package states;
 
 import states.menus.SelectState;
 
+import states.OnlineState;
+
 #if MODS_ALLOWED
 import states.menus.ModsState;
 #end
@@ -10,6 +12,8 @@ class lMenuState extends GameState {
     var index:Int = 0;
     var items:Array<String> = [
         "Play",
+
+        "Online",
 
         #if MODS_ALLOWED
         "Mods",
@@ -59,11 +63,15 @@ class lMenuState extends GameState {
             switch(items[index]) {
                 case "Play": GameState.switchState(new SelectState());
 
+                case 'Online':
+							FlxG.switchState(new SelectState());
+
                 #if MODS_ALLOWED
                 case "Mods": GameState.switchState(new ModsState());
                 #end
 
                 case "Options": GameState.switchState(new OptionsState());
+                    
                 case "Quit": LimeSystem.exit(1); //FlxG.exit();
             }
         }
