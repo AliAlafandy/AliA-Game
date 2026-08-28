@@ -60,6 +60,7 @@ class TitleState extends GameState
     override public function update(elapsed:Float) {
         super.update(elapsed);
         if (FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed) {
+			FlxG.sound.play(Paths.sound('scroll_sound'));
             GameState.switchState(new MenuState());
         }
     }
