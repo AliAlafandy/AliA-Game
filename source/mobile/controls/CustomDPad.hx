@@ -229,34 +229,39 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		add(backButton);
 		add(pauseButton);
 
-		if (touchPad.buttonLeft.justPressed || touch.buttonLeft.pressed)
+		updateTrackedButtons();
+	}
+
+	override function update(elapsed:Float)
+	{
+		if (customDPad.buttonLeft.justPressed || customDPad.buttonLeft.pressed)
 		{
 			dPad.animation.play('left');
-		} else if (touchPad.buttonDown.justPressed || touch.buttonDown.pressed) {
+		} else if (customDPad.buttonDown.justPressed || customDPad.buttonDown.pressed) {
 			dPad.animation.play('down');
-		} else if (touchPad.buttonUp.justPressed || touch.buttonUp.pressed) {
+		} else if (customDPad.buttonUp.justPressed || customDPad.buttonUp.pressed) {
 			dPad.animation.play('up');
-		} else if (touchPad.buttonRight.justPressed || touch.buttonRight.pressed) {
+		} else if (customDPad.buttonRight.justPressed || customDPad.buttonRight.pressed) {
 			dPad.animation.play('right');
 		} else {
 			dPad.animation.play('idle');
 		}
 
-		if (touchPad.jumpButton.justPressed || touch.jumpButton.pressed)
+		if (customDPad.jumpButton.justPressed || customDPad.jumpButton.pressed)
 		{
 			dPad.animation.play('press');
 		} else {
 			jumpPad.animation.play('idle');
 		}
 
-		if (touchPad.powerButton.justPressed || touch.powerButton.pressed)
+		if (customDPad.powerButton.justPressed || customDPad.powerButton.pressed)
 		{
 			dPad.animation.play('press');
 		} else {
 			powerPad.animation.play('idle');
 		}
 
-		updateTrackedButtons();
+		super.update(elapsed);
 	}
 
 	private function createCustomButton(X:Float, Y:Float, frameName:String, IDs:Array<MobileInputID>, frames:Dynamic):TouchButton
