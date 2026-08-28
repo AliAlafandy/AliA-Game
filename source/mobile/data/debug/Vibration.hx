@@ -1,4 +1,4 @@
-package mobile.backend;
+package mobile.data.debug;
 
 #if android
 import lime.system.JNI;
