@@ -234,27 +234,27 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 
 	override function update(elapsed:Float)
 	{
-		if (customDPad.buttonLeft.justPressed || customDPad.buttonLeft.pressed)
+		if (buttonLeft.justPressed || buttonLeft.pressed)
 		{
 			dPad.animation.play('left');
-		} else if (customDPad.buttonDown.justPressed || customDPad.buttonDown.pressed) {
+		} else if (buttonDown.justPressed || buttonDown.pressed) {
 			dPad.animation.play('down');
-		} else if (customDPad.buttonUp.justPressed || customDPad.buttonUp.pressed) {
+		} else if (buttonUp.justPressed || buttonUp.pressed) {
 			dPad.animation.play('up');
-		} else if (customDPad.buttonRight.justPressed || customDPad.buttonRight.pressed) {
+		} else if (buttonRight.justPressed || buttonRight.pressed) {
 			dPad.animation.play('right');
 		} else {
 			dPad.animation.play('idle');
 		}
 
-		if (customDPad.jumpButton.justPressed || customDPad.jumpButton.pressed)
+		if (jumpButton.justPressed || jumpButton.pressed)
 		{
 			dPad.animation.play('press');
 		} else {
 			jumpPad.animation.play('idle');
 		}
 
-		if (customDPad.powerButton.justPressed || customDPad.powerButton.pressed)
+		if (powerButton.justPressed || powerButton.pressed)
 		{
 			dPad.animation.play('press');
 		} else {
