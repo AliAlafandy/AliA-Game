@@ -7,6 +7,8 @@ import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 
+import online.mods.ModLoader;
+
 import openfl.events.TextEvent;
 import openfl.events.KeyboardEvent;
 
@@ -103,7 +105,7 @@ class OnlineState extends GameState
 	static inline var CHAT_LINES_MAX:Int = 8;
 
 	var mods:Array<Dynamic> = [];
-	var listGroup:FlxTypedGroup<FlxSprite>;
+	var listGroup:FlxSpriteGroup;
 	var statusText:FlxText;
 
 	var scrollY:Float = 0;
@@ -176,8 +178,8 @@ class OnlineState extends GameState
 
 	private function buildModsTab():Void
 	{
-		modsGroup = new FlxTypedGroup<FlxSprite>();
-		add(modsGroup);
+		listGroup = new FlxSpriteGroup();
+		modsGroup.add(listGroup);
 
 		statusText = new FlxText(20, LIST_START_Y - 30, 0, "Loading mods...", 16);
 		modsGroup.add(statusText);
