@@ -217,6 +217,41 @@ class EllawyUtils
         return Std.string(value);
     }
 
+    public static function getBuildTarget():String
+	{
+		#if windows
+		return 'windows';
+		#elseif linux
+		return 'linux';
+		#elseif mac
+		return 'mac';
+		#elseif hl
+		return 'hashlink';
+		#elseif (html5 || emscripten || nodejs || winjs || electron)
+		return 'browser';
+		#elseif android
+		return 'android';
+		#elseif webos
+		return 'webos';
+		#elseif tvos
+		return 'tvos';
+		#elseif watchos
+		return 'watchos';
+		#elseif air
+		return 'air';
+		#elseif flash
+		return 'flash';
+		#elseif (ios || iphonesim)
+		return 'ios';
+		#elseif neko
+		return 'neko';
+		#elseif switch
+		return 'switch';
+		#else
+		return 'unknown';
+		#end
+	}
+
     /**
      * Gets a property from a Dynamic object safely.
      */
