@@ -185,7 +185,7 @@ class OnlineState extends GameState
 		statusText = new FlxText(20, LIST_START_Y - 30, 0, "Loading mods...", 16);
 		modsGroup.add(statusText);
 
-		listGroup = new FlxTypedGroup<FlxSprite>();
+		listGroup = new FlxSpriteGroup();
 		modsGroup.add(listGroup);
 
 		loadModList();
