@@ -230,6 +230,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		add(pauseButton);
 
 		if (touchPad.buttonLeft.justPressed || touch.buttonLeft.pressed)
+		{
 			dPad.animation.play('left');
 		} else if (touchPad.buttonDown.justPressed || touch.buttonDown.pressed) {
 			dPad.animation.play('down');
@@ -242,12 +243,14 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		}
 
 		if (touchPad.jumpButton.justPressed || touch.jumpButton.pressed)
+		{
 			dPad.animation.play('press');
 		} else {
 			jumpPad.animation.play('idle');
 		}
 
 		if (touchPad.powerButton.justPressed || touch.powerButton.pressed)
+		{
 			dPad.animation.play('press');
 		} else {
 			powerPad.animation.play('idle');
