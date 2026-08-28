@@ -18,6 +18,8 @@ import lime.app.Application;
 
 import states.menus.SelectState;
 
+import states.OnlineState;
+
 #if MODS_ALLOWED
 import states.menus.ModsState;
 #end
@@ -35,6 +37,7 @@ class MenuState extends GameState
 
 	var optionShit:Array<String> = [
 		'play',
+		'online',
 
 		#if MODS_ALLOWED
 		'mods',
@@ -142,6 +145,9 @@ class MenuState extends GameState
 					{
 						case 'play':
 							FlxG.switchState(new SelectState());
+
+						case 'online':
+							FlxG.switchState(new OnlineState());
 
 						#if MODS_ALLOWED
 						case 'mods':
