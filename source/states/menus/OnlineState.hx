@@ -179,16 +179,16 @@ class OnlineState extends GameState
 
 	private function buildModsTab():Void
 	{
-		listGroup = new FlxSpriteGroup();
-		modsGroup.add(listGroup);
-
-		statusText = new FlxText(20, LIST_START_Y - 30, 0, "Loading mods...", 16);
-		modsGroup.add(statusText);
-
-		listGroup = new FlxSpriteGroup();
-		modsGroup.add(listGroup);
-
-		loadModList();
+	    modsGroup = new FlxTypedGroup<FlxSprite>();
+	    add(modsGroup);
+	
+	    statusText = new FlxText(20, LIST_START_Y - 30, 0, "Loading mods...", 16);
+	    modsGroup.add(statusText);
+	
+	    listGroup = new FlxSpriteGroup();
+	    modsGroup.add(listGroup);
+	
+	    loadModList();
 	}
 
 	private function buildMultiplayerTab():Void
