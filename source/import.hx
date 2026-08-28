@@ -12,7 +12,10 @@ import data.backend.Achievements;
 #end
 
 #if mobile
+#if android
 import mobile.StorageUtil;
+#end
+
 import mobile.TouchUtil;
 
 import mobile.controls.MobileControls;
@@ -60,10 +63,6 @@ import data.backend.GameState;
 import data.backend.GameSubState;
 import data.backend.ClientPrefs;
 import data.backend.Mods;
-
-#if android
-import mobile.StorageUtil;
-#end
 
 import data.objects.BGSprite;
 
