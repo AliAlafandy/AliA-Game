@@ -29,7 +29,7 @@ import vlc.MP4Handler as VideoHandler;
 #end
 #end
 
-class TitleState extends GameState
+class lTitleState extends GameState
 {
     public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
 	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
