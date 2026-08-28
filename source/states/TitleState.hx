@@ -39,7 +39,7 @@ class TitleState extends GameState
 
     override public function create()
 	{
-		super.create():
+		super.create();
 
 		Paths.clearStoredMemory();
 		ClientPrefs.loadPrefs();
