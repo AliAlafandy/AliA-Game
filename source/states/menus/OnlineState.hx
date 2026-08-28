@@ -269,14 +269,14 @@ class OnlineState extends GameState
 
 	private function loadModList():Void
 	{
-		Network.fetchJson("https://alialafandy.github.io/AliA-Online/mods.json", onModsLoaded, onModsFailed);
+		Network.fetchJson("https://alia-server.onrender.com/api/mods.json", onModsLoaded, onModsFailed);
 	}
 
 	private function onModsLoaded(data:Dynamic):Void
 	{
-		mods = data;
-		statusText.text = mods.length == 0 ? "No mods available" : "";
-		renderList();
+	    mods = data.mods;
+	    statusText.text = mods.length == 0 ? "No mods available" : "";
+	    renderList();
 	}
 
 	private function onModsFailed(reason:String):Void
