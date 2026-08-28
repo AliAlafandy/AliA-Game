@@ -12,10 +12,7 @@ import data.backend.Achievements;
 #end
 
 #if mobile
-#if android
 import mobile.StorageUtil;
-#end
-
 import mobile.TouchUtil;
 
 import mobile.controls.MobileControls;
