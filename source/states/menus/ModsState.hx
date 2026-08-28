@@ -81,7 +81,7 @@ class ModsState extends GameState {
         super.update(elapsed);
 
         if (controls.BACK) {
-            FlxG.switchState(new MenuState());
+            GameState.switchState(new MenuState());
         }
     }
 }
