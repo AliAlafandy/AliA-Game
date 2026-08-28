@@ -2,7 +2,7 @@ package states;
 
 import states.menus.SelectState;
 
-import states.OnlineState;
+import states.menus.OnlineState;
 
 #if MODS_ALLOWED
 import states.menus.ModsState;
