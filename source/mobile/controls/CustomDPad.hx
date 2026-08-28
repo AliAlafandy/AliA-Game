@@ -123,11 +123,11 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		add(arrows);
 		
 		buttonLeft = createCustomButton(X + 20, Y + 150, 'touch Left0000', [MobileInputID.GAME_LEFT, MobileInputID.LEFT, MobileInputID.LEFT2], customFrames);
-		buttonDown = createCustomButton(X + 100, Y + 220, 'touch Down0000', [MobileInputID.GAME_DOWN, MobileInputID.DOWN, MobileInputID.DOWN2], customFrames);
-		buttonUp = createCustomButton(X + 100, Y + 70, 'touch Up0000', [MobileInputID.GAME_UP, MobileInputID.UP, MobileInputID.UP2], customFrames);
+		buttonDown = createCustomButton(X + 100, Y + 225, 'touch Down0000', [MobileInputID.GAME_DOWN, MobileInputID.DOWN, MobileInputID.DOWN2], customFrames);
+		buttonUp = createCustomButton(X + 100, Y + 65, 'touch Up0000', [MobileInputID.GAME_UP, MobileInputID.UP, MobileInputID.UP2], customFrames);
 		buttonRight = createCustomButton(X + 180, Y + 150, 'touch Right0000', [MobileInputID.GAME_RIGHT, MobileInputID.RIGHT, MobileInputID.RIGHT2], customFrames);
 
-		jumpBG = new TouchButton(FlxG.width - 270 + X, Y + 135, []);
+		jumpBG = new TouchButton(FlxG.width - 265 + X, Y + 125, []);
 		if (customFrames != null)
 		{
 			jumpBG.frames = customFrames;
@@ -141,7 +141,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		jumpBG.antialiasing = ClientPrefs.data.antialiasing;
 		add(jumpBG);
 
-		jumpPad = new TouchButton(jumpBG.x + offset - 5, jumpBG.y + offset - 5, []);
+		jumpPad = new TouchButton(jumpBG.x + offset - 10, jumpBG.y + offset - 10, []);
 		if (customFrames != null)
 		{
 			jumpPad.frames = customFrames;
@@ -156,7 +156,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		jumpPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(jumpPad);
 
-		powerBG = new TouchButton(FlxG.width - 120 + X, Y + 55, []);
+		powerBG = new TouchButton(FlxG.width - 160 + X, Y + 35, []);
 		if (customFrames != null)
 		{
 			powerBG.frames = customFrames;
@@ -215,8 +215,8 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 
 		jumpButton = createCustomButton(FlxG.width - 200, FlxG.height - 200, 'jump Idle0000', [MobileInputID.JUMP, MobileInputID.Z], customFrames);
 		powerButton = createCustomButton(FlxG.width - 100, FlxG.height - 300, 'power Idle0000', [MobileInputID.POWER, MobileInputID.C], customFrames);
-		backButton = createCustomButton(10, 10, 'back0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
-		pauseButton = createCustomButton(FlxG.width - 80, 10, 'pause0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
+		backButton = createCustomButton(20, 20, 'back0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
+		pauseButton = createCustomButton(FlxG.width - 70, 20, 'pause0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
 
 		add(buttonLeft);
 		add(buttonDown);
