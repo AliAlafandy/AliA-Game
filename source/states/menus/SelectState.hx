@@ -44,6 +44,7 @@ class SelectState extends GameState {
         super.update(elapsed);
         if (controls.ACCEPT) {
             FlxG.switchState(new CharacterState());
+			FlxG.sound.music.volume = 0;
         }
         if (controls.BACK) {
             FlxG.switchState(new MenuState());
