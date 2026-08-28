@@ -495,7 +495,7 @@ class OnlineState extends GameState
 		if (controls.BACK)
 		{
 			MultiPlayer.instance.off("connected", null);
-			FlxG.switchState(new MenuState());
+			GameState.switchState(new MenuState());
 		}
 	}
 
