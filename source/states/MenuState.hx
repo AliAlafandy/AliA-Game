@@ -83,10 +83,10 @@ class MenuState extends GameState
 
 		for (i in 0...optionShit.length)
 		{
-			var baseX:Float = 20;
-			var baseY:Float = 20;
+			var baseX:Float = 15;
+			var baseY:Float = 15;
 			
-			var menuItem:FlxSprite = new FlxSprite(baseX + (i * 105), baseY + (i * 135));
+			var menuItem:FlxSprite = new FlxSprite(baseX + (i * 125), baseY + (i * 130));
 			menuItem.loadGraphic(Paths.image('menus/Menus/' + optionShit[i] + '_button'));
 			menuItems.add(menuItem);
 
