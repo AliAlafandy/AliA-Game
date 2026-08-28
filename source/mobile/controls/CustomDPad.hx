@@ -127,7 +127,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		buttonUp = createCustomButton(X + 100, Y + 65, 'touch Up0000', [MobileInputID.GAME_UP, MobileInputID.UP, MobileInputID.UP2], customFrames);
 		buttonRight = createCustomButton(X + 180, Y + 150, 'touch Right0000', [MobileInputID.GAME_RIGHT, MobileInputID.RIGHT, MobileInputID.RIGHT2], customFrames);
 
-		jumpBG = new TouchButton(FlxG.width - 265 + X, Y + 125, []);
+		jumpBG = new TouchButton(FlxG.width - 275 + X, Y + 125, []);
 		if (customFrames != null)
 		{
 			jumpBG.frames = customFrames;
@@ -228,6 +228,30 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 
 		add(backButton);
 		add(pauseButton);
+
+		if (touchPad.buttonLeft.justPressed || touch.buttonLeft.pressed)
+			dPad.animation.play('left');
+		} else if (touchPad.buttonDown.justPressed || touch.buttonDown.pressed) {
+			dPad.animation.play('down');
+		} else if (touchPad.buttonUp.justPressed || touch.buttonUp.pressed) {
+			dPad.animation.play('up');
+		} else if (touchPad.buttonRight.justPressed || touch.buttonRight.pressed) {
+			dPad.animation.play('right');
+		} else {
+			dPad.animation.play('idle');
+		}
+
+		if (touchPad.jumpButton.justPressed || touch.jumpButton.pressed)
+			dPad.animation.play('press');
+		} else {
+			jumpPad.animation.play('idle');
+		}
+
+		if (touchPad.powerButton.justPressed || touch.powerButton.pressed)
+			dPad.animation.play('press');
+		} else {
+			powerPad.animation.play('idle');
+		}
 
 		updateTrackedButtons();
 	}
