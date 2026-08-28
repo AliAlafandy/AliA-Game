@@ -86,7 +86,7 @@ class MenuState extends GameState
 			var baseX:Float = 15;
 			var baseY:Float = 15;
 			
-			var menuItem:FlxSprite = new FlxSprite(baseX + (i * 175), baseY + (i * 130));
+			var menuItem:FlxSprite = new FlxSprite(baseX + (i * 170), baseY + (i * 130));
 			menuItem.loadGraphic(Paths.image('menus/Menus/' + optionShit[i] + '_button'));
 			menuItems.add(menuItem);
 
@@ -199,12 +199,12 @@ class MenuState extends GameState
 			if (i == curSelected)
 			{
 				item.alpha = 1.0;
-				item.scale.set(1.1, 1.1); 
+				item.scale.set(1.0, 1.0); 
 			}
 			else
 			{
 				item.alpha = 0.6;
-				item.scale.set(1.0, 1.0);
+				item.scale.set(0.9, 0.9);
 			}
 			
 			item.updateHitbox();
