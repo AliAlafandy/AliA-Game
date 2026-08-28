@@ -63,7 +63,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		var offset:Float = 25;
 
 		var scalePad:Float = 1;
-		var scaleAction:Float = scale - 0.25;
+		var scaleAction:Float = scalePad - 0.25;
 
 		padBG = new TouchButton(X + offset, Y + offset, []);
 		if (customFrames != null)
