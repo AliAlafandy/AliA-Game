@@ -53,11 +53,12 @@ class CharacterState extends GameState {
 
         if (controls.ACCEPT) {
             // Save selected character here
-            FlxG.switchState(new PlayState());
+            GameState.switchState(new PlayState());
+			FlxG.sound.music.volume = 0;
         }
 
         if (controls.BACK) {
-            FlxG.switchState(new SelectState());
+            GameState.switchState(new SelectState());
         }
     }
 }
