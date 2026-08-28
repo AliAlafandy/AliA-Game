@@ -8,7 +8,7 @@ import mobile.data.MobileInputID;
 import states.TitleState;
 
 #if mobile
-import mobile.backend.Vibration;
+import mobile.data.debug.Vibration;
 #end
 
 @:structInit class SaveVariables {
