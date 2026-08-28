@@ -1,4 +1,4 @@
-package states;
+package states.editors;
 
 import flixel.FlxG;
 import flixel.text.FlxText;
