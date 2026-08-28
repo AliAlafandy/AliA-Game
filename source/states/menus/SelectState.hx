@@ -43,11 +43,11 @@ class SelectState extends GameState {
     override public function update(elapsed:Float) {
         super.update(elapsed);
         if (controls.ACCEPT) {
-            FlxG.switchState(new CharacterState());
+            GameState.switchState(new CharacterState());
 			FlxG.sound.music.volume = 0;
         }
         if (controls.BACK) {
-            FlxG.switchState(new MenuState());
+            GameState.switchState(new MenuState());
         }
     }
 }
