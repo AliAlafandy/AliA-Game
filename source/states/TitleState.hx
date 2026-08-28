@@ -116,7 +116,7 @@ class TitleState extends GameState
 		{
 			if (touch.justPressed)
 			{
-				pressedEnter = true;
+				pressedAny = true;
 			}
 		}
 		#end
