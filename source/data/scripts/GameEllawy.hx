@@ -6,12 +6,22 @@ import flixel.FlxG;
 import flixel.FlxState;
 import haxe.ds.StringMap;
 
+import data.scripts.EllawyUtils;
+
 class GameEllawy
 {
     private static var initialized:Bool = false;
     private static var scripts:StringMap<GameEllawyScript> = new StringMap<GameEllawyScript>();
     private static var globals:StringMap<Dynamic> = new StringMap<Dynamic>();
     private static var callbacks:StringMap<Array<Dynamic->Void>> = new StringMap<Array<Dynamic->Void>>();
+
+    //public var ellawy:State = null;
+    public var scriptName:String = '';
+
+    public function new(scriptName:String)
+    {
+        set('buildTarget', EllawyUtils.getBuildTarget());
+    }
 
     /**
      * Initializes the Ellawy runtime.
