@@ -272,7 +272,7 @@ class OnlineState extends GameState
 
 	private function loadModList():Void
 	{
-		Network.fetchJson("https://alia-server.onrender.com/api/mods.json", onModsLoaded, onModsFailed);
+	    Network.fetchJson("https://alia-server.onrender.com/api/mods", onModsLoaded, onModsFailed);
 	}
 
 	private function onModsLoaded(data:Dynamic):Void
@@ -289,27 +289,27 @@ class OnlineState extends GameState
 
 	private function renderList():Void
 	{
-		listGroup.clear();
-
-		var y = LIST_START_Y;
-		for (mod in mods)
-		{
-			var nameText = new FlxText(20, y, 300, mod.name + " - " + mod.author, 16);
-			listGroup.add(nameText);
-
-			var descText = new FlxText(20, y + 18, 300, mod.description, 12);
-			listGroup.add(descText);
-
-			var btn = new FlxButton(400, y, "Download", null);
-			btn.onUp.callback = function() downloadMod(mod.zip, btn);
-			listGroup.add(btn);
-
-			y += ENTRY_HEIGHT;
-		}
-
-		maxScroll = Math.max(0, y - FlxG.height + 140);
-		scrollY = 0;
-		listGroup.y = 0;
+	    listGroup.clear();
+	
+	    var y = LIST_START_Y;
+	    for (mod in mods)
+	    {
+	        var nameText = new FlxText(20, y, 300, mod.name, 16);
+	        listGroup.add(nameText);
+	
+	        var descText = new FlxText(20, y + 18, 300, mod.description, 12);
+	        listGroup.add(descText);
+	
+	        var btn = new FlxButton(400, y, "Download", null);
+	        btn.onUp.callback = function() downloadMod(mod.download_url, btn);
+	        listGroup.add(btn);
+	
+	        y += ENTRY_HEIGHT;
+	    }
+	
+	    maxScroll = Math.max(0, y - FlxG.height + 140);
+	    scrollY = 0;
+	    listGroup.y = 0;
 	}
 
 	private function downloadMod(url:String, btn:FlxButton):Void
