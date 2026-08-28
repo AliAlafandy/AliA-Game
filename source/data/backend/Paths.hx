@@ -180,7 +180,7 @@ class Paths
 
 	static public function sound(key:String, ?library:String):Sound
 	{
-		var sound:Sound = returnSound('music/sound', key, library);
+		var sound:Sound = returnSound('music/sounds', key, library);
 		return sound;
 	}
 
@@ -489,12 +489,12 @@ class Paths
 
 	inline static public function modsShaderFragment(key:String, ?library:String)
 	{
-		return modFolders('shaders/'+key+'.frag');
+		return modFolders('shaders/' + key + '.frag');
 	}
 
 	inline static public function modsShaderVertex(key:String, ?library:String)
 	{
-		return modFolders('shaders/'+key+'.vert');
+		return modFolders('shaders/' + key + '.vert');
 	}
 
 	inline static public function modsAchievements(key:String) {
