@@ -1,4 +1,4 @@
-package states.menus;
+package states.options;
 
 import flixel.FlxG;
 import flixel.text.FlxText;
