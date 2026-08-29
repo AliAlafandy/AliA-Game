@@ -45,7 +45,7 @@ class OptionsState extends GameState
         refresh();
 
 		#if mobile
-		addCustomDPad('EXIST', 'MENU');
+		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
 		#end
     }
