@@ -60,7 +60,7 @@ class EditorState extends GameState
 		add(info);
 
 		#if mobile
-		addCustomDPad();
+		addCustomDPad('EXIST', 'MENU');
 		addCustomDPadCam();
 		#end
 
