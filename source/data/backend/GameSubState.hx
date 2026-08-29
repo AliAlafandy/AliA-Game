@@ -64,7 +64,7 @@ class GameSubState extends FlxSubState
 		}
 	}
 
-	public function removeCustomPad()
+	public function removeCustomDPad()
 	{
 		if (customDPad != null)
 		{
@@ -147,7 +147,7 @@ class GameSubState extends FlxSubState
         #if mobile
 		controls.isInSubstate = false;
 		removeTouchPad();
-		removeCustomPad();
+		removeCustomDPad();
 		removeMobileControls();
         #end
 		
