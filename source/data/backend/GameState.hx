@@ -90,7 +90,7 @@ class GameState extends FlxUIState
 		add(mobileControls.instance);
 	}
 
-	public function removeCustomPad()
+	public function removeCustomDPad()
 	{
 		if (customDPad != null)
 		{
