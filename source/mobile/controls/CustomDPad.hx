@@ -215,8 +215,8 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 
 		jumpButton = createCustomButton(FlxG.width - 200, FlxG.height - 150, 1, 1, 'null0000', [MobileInputID.JUMP, MobileInputID.Z], customFrames);
 		powerButton = createCustomButton(FlxG.width - 100, FlxG.height - 260, 1, 1, 'power Idle0000', [MobileInputID.POWER, MobileInputID.C], customFrames);
-		backButton = createCustomButton(27, 30, 'null0000', 1, 1, [MobileInputID.BACK_M, MobileInputID.B], customFrames);
-		pauseButton = createCustomButton(FlxG.width - 95, 30, 'pause0000', 1, 1, [MobileInputID.PAUSE, MobileInputID.P], customFrames);
+		backButton = createCustomButton(27, 30, 1, 1, 'null0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
+		pauseButton = createCustomButton(FlxG.width - 95, 30, 1, 1, 'pause0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
 
 		add(buttonLeft);
 		add(buttonDown);
@@ -266,7 +266,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 
 	private function createCustomButton(X:Float, Y:Float, Width:Float, Height:Float, frameName:String, IDs:Array<MobileInputID>, frames:Dynamic):TouchButton
 	{
-		var button = new TouchButton(X, Y, Width, Height, IDs);
+		var button = new TouchButton(X, Y, IDs);
 		
 		if (frames != null)
 		{
