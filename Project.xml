@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	<!-- Application Settings -->
-	<app title="Ali Alafandy - Game" />
-	<app file="AliA_Game" />
+	<app title="Ali-A Game" if="mobile">
+	<app title="Ali Alafandy - Game" unless="mobile"/>
+	<app file="Ali-A_Game" />
 	<app packageName="com.alialafandy.aliagame" />
 	<app package="com.alialafandy.aliagame" />
 	<app main="Main" />
