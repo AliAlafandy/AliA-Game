@@ -40,8 +40,6 @@ class EditorState extends GameState
 		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
 		add(bg);
 
-		// FlxG.camera.bgColor = FlxColor.BLACK;
-
 		buildOptions();
 
 		title = new FlxText(0, 80, FlxG.width, 'EDITOR ZONE', 32);
