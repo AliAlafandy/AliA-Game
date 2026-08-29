@@ -151,6 +151,9 @@ class OnlineState extends GameState
 	{
 		super.create();
 
+		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
+		add(bg);
+
 		if (MultiPlayer.instance == null)
 			new MultiPlayer();
 
