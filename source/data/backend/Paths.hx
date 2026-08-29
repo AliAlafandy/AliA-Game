@@ -180,7 +180,7 @@ class Paths
 
 	static public function sound(key:String, ?library:String):Sound
 	{
-		var sound:Sound = returnSound('music/sounds', key, library);
+		var sound:Sound = returnSound('sounds', key, 'music');
 		return sound;
 	}
 
