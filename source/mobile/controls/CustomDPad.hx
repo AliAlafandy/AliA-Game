@@ -122,12 +122,12 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		arrows.antialiasing = ClientPrefs.data.antialiasing;
 		add(arrows);
 		
-		buttonLeft = createCustomButton(X + 20, Y + 150, 'touch Left0000', [MobileInputID.GAME_LEFT, MobileInputID.LEFT, MobileInputID.LEFT2], customFrames);
-		buttonDown = createCustomButton(X + 100, Y + 235, 'touch Down0000', [MobileInputID.GAME_DOWN, MobileInputID.DOWN, MobileInputID.DOWN2], customFrames);
-		buttonUp = createCustomButton(X + 100, Y + 65, 'touch Up0000', [MobileInputID.GAME_UP, MobileInputID.UP, MobileInputID.UP2], customFrames);
-		buttonRight = createCustomButton(X + 180, Y + 150, 'touch Right0000', [MobileInputID.GAME_RIGHT, MobileInputID.RIGHT, MobileInputID.RIGHT2], customFrames);
+		buttonLeft = createCustomButton(X + 20, Y + 150, 'null0000', [MobileInputID.GAME_LEFT, MobileInputID.LEFT, MobileInputID.LEFT2], customFrames);
+		buttonDown = createCustomButton(X + 100, Y + 235, 'null0000', [MobileInputID.GAME_DOWN, MobileInputID.DOWN, MobileInputID.DOWN2], customFrames);
+		buttonUp = createCustomButton(X + 100, Y + 65, 'null0000', [MobileInputID.GAME_UP, MobileInputID.UP, MobileInputID.UP2], customFrames);
+		buttonRight = createCustomButton(X + 180, Y + 150, 'null0000', [MobileInputID.GAME_RIGHT, MobileInputID.RIGHT, MobileInputID.RIGHT2], customFrames);
 
-		jumpBG = new TouchButton(FlxG.width - 277 + X, Y + 170, []);
+		jumpBG = new TouchButton(FlxG.width - 278 + X, Y + 170, []);
 		if (customFrames != null)
 		{
 			jumpBG.frames = customFrames;
@@ -199,7 +199,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		backPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(backPad);
 
-		pausePad = new TouchButton(FlxG.width - 95 - X, Y - 340, []);
+		pausePad = new TouchButton(FlxG.width - 90 + X, Y - 340, []);
 		if (customFrames != null)
 		{
 			pausePad.frames = customFrames;
@@ -214,7 +214,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		add(pausePad);
 
 		jumpButton = createCustomButton(FlxG.width - 200, FlxG.height - 150, 'jump Idle0000', [MobileInputID.JUMP, MobileInputID.Z], customFrames);
-		powerButton = createCustomButton(FlxG.width - 100, FlxG.height - 270, 'power Idle0000', [MobileInputID.POWER, MobileInputID.C], customFrames);
+		powerButton = createCustomButton(FlxG.width - 100, FlxG.height - 265, 'power Idle0000', [MobileInputID.POWER, MobileInputID.C], customFrames);
 		backButton = createCustomButton(28, 30, 'back0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
 		pauseButton = createCustomButton(FlxG.width - 95, 30, 'pause0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
 
