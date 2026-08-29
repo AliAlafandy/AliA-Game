@@ -360,7 +360,7 @@ class PlayState extends GameState
 		if (controls.BACK)
 		{
 			leaveOnlineMode();
-			FlxG.switchState(new MenuState());
+			GameState.switchState(new MenuState());
 		}
 
 		#if HSCRIPT_ALLOWED
