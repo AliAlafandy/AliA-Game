@@ -37,7 +37,7 @@ class EditorState extends GameState
 	{
 		super.create();
 
-		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
+		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/Options/background'));
 		add(bg);
 
 		buildOptions();
