@@ -27,6 +27,9 @@ class ModsState extends GameState {
     override public function create() {
         super.create();
 
+		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
+		add(bg);
+
         add(new FlxText(20, 20, 0, "MOD MANAGER", 24));
 
         var yPos = 80;
