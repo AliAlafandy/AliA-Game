@@ -86,8 +86,9 @@ class SelectState extends GameState
 
         for (i in 0...saves.length)
         {
-            var prefix:String = i == selected ? '> ' : '  ';
-            output += prefix + saves[i] + '\n';
+            var prefix:String = i == selected ? '> ' : '';
+			var prefix2:String = i == selected ? ' <' : '';
+            output += prefix + saves[i] + prefix2 + '\n';
         }
 
         output += '\nUP / DOWN - Select\nENTER - Open\nESC - Back';
