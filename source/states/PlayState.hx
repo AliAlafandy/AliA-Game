@@ -127,7 +127,7 @@ class PlayState extends GameState
 		add(help);*/
 
 		#if mobile
-		addCustomDPad('EXIST', 'PLAY');
+		addCustomDPad('EXITE', 'PLAY');
 		addCustomDPadCam();
 		#end
 
