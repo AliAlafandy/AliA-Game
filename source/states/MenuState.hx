@@ -145,18 +145,18 @@ class MenuState extends GameState
 					switch (optionShit[curSelected])
 					{
 						case 'play':
-							FlxG.switchState(new SelectState());
+							GameState.switchState(new SelectState());
 
 						case 'online':
-							FlxG.switchState(new OnlineState());
+							GameState.switchState(new OnlineState());
 
 						#if MODS_ALLOWED
 						case 'mods':
-							FlxG.switchState(new ModsState());
+							GameState.switchState(new ModsState());
 						#end
 
 						case 'options':
-							FlxG.switchState(new OptionsState());
+							GameState.switchState(new OptionsState());
 
 						case 'exit':
 							LimeSystem.exit(1);
