@@ -281,7 +281,14 @@ class PlayState extends GameState
 		callOnScripts('onUpdate', [elapsed]);
 		#end
 
-		if (!paused && (FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.P || customDPad.pauseButton.justPressed))
+		if (!paused && (FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.P
+						#if mobile 
+						#if android
+						|| FlxG.android.justReleased.BACK || customDPad.pauseButton.justPressed
+						#else
+						|| customDPad.pauseButton.justPressed
+						#end
+						#end))
         {
             openPauseMenu();
             return;
