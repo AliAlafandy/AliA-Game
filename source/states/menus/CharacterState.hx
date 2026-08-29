@@ -24,6 +24,12 @@ class CharacterState extends GameState {
     }
 
     override public function create() {
+		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
+		add(bg);
+
+		var charPlace:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/Selects/char_place'));
+		add(charPlace);
+
         txt = new FlxText(0, 0, 0, "", 16);
         txt.screenCenter();
         add(txt);
