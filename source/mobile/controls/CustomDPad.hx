@@ -108,7 +108,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		dPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(dPad);
 
-		arrows = new TouchButton(dPad.x + (offset - 15), dPad.y + (offset - 15), []);
+		arrows = new TouchButton(dPad.x + (offset - 15), dPad.y + (offset - 17), []);
 		if (customFrames != null)
 		{
 			arrows.frames = customFrames;
@@ -199,7 +199,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		backPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(backPad);
 
-		pausePad = new TouchButton(X + (FlxG.width - 140), Y - 340, []);
+		pausePad = new TouchButton(X + (FlxG.width - 150), Y - 340, []);
 		if (customFrames != null)
 		{
 			pausePad.frames = customFrames;
