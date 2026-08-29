@@ -53,7 +53,6 @@ class EditorState extends GameState
 		{
 			var entry = new FlxText(0, 180 + (i * 40), FlxG.width, options[i].label, 24);
 			entry.setFormat(null, 24, FlxColor.WHITE, CENTER);
-			//entry.alignment(CENTER, null);
 			optionTexts.add(entry);
 		}
 
