@@ -38,7 +38,7 @@ class SelectState extends GameState {
         add(t);
 
         #if mobile
-		addCustomDPad('EXIST', 'MENU');
+		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
 		#end
     }
