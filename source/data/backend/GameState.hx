@@ -15,8 +15,10 @@ class GameState extends FlxUIState
 	#if mobile
 	public var touchPad:TouchPad;
 	public var touchPadCam:FlxCamera;
+
 	public var customDPad:CustomDPad;
 	public var customDPadCam:FlxCamera;
+
 	public var mobileControls:IMobileControls;
 	public var mobileControlsCam:FlxCamera;
 
@@ -26,6 +28,14 @@ class GameState extends FlxUIState
 
 		touchPad = new TouchPad(DPad, Action);
 		add(touchPad);
+	}
+
+	public function addTouchPadCamera(defaultDrawTarget:Bool = false):Void
+	{
+		if (touchPad == null || touchPadCam != null) return;
+
+		touchPadCam = createOverlayCamera(defaultDrawTarget);
+		touchPad.cameras = [touchPadCam];
 	}
 
 	public function addCustomDPad():Void
@@ -43,14 +53,6 @@ class GameState extends FlxUIState
 
 		customDPadCam = createOverlayCamera(defaultDrawTarget);
 		customDPad.cameras = [customDPadCam];
-	}
-
-	public function addTouchPadCamera(defaultDrawTarget:Bool = false):Void
-	{
-		if (touchPad == null || touchPadCam != null) return;
-
-		touchPadCam = createOverlayCamera(defaultDrawTarget);
-		touchPad.cameras = [touchPadCam];
 	}
 
 	public function addMobileControls(defaultDrawTarget:Bool = false):Void
