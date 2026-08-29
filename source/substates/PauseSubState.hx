@@ -1,7 +1,6 @@
 package substates;
 
 import flixel.FlxG;
-import flixel.FlxSubState;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 
