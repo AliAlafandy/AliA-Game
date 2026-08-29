@@ -90,7 +90,7 @@ class EditorState extends GameState
 			options[selectedIndex].action();
 
 		if (controls.BACK)
-			FlxG.switchState(new MenuState());
+			GameState.switchState(new MenuState());
 	}
 
 	private function moveSelection(direction:Int):Void
