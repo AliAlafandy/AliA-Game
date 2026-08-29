@@ -17,7 +17,7 @@ class SelectState extends GameState
         'NEW GAME 8'
     ];
 
-	private var text:FlxText;
+	private var t:FlxText;
 
     #if mobile
     public var manager:MobileInputManager;
@@ -35,9 +35,9 @@ class SelectState extends GameState
 		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
 		add(bg);
 
-        text = new FlxText(0, 0, 0, "", 14);
-        text.screenCenter();
-        add(text);
+        t = new FlxText(0, 0, 0, "", 14);
+        t.screenCenter();
+        add(t);
 
         #if mobile
 		addCustomDPad('EXITE', 'MENU');
@@ -90,7 +90,7 @@ class SelectState extends GameState
 
         output += '\nUP / DOWN - Select\nENTER - Open\nESC - Back';
 
-        text.text = output;
-        text.screenCenter();
+        t.text = output;
+        t.screenCenter();
 	}
 }
