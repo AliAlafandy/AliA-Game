@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.util.FlxSignal.FlxTypedSignal;
 
+@:access(mobile.controls.TouchButton)
 class CustomDPad extends MobileInputManager implements IMobileControls
 {
 	public var padBG:TouchButton;
@@ -39,11 +40,13 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 	public var onButtonDown:FlxTypedSignal<TouchButton->Void> = new FlxTypedSignal<TouchButton->Void>();
 	public var onButtonUp:FlxTypedSignal<TouchButton->Void> = new FlxTypedSignal<TouchButton->Void>();
 
-	public function new(X:Float, Y:Float)
+	/**
+	* @param DPadMode
+	* @param ActionMode
+	*/
+	public function new(DPad:String, Action:String)
 	{
 		super();
-
-		instance = this;
 
 		var color:String; //'yellow' / 'blue'
 		if (ClientPrefs.data.controlsColor == 'Yellow') {
@@ -60,6 +63,8 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		trace(path2);
 		var customFrames = Paths.getSparrowAtlas('d-pad_' + color , 'mobile');
 
+		var X:Float = 30;
+		var Y:Float = FlxG.height - 370;
 		var offset:Float = 30;
 
 		var scalePad:Float = 1;
@@ -229,7 +234,36 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		add(backButton);
 		add(pauseButton);
 
+		if (DPad != "NONE")
+		{
+			if (!MobileData.dpadModes.exists(DPad))
+				throw 'The customDPad dpadMode "$DPad" doesn\'t exists.';
+
+			for (buttonData in MobileData.dpadModes.get(DPad).buttons)
+			{
+				Reflect.setField(this, buttonData.button,
+					createCustomButton(buttonData.x, buttonData.y, buttonData.width, buttonData.height, // framename
+						Reflect.getProperty(this, buttonData.button).IDs));
+				add(Reflect.field(this, buttonData.button));
+			}
+		}
+
+		if (Action != "NONE")
+		{
+			if (!MobileData.actionModes.exists(Action))
+				throw 'The customDPad actionMode "$Action" doesn\'t exists.';
+
+			for (buttonData in MobileData.actionModes.get(Action).buttons)
+			{
+				Reflect.setField(this, buttonData.button,
+					createCustomButton(buttonData.x, buttonData.y, buttonData.width, buttonData.height, // frameName
+						Reflect.getProperty(this, buttonData.button).IDs));
+				add(Reflect.field(this, buttonData.button));
+			}
+		}
+
 		updateTrackedButtons();
+		instance = this;
 	}
 
 	override function update(elapsed:Float)
