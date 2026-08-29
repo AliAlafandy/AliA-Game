@@ -109,7 +109,7 @@ class MenuState extends GameState
 
 		// TODO: plugar seu próprio sistema de touch controls aqui (mobile.controls.*)
 		#if mobile
-		addCustomDPad();
+		addCustomDPad('EXIST', 'MENU');
 		addCustomDPadCam();
 		#end
 	}
