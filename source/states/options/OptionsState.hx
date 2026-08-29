@@ -34,7 +34,8 @@ class OptionsState extends GameState
     {
         super.create();
 
-        FlxG.camera.bgColor = FlxColor.BLACK;
+        var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/Options/background'));
+		add(bg);
 
         text = new FlxText(0, 0, FlxG.width, '', 24);
 
