@@ -579,6 +579,10 @@ class PlayState extends GameState
         paused = true;
         FlxG.sound.music.pause();
         openSubState(new PauseSubState());
+
+		#if mobile
+		removeCustomDPad();
+		#end
     }
 
     override public function closeSubState():Void
@@ -586,6 +590,11 @@ class PlayState extends GameState
         paused = false;
         FlxG.sound.music.resume();
         super.closeSubState();
+
+		#if mobile
+		removeCustomDPad();
+		addCustomDPad('EXITE', 'PLAY');
+		#end
 	}
 
 	override public function destroy():Void
