@@ -118,16 +118,16 @@ class PlayState extends GameState
 		player.screenCenter();
 		add(player);
 
-		var title:FlxText = new FlxText(0, 20, FlxG.width, 'ALI ALAFANDY GAME', 24);
+		/*var title:FlxText = new FlxText(0, 20, FlxG.width, 'ALI ALAFANDY GAME', 24);
 		title.setFormat(null, 24, FlxColor.WHITE, CENTER);
 		add(title);
 
 		var help:FlxText = new FlxText(0, FlxG.height - 50, FlxG.width, 'ARROW KEYS / WASD    PAUSE: ESC', 16);
 		help.setFormat(null, 16, FlxColor.WHITE, CENTER);
-		add(help);
+		add(help);*/
 
 		#if mobile
-		addCustomDPad();
+		addCustomDPad('EXIST', 'PLAY');
 		addCustomDPadCam();
 		#end
 
