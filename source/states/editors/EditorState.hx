@@ -5,7 +5,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
-import states.editors.LevelEditorState;
+import states.editors.*;
 
 typedef EditorOption =
 {
