@@ -94,6 +94,7 @@ class MenuState extends GameState
 			if (optionShit.length < 6)
 				scr = 0;
 			menuItem.scrollFactor.set(0, scr);
+			//menuItems.centerOffsets();
 			menuItem.updateHitbox();
 		}
 
