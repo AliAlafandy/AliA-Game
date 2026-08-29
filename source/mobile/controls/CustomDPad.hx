@@ -6,7 +6,7 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.util.FlxSignal.FlxTypedSignal;
 
-@:access(mobile.controls.TouchButton)
+// @:access(mobile.controls.TouchButton)
 class CustomDPad extends MobileInputManager implements IMobileControls
 {
 	public var padBG:TouchButton;
@@ -82,7 +82,6 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		padBG.updateHitbox();
 		padBG.alpha = ClientPrefs.data.controlsAlpha;
 		padBG.antialiasing = ClientPrefs.data.antialiasing;
-		add(padBG);
 
 		dPad = new TouchButton(padBG.x + offset, padBG.y + offset, []);
 		if (customFrames != null)
@@ -111,7 +110,6 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		dPad.updateHitbox();
 		dPad.alpha = ClientPrefs.data.controlsAlpha;
 		dPad.antialiasing = ClientPrefs.data.antialiasing;
-		add(dPad);
 
 		arrows = new TouchButton(dPad.x + (offset - 15), dPad.y + (offset - 17), []);
 		if (customFrames != null)
@@ -125,7 +123,6 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		arrows.updateHitbox();
 		arrows.alpha = ClientPrefs.data.controlsAlpha;
 		arrows.antialiasing = ClientPrefs.data.antialiasing;
-		add(arrows);
 		
 		buttonLeft = createCustomButton(X + 10, Y + 150, 0.5, 0.5, 'null0000', [MobileInputID.GAME_LEFT, MobileInputID.LEFT, MobileInputID.LEFT2], customFrames);
 		buttonDown = createCustomButton(X + 90, Y + 235, 0.5, 0.5, 'null0000', [MobileInputID.GAME_DOWN, MobileInputID.DOWN, MobileInputID.DOWN2], customFrames);
@@ -144,7 +141,6 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		jumpBG.updateHitbox();
 		jumpBG.alpha = ClientPrefs.data.controlsAlpha;
 		jumpBG.antialiasing = ClientPrefs.data.antialiasing;
-		add(jumpBG);
 
 		jumpPad = new TouchButton(jumpBG.x + (offset - 7), jumpBG.y + (offset - 7), []);
 		if (customFrames != null)
@@ -159,7 +155,6 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		jumpPad.updateHitbox();
 		jumpPad.alpha = ClientPrefs.data.controlsAlpha;
 		jumpPad.antialiasing = ClientPrefs.data.antialiasing;
-		add(jumpPad);
 
 		powerBG = new TouchButton(X + (FlxG.width - 165), Y + 60, []);
 		if (customFrames != null)
@@ -173,7 +168,6 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		powerBG.updateHitbox();
 		powerBG.alpha = ClientPrefs.data.controlsAlpha;
 		powerBG.antialiasing = ClientPrefs.data.antialiasing;
-		add(powerBG);
 
 		powerPad = new TouchButton(powerBG.x + (offset - 11), powerBG.y + (offset - 10), []);
 		if (customFrames != null)
@@ -188,7 +182,6 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		powerPad.updateHitbox();
 		powerPad.alpha = ClientPrefs.data.controlsAlpha;
 		powerPad.antialiasing = ClientPrefs.data.antialiasing;
-		add(powerPad);
 
 		backPad = new TouchButton(X - 20, Y - 340, []);
 		if (customFrames != null)
@@ -202,7 +195,6 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		backPad.updateHitbox();
 		backPad.alpha = ClientPrefs.data.controlsAlpha;
 		backPad.antialiasing = ClientPrefs.data.antialiasing;
-		add(backPad);
 
 		pausePad = new TouchButton(X + (FlxG.width - 145), Y - 340, []);
 		if (customFrames != null)
@@ -216,50 +208,69 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		pausePad.updateHitbox();
 		pausePad.alpha = ClientPrefs.data.controlsAlpha;
 		pausePad.antialiasing = ClientPrefs.data.antialiasing;
-		add(pausePad);
 
 		jumpButton = createCustomButton(jumpPad.x, jumpPad.y, 0.75, 0.75, 'null0000', [MobileInputID.JUMP, MobileInputID.Z], customFrames);
 		powerButton = createCustomButton(powerPad.x, powerPad.y, 0.75, 0.75, 'null0000', [MobileInputID.POWER, MobileInputID.C], customFrames);
 		backButton = createCustomButton(backPad.x, backPad.y, 0.75, 0.75, 'null0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
 		pauseButton = createCustomButton(pausePad.x, pausePad.y, 0.75, 0.75, 'null0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
 
-		add(buttonLeft);
-		add(buttonDown);
-		add(buttonUp);
-		add(buttonRight);
-
-		add(jumpButton);
-		add(powerButton);
-
-		add(backButton);
-		add(pauseButton);
-
-		if (DPad != "NONE")
+		if (DPad == "EXITE")
 		{
-			if (!MobileData.dpadModes.exists(DPad))
-				throw 'The customDPad dpadMode "$DPad" doesn\'t exists.';
+			add(padBG);
+			add(dPad);
+			add(arrows);
 
-			for (buttonData in MobileData.dpadModes.get(DPad).buttons)
-			{
-				Reflect.setField(this, buttonData.button,
-					createCustomButton(buttonData.x, buttonData.y, buttonData.width, buttonData.height, // framename
-						Reflect.getProperty(this, buttonData.button).IDs));
-				add(Reflect.field(this, buttonData.button));
-			}
+			add(buttonLeft);
+			add(buttonDown);
+			add(buttonUp);
+			add(buttonRight);
+		} else {
+			// Error
 		}
 
-		if (Action != "NONE")
+		if (Action == "PLAY")
 		{
-			if (!MobileData.actionModes.exists(Action))
-				throw 'The customDPad actionMode "$Action" doesn\'t exists.';
+			add(jumpBG);
+			add(jumpPad);
+			add(jumpButton);
 
-			for (buttonData in MobileData.actionModes.get(Action).buttons)
-			{
-				Reflect.setField(this, buttonData.button,
-					createCustomButton(buttonData.x, buttonData.y, buttonData.width, buttonData.height, // frameName
-						Reflect.getProperty(this, buttonData.button).IDs));
-				add(Reflect.field(this, buttonData.button));
-			}
+			add(powerBG);
+			add(powerPad);
+			add(powerButton);
+
+			add(pausePad);
+			add(pauseButton);
+		} else if (Action == "MENU") {
+			add(jumpBG);
+			add(jumpPad);
+			add(jumpButton);
+
+			add(powerBG);
+			add(powerPad);
+			add(powerButton);
+
+			add(backPad);
+			add(backButton);
+		} else if (Action == "JUMP") {
+			add(jumpBG);
+			add(jumpPad);
+			add(jumpButton);
+		} else if (Action == "JUMP_POWER") {
+			add(jumpBG);
+			add(jumpPad);
+			add(jumpButton);
+
+			add(powerBG);
+			add(powerPad);
+			add(powerButton);
+		} else if (Action == "PAUSE") {
+			add(pausePad);
+			add(pauseButton);
+		} else if (Action == "BACK") {
+			add(backPad);
+			add(backButton);
+		} else {
+			// Error
 		}
 
 		updateTrackedButtons();
@@ -309,9 +320,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			{
 				button.animation.addByPrefix('idle', frameName, 0, false);
 				button.animation.play('idle');
-			}
-			else
-			{
+			} else {
 				button.animation.addByPrefix('idle', 'touch Idle0000', 0, false);
 				button.animation.play('idle');
 			}
