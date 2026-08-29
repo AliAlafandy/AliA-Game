@@ -22,10 +22,29 @@ class GameSubState extends FlxSubState
     #if mobile
 	public var touchPad:TouchPad;
 	public var touchPadCam:FlxCamera;
+	
 	public var customDPad:CustomDPad;
 	public var customDPadCam:FlxCamera;
+	
 	public var mobileControls:IMobileControls;
 	public var mobileControlsCam:FlxCamera;
+
+	public function addTouchPad(DPad:String, Action:String)
+	{
+		touchPad = new TouchPad(DPad, Action);
+		add(touchPad);
+	}
+
+	public function addTouchPadCamera(defaultDrawTarget:Bool = false):Void
+	{
+		if (touchPad != null)
+		{
+			touchPadCam = new FlxCamera();
+			touchPadCam.bgColor.alpha = 0;
+			FlxG.cameras.add(touchPadCam, defaultDrawTarget);
+			touchPad.cameras = [touchPadCam];
+		}
+	}
 
 	public function addCustomDPad():Void
 	{
@@ -58,12 +77,6 @@ class GameSubState extends FlxSubState
 			FlxG.cameras.remove(customDPadCam);
 			customDPadCam = FlxDestroyUtil.destroy(customDPadCam);
 		}
-	}
-
-	public function addTouchPad(DPad:String, Action:String)
-	{
-		touchPad = new TouchPad(DPad, Action);
-		add(touchPad);
 	}
 
 	public function removeTouchPad()
@@ -125,17 +138,6 @@ class GameSubState extends FlxSubState
 		{
 			FlxG.cameras.remove(mobileControlsCam);
 			mobileControlsCam = FlxDestroyUtil.destroy(mobileControlsCam);
-		}
-	}
-
-	public function addTouchPadCamera(defaultDrawTarget:Bool = false):Void
-	{
-		if (touchPad != null)
-		{
-			touchPadCam = new FlxCamera();
-			touchPadCam.bgColor.alpha = 0;
-			FlxG.cameras.add(touchPadCam, defaultDrawTarget);
-			touchPad.cameras = [touchPadCam];
 		}
 	}
     #end
