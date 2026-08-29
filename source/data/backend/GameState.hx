@@ -70,7 +70,7 @@ class GameState extends FlxUIState
 			case 2:
 				mobileControls = MobileData.getTouchPadCustom(new TouchPad('RIGHT_FULL', 'NONE'));
 			case 3:
-				mobileControls = new CustomDPad(30, FlxG.height - 370);
+				mobileControls = new CustomDPad('EXIST', 'FULL');
 				isCustomDPad = true;
 			default:
 				mobileControls = new TouchPad('RIGHT_FULL', 'NONE');
