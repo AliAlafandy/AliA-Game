@@ -15,7 +15,6 @@ class PauseSubState extends GameSubState
     private final options:Array<String> = [
         'RESUME',
         'RESTART',
-        'OPTIONS',
         'QUIT'
     ];
 
@@ -99,7 +98,7 @@ class PauseSubState extends GameSubState
             if (i == selected)
                 output += '> ' + options[i] + ' <\n';
             else
-                output += '  ' + options[i] + '\n';
+                output += options[i] + '\n';
         }
 
         output += '\nUP / DOWN - Select';
@@ -111,19 +110,16 @@ class PauseSubState extends GameSubState
 
     private function select():Void
     {
-        switch (selected)
+        switch (options[selected])
         {
-            case 0:
+            case 'RESUME':
                 close();
 
-            case 1:
+            case 'RESTART':
                 close();
                 GameState.resetState();
 
-            case 2:
-                GameState.switchState(new OptionsState());
-
-            case 3:
+            case 'QUIT':
                 close();
                 GameState.switchState(new MenuState());
         }
