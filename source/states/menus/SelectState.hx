@@ -35,9 +35,11 @@ class SelectState extends GameState
 		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
 		add(bg);
 
-        t = new FlxText(0, 0, 0, "", 14);
-        t.screenCenter();
+        t = new FlxText(0, 0, 0, "", 24);
+        t.setFormat(null, 24, FlxColor.WHITE, CENTER);
         add(t);
+
+		refresh();
 
         #if mobile
 		addCustomDPad('EXITE', 'MENU');
