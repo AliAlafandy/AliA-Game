@@ -4,6 +4,8 @@ import states.MenuState;
 
 class SelectState extends GameState
 {
+	private var selected:Int = 0;
+
 	private final saves:Array<String> = [
         'NEW GAME 1',
         'NEW GAME 2',
@@ -14,6 +16,8 @@ class SelectState extends GameState
         'NEW GAME 7',
         'NEW GAME 8'
     ];
+
+	private var text:FlxText;
 
     #if mobile
     public var manager:MobileInputManager;
@@ -31,7 +35,7 @@ class SelectState extends GameState
 		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
 		add(bg);
 
-        var text = new FlxText(0, 0, 0, "", 14);
+        text = new FlxText(0, 0, 0, "", 14);
         text.screenCenter();
         add(text);
 
