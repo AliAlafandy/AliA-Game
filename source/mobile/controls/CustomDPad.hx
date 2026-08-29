@@ -65,7 +65,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		var scalePad:Float = 1;
 		var scaleAction:Float = scalePad - 0.25;
 
-		padBG = new TouchButton(X + offset - 18, Y + offset + 35, []);
+		padBG = new TouchButton(X + (offset - 18), Y + (offset + 35), []);
 		if (customFrames != null)
 		{
 			padBG.frames = customFrames;
@@ -108,7 +108,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		dPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(dPad);
 
-		arrows = new TouchButton(dPad.x + offset - 5, dPad.y + offset - 5, []);
+		arrows = new TouchButton(dPad.x + (offset - 5), dPad.y + (offset - 5), []);
 		if (customFrames != null)
 		{
 			arrows.frames = customFrames;
@@ -127,7 +127,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		buttonUp = createCustomButton(X + 100, Y + 65, 0.5, 0.5, 'null0000', [MobileInputID.GAME_UP, MobileInputID.UP, MobileInputID.UP2], customFrames);
 		buttonRight = createCustomButton(X + 180, Y + 150, 0.5, 0.5, 'null0000', [MobileInputID.GAME_RIGHT, MobileInputID.RIGHT, MobileInputID.RIGHT2], customFrames);
 
-		jumpBG = new TouchButton(FlxG.width - 277 + X, Y + 170, []);
+		jumpBG = new TouchButton(X - (FlxG.width - 277), Y + 170, []);
 		if (customFrames != null)
 		{
 			jumpBG.frames = customFrames;
@@ -141,7 +141,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		jumpBG.antialiasing = ClientPrefs.data.antialiasing;
 		add(jumpBG);
 
-		jumpPad = new TouchButton(jumpBG.x + offset - 7, jumpBG.y + offset - 7, []);
+		jumpPad = new TouchButton(jumpBG.x + (offset - 7), jumpBG.y + (offset - 7), []);
 		if (customFrames != null)
 		{
 			jumpPad.frames = customFrames;
@@ -156,7 +156,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		jumpPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(jumpPad);
 
-		powerBG = new TouchButton(FlxG.width - 165 + X, Y + 60, []);
+		powerBG = new TouchButton(X - (FlxG.width - 165), Y + 60, []);
 		if (customFrames != null)
 		{
 			powerBG.frames = customFrames;
@@ -170,7 +170,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		powerBG.antialiasing = ClientPrefs.data.antialiasing;
 		add(powerBG);
 
-		powerPad = new TouchButton(powerBG.x + offset - 10, powerBG.y + offset - 10, []);
+		powerPad = new TouchButton(powerBG.x + (offset - 10), powerBG.y + (offset - 10), []);
 		if (customFrames != null)
 		{
 			powerPad.frames = customFrames;
@@ -199,7 +199,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		backPad.antialiasing = ClientPrefs.data.antialiasing;
 		add(backPad);
 
-		pausePad = new TouchButton(FlxG.width - 150 + X, Y - 340, []);
+		pausePad = new TouchButton(X - (FlxG.width - 20), Y - 340, []);
 		if (customFrames != null)
 		{
 			pausePad.frames = customFrames;
@@ -213,10 +213,10 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		pausePad.antialiasing = ClientPrefs.data.antialiasing;
 		add(pausePad);
 
-		jumpButton = createCustomButton(jumpPad.x, jumpPad.y, 0.9, 0.9, 'jump Idle0000', [MobileInputID.JUMP, MobileInputID.Z], customFrames);
-		powerButton = createCustomButton(powerPad.x, powerPad.y, 0.9, 0.9, 'power Idle0000', [MobileInputID.POWER, MobileInputID.C], customFrames);
-		backButton = createCustomButton(backPad.x, backPad.y, 0.9, 0.9, 'back0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
-		pauseButton = createCustomButton(pausePad.x, pausePad.y, 0.9, 0.9, 'pause0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
+		jumpButton = createCustomButton(jumpPad.x, jumpPad.y, 0.75, 0.75, 'jump Idle0000', [MobileInputID.JUMP, MobileInputID.Z], customFrames);
+		powerButton = createCustomButton(powerPad.x, powerPad.y, 0.75, 0.75, 'power Idle0000', [MobileInputID.POWER, MobileInputID.C], customFrames);
+		backButton = createCustomButton(backPad.x, backPad.y, 0.75, 0.75, 'back0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
+		pauseButton = createCustomButton(pausePad.x, pausePad.y, 0.75, 0.75, 'pause0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
 
 		add(buttonLeft);
 		add(buttonDown);
