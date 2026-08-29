@@ -17,6 +17,9 @@ class SelectState extends GameState {
     }
 
     override public function create() {
+		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
+		add(bg);
+
         var t = new FlxText(0, 0, 0,
         	"SELECT SAVE\n
         	\n
