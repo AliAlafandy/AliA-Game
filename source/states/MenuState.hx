@@ -116,7 +116,7 @@ class MenuState extends GameState
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(Paths.music('menus/menu'));
+			FlxG.sound.playMusic(Paths.music('menu', 'menus'));
 
 		if (!selectedSomethin)
 		{
@@ -129,13 +129,13 @@ class MenuState extends GameState
 			if (controls.BACK)
 			{
 				selectedSomethin = true;
-				FlxG.sound.play(Paths.sound('cancel'));
+				FlxG.sound.play(Paths.sound('cancel_sound'));
 				FlxG.switchState(new states.TitleState());
 			}
 
 			if (controls.ACCEPT)
 			{
-				FlxG.sound.play(Paths.sound('confirm'));
+				FlxG.sound.play(Paths.sound('confirm_sound'));
 
 				selectedSomethin = true;
 
@@ -183,7 +183,7 @@ class MenuState extends GameState
 
 	function changeItem(huh:Int = 0)
 	{
-		FlxG.sound.play(Paths.sound('scroll'));
+		FlxG.sound.play(Paths.sound('scroll_sound'));
 
 		curSelected += huh;
 
