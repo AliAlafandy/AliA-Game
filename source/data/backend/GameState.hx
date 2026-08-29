@@ -150,7 +150,7 @@ class GameState extends FlxUIState
 		#if mobile
 		removeTouchPad();
 		removeMobileControls();
-		removeCustomPad();
+		removeCustomDPad();
 		#end
 		super.destroy();
 	}
