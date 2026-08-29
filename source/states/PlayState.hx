@@ -11,7 +11,7 @@ import data.objects.Player;
 import online.MultiPlayer;
 import online.MultiPlayer.RemotePlayer;
 
-import states.substates.PauseSubState;
+import substates.PauseSubState;
 
 #if mobile
 import mobile.data.MobileInputManager;
