@@ -46,10 +46,10 @@ class GameSubState extends FlxSubState
 		}
 	}
 
-	public function addCustomDPad():Void
+	public function addCustomDPad(DPad:String, Action:String):Void
 	{
-		customDPad = new CustomDPad(30, FlxG.height - 370);
-		customDPad.visible = true;
+		customDPad = new CustomDPad(DPad, Action);
+		// customDPad.visible = true;
 		add(customDPad);
 	}
 
