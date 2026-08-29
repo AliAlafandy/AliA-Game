@@ -166,7 +166,7 @@ class OnlineState extends GameState
 		bindMultiplayerEvents();
 
 		#if mobile
-		addCustomDPad();
+		addCustomDPad('NONE', 'BACK');
 		addCustomDPadCam();
 		#end
 
