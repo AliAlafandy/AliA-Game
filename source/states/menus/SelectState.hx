@@ -37,6 +37,7 @@ class SelectState extends GameState
 
         t = new FlxText(0, 0, 0, "", 24);
         t.setFormat(null, 24, FlxColor.WHITE, CENTER);
+		t.alignment(CENTER, null);
         add(t);
 
 		refresh();
