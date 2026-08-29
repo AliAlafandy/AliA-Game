@@ -199,11 +199,11 @@ class MenuState extends GameState
 			if (i == curSelected)
 			{
 				item.alpha = 1.0;
-				item.scale.set(1.0, 1.0); 
-			}
-			else
-			{
+				item.x = -10;
+				item.scale.set(1.0, 1.0);
+			} else {
 				item.alpha = 0.6;
+				item.x = 10;
 				item.scale.set(0.9, 0.9);
 			}
 			
