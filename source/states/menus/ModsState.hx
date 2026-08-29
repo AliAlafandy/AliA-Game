@@ -62,7 +62,7 @@ class ModsState extends GameState {
         add(reloadBtn);
 
 		#if mobile
-		addCustomDPad();
+		addCustomDPad('NONE', 'BACK');
 		addCustomDPadCam();
 		#end
     }
