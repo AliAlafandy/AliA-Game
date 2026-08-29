@@ -131,7 +131,7 @@ class MenuState extends GameState
 			{
 				selectedSomethin = true;
 				FlxG.sound.play(Paths.sound('cancel_sound'));
-				FlxG.switchState(new states.TitleState());
+				GameState.switchState(new states.TitleState());
 			}
 
 			if (controls.ACCEPT)
