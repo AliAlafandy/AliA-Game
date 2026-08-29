@@ -30,7 +30,7 @@ class CharacterState extends GameState {
         updateChar();
 
         #if mobile
-		addCustomDPad();
+		addCustomDPad('EXIST', 'MENU');
 		addCustomDPadCam();
 		#end
     }
