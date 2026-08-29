@@ -43,7 +43,6 @@ class PauseSubState extends GameSubState
 
         menuText = new FlxText(0, 120, FlxG.width, '', 28);
         menuText.setFormat(null, 28, FlxColor.WHITE, CENTER);
-		//menuText.alignment(CENTER, null);
         menuText.scrollFactor.set();
         add(menuText);
 
