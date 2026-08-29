@@ -42,7 +42,7 @@ class MobileControls extends FlxTypedSpriteGroup<MobileInputManager>
 				touchPad = MobileData.setButtonsColors(touchPad);
 				add(touchPad);
 			case 3:
-				var customDPad = new CustomDPad(50, flixel.FlxG.height - 350);
+				var customDPad = new CustomDPad('EXIST', 'FULL');
 				touchPad = customDPad;
 				add(touchPad);
 		}
