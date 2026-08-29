@@ -39,7 +39,7 @@ class OptionsState extends GameState
 
         text = new FlxText(0, 0, FlxG.width, '', 24);
         text.setFormat(null, 24, FlxColor.WHITE, CENTER);
-		text.alignment(CENTER);
+		text.alignment(CENTER, null);
         add(text);
 
         refresh();
