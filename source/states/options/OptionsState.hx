@@ -180,8 +180,9 @@ class OptionsState extends GameState
 
         for (i in 0...options.length)
         {
-            var prefix:String = i == selected ? '> ' : '  ';
-            output += prefix + options[i] + '\n';
+            var prefix:String = i == selected ? '> ' : '';
+			var prefix2:String = i == selected ? ' <' : '';
+            output += prefix + options[i] + prefix2 + '\n';
         }
 
         output += '\nUP / DOWN - Select\nENTER - Open\nESC - Back';
