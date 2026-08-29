@@ -11,6 +11,8 @@ import data.objects.Player;
 import online.MultiPlayer;
 import online.MultiPlayer.RemotePlayer;
 
+import states.substates.PauseSubState;
+
 #if mobile
 import mobile.data.MobileInputManager;
 #end
@@ -68,6 +70,8 @@ class PlayState extends GameState
 	private var chatLog:Array<String> = [];
 	private var chatInputActive:Bool = false;
 	private var chatBuffer:String = "";
+
+	private var paused:Bool = false;
 
 	#if mobile
 	public var manager:MobileInputManager;
@@ -127,7 +131,7 @@ class PlayState extends GameState
 		add(help);*/
 
 		#if mobile
-		addCustomDPad('EXITE', 'FULL'); //PLAY
+		addCustomDPad('EXITE', 'PLAY');
 		addCustomDPadCam();
 		#end
 
@@ -277,6 +281,12 @@ class PlayState extends GameState
 		callOnScripts('onUpdate', [elapsed]);
 		#end
 
+		if (!paused && (FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.P || customDPad.pauseButton.justPressed))
+        {
+            openPauseMenu();
+            return;
+		}
+
 		super.update(elapsed);
 	}
 
@@ -357,11 +367,11 @@ class PlayState extends GameState
 		if (chatInputActive)
 			return;
 
-		if (controls.BACK)
+		/*if (controls.BACK)
 		{
 			leaveOnlineMode();
 			GameState.switchState(new MenuState());
-		}
+		}*/
 
 		#if HSCRIPT_ALLOWED
 		callOnScripts('onhandleInput');
@@ -552,6 +562,23 @@ class PlayState extends GameState
 			script.set(variable, arg);
 		}
 		#end
+	}
+
+	public function openPauseMenu():Void
+    {
+        if (paused)
+            return;
+
+        paused = true;
+        FlxG.sound.music.pause();
+        openSubState(new PauseSubState());
+    }
+
+    override public function closeSubState():Void
+    {
+        paused = false;
+        FlxG.sound.music.resume();
+        super.closeSubState();
 	}
 
 	override public function destroy():Void
