@@ -53,7 +53,7 @@ class SelectState extends GameState
 			selected--;
 
 			if (selected < 0)
-				selected = options.length - 1;
+				selected = saves.length - 1;
 
 			refresh();
 		}
@@ -62,7 +62,7 @@ class SelectState extends GameState
 		{
 			selected++;
 
-			if (selected >= options.length)
+			if (selected >= saves.length)
 				selected = 0;
 
 			refresh();
