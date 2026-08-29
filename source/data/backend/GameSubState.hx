@@ -107,7 +107,7 @@ class GameSubState extends FlxSubState
 			case 2:
 				mobileControls = MobileData.getTouchPadCustom(new TouchPad('RIGHT_FULL', 'NONE'));
 			case 3:
-				mobileControls = new mobile.controls.CustomDPad(50, FlxG.height - 350);
+				mobileControls = new mobile.controls.CustomDPad('EXIST', 'FULL');
 				isCustomDPad = true;
 		}
 
