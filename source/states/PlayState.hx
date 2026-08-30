@@ -592,7 +592,7 @@ class PlayState extends GameState
         super.closeSubState();
 
 		#if mobile
-		removeCustomDPad();
+		// removeCustomDPad();
 		addCustomDPad('EXITE', 'PLAY');
 		#end
 	}
