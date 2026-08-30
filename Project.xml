@@ -95,8 +95,8 @@
 
 	<app path="export\32bit\windows\bin" if="32bits" />
 
-	<config:ios category_type="public.app-category.music-games" />
-	<config:mac category_type="public.app-category.music-games" />
+	<config:ios category_type="public.app-category.2D-games" />
+	<config:mac category_type="public.app-category.2D-games" />
 
 	<config:android install-location="auto" minimum-sdk-version="21" target-sdk-version="35" permissions="android.permission.WRITE_EXTERNAL_STORAGE android.permission.READ_EXTERNAL_STORAGE android.permission.INTERNET" />
 
