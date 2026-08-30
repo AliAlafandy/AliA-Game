@@ -162,8 +162,8 @@ class OnlineState extends GameState
 		titleText.screenCenter(FlxAxes.X);
 		add(titleText);
 
-		tabModsBtn = new FlxButton(FlxG.width / 2 - 110, 55, "Mods", function() switchTab(MODS));
-		tabMultiBtn = new FlxButton(FlxG.width / 2 + 10, 55, "Multiplayer", function() switchTab(MULTIPLAYER));
+		tabModsBtn = new FlxButton(FlxG.width / 2 - 80, 55, "Mods", function() switchTab(MODS));
+		tabMultiBtn = new FlxButton(FlxG.width / 2 + 20, 55, "Multiplayer", function() switchTab(MULTIPLAYER));
 		add(tabModsBtn);
 		add(tabMultiBtn);
 
@@ -210,11 +210,11 @@ class OnlineState extends GameState
 		var inputWidth = 280;
 		var centerX = (FlxG.width - inputWidth) / 2;
 
-		nameInput = new TextInputField(centerX - 10, LIST_START_Y, inputWidth, "Player name");
+		nameInput = new TextInputField(centerX - 5, LIST_START_Y, inputWidth, "Player name");
 		nameInput.value = MultiPlayer.instance.localPlayerName;
 		multiGroup.add(nameInput.display);
 
-		roomInput = new TextInputField(centerX - 10, LIST_START_Y + 35, inputWidth, "Room code");
+		roomInput = new TextInputField(centerX - 5, LIST_START_Y + 35, inputWidth, "Room code");
 		roomInput.onSubmit = function(code) attemptJoinRoom(code);
 		multiGroup.add(roomInput.display);
 
