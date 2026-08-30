@@ -43,11 +43,11 @@ class ModsState extends GameState {
                 add(txt);
 
                 var enableBtn = new FlxButton(FlxG.width / 2 - 90, yPos + 22, "Enable", function() {
-                    //ModLoader.enable(mod);
+                //ModLoader.enable(mod);
                 });
 
                 var disableBtn = new FlxButton(FlxG.width / 2 + 10, yPos + 22, "Disable", function() {
-                    //ModLoader.disable(mod);
+                //ModLoader.disable(mod);
                 });
 
                 add(enableBtn);
@@ -58,13 +58,13 @@ class ModsState extends GameState {
         }
 
         /*var installBtn = new FlxButton(0, yPos + 20, "Install ZIP Mods", function() {
-        // installAllZips();
+        //installAllZips();
         });
         installBtn.screenCenter(FlxAxes.X);
         add(installBtn);*/
 
         var reloadBtn = new FlxButton(0, yPos + 20, "Reload Mods", function() { // 60
-        // ModLoader.loadAllMods();
+        //ModLoader.loadAllMods();
         });
         reloadBtn.screenCenter(FlxAxes.X);
         add(reloadBtn);
