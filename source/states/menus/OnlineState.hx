@@ -182,16 +182,16 @@ class OnlineState extends GameState
 
 	private function buildModsTab():Void
 	{
-	    modsGroup = new FlxTypedGroup<FlxSprite>();
-	    add(modsGroup);
+		modsGroup = new FlxTypedGroup<FlxSprite>();
+		add(modsGroup);
 	
-	    statusText = new FlxText(20, LIST_START_Y - 30, 0, "Loading mods...", 16);
-	    modsGroup.add(statusText);
+		statusText = new FlxText(20, LIST_START_Y - 30, 0, "Loading mods...", 16);
+		modsGroup.add(statusText);
 	
-	    listGroup = new FlxSpriteGroup();
-	    modsGroup.add(listGroup);
+		listGroup = new FlxSpriteGroup();
+		modsGroup.add(listGroup);
 	
-	    loadModList();
+		loadModList();
 	}
 
 	private function buildMultiplayerTab():Void
@@ -275,14 +275,14 @@ class OnlineState extends GameState
 
 	private function loadModList():Void
 	{
-	    Network.fetchJson("https://alia-server.onrender.com/api/mods", onModsLoaded, onModsFailed);
+		Network.fetchJson("https://alia-server.onrender.com/api/mods", onModsLoaded, onModsFailed);
 	}
 
 	private function onModsLoaded(data:Dynamic):Void
 	{
-	    mods = data.mods;
-	    statusText.text = mods.length == 0 ? "No mods available" : "";
-	    renderList();
+		mods = data.mods;
+		statusText.text = mods.length == 0 ? "No mods available" : "";
+		renderList();
 	}
 
 	private function onModsFailed(reason:String):Void
@@ -292,27 +292,29 @@ class OnlineState extends GameState
 
 	private function renderList():Void
 	{
-	    listGroup.clear();
+		listGroup.clear();
 	
-	    var y = LIST_START_Y;
-	    for (mod in mods)
-	    {
-	        var nameText = new FlxText(20, y, 300, mod.name, 16);
-	        listGroup.add(nameText);
+		var y = LIST_START_Y;
+		for (mod in mods)
+		{
+			var nameText = new FlxText(0, y, FlxG.width, mod.name, 16);
+			nameText.alignment = CENTER;
+			listGroup.add(nameText);
 	
-	        var descText = new FlxText(20, y + 18, 300, mod.description, 12);
-	        listGroup.add(descText);
+			var descText = new FlxText(0, y + 18, FlxG.width, mod.description, 12);
+			descText.alignment = CENTER;
+			listGroup.add(descText);
 	
-	        var btn = new FlxButton(400, y, "Download", null);
-	        btn.onUp.callback = function() downloadMod(mod.download_url, btn);
-	        listGroup.add(btn);
+			var btn = new FlxButton(FlxG.width - 110, y, "Download", null);
+			btn.onUp.callback = function() downloadMod(mod.download_url, btn);
+			listGroup.add(btn);
 	
-	        y += ENTRY_HEIGHT;
-	    }
+			y += ENTRY_HEIGHT;
+		}
 	
-	    maxScroll = Math.max(0, y - FlxG.height + 140);
-	    scrollY = 0;
-	    listGroup.y = 0;
+		maxScroll = Math.max(0, y - FlxG.height + 140);
+		scrollY = 0;
+		listGroup.y = 0;
 	}
 
 	private function downloadMod(url:String, btn:FlxButton):Void
