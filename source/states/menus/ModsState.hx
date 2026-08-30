@@ -38,32 +38,32 @@ class ModsState extends GameState {
 
         if (FileSystem.exists(#if mobile StorageUtil.getStorageDirectory() + #end "mods")) {
             for (mod in FileSystem.readDirectory(#if mobile StorageUtil.getStorageDirectory() + #end "mods")) {
-                var txt = new FlxText(40, yPos, 200, mod, 16);
+                var txt = new FlxText(0, yPos, FlxG.width, mod, 16);
                 txt.alignment = CENTER;
                 add(txt);
 
-                var enableBtn = new FlxButton(FlxG.width - 200, yPos, "Enable", function() {
+                var enableBtn = new FlxButton(FlxG.width / 2 - 90, yPos + 22, "Enable", function() {
                     //ModLoader.enable(mod);
                 });
 
-                var disableBtn = new FlxButton(FlxG.width - 110, yPos, "Disable", function() {
+                var disableBtn = new FlxButton(FlxG.width / 2 + 10, yPos + 22, "Disable", function() {
                     //ModLoader.disable(mod);
                 });
 
                 add(enableBtn);
                 add(disableBtn);
 
-                yPos += 40;
+                yPos += 70;
             }
         }
 
-        var installBtn = new FlxButton(20, yPos + 40, "Install ZIP Mods", function() {
+        var installBtn = new FlxButton(0, yPos + 20, "Install ZIP Mods", function() {
             // installAllZips();
         });
         installBtn.screenCenter(FlxAxes.X);
         add(installBtn);
 
-        var reloadBtn = new FlxButton(20, yPos + 90, "Reload Mods", function() {
+        var reloadBtn = new FlxButton(0, yPos + 60, "Reload Mods", function() {
             // ModLoader.loadAllMods();
         });
         reloadBtn.screenCenter(FlxAxes.X);
