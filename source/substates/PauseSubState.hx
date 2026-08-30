@@ -129,5 +129,9 @@ class PauseSubState extends GameSubState
     {
         FlxG.sound.music.resume();
         super.close();
+
+		#if mobile
+		removeCustomDPad();
+		#end
     }
 }
