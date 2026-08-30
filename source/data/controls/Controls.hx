@@ -6,6 +6,7 @@ import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.mappings.FlxGamepadMapping;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
+import haxe.Timer;
 
 import data.backend.GameState;
 import data.backend.GameSubState;
@@ -32,6 +33,11 @@ class ActionBinding
 	public var analogAxis:Null<FlxGamepadInputID> = null;
 	public var analogThreshold:Float = 0.5;
 	public var analogInverted:Bool = false;
+	public var contexts:Array<String> = ["gameplay"];
+	public var locked:Bool = false;
+	public var playerIndex:Int = 0;
+	public var lastPressStamp:Float = -1;
+	public var doubleTapped:Bool = false;
 
 	public function new(name:String)
 	{
@@ -39,10 +45,36 @@ class ActionBinding
 	}
 }
 
+class ComboBinding
+{
+	public var name:String;
+	public var sequence:Array<String>;
+	public var windowSeconds:Float;
+	public var progress:Int = 0;
+	public var lastStepStamp:Float = -1;
+	public var onTrigger:Void->Void;
+
+	public function new(name:String, sequence:Array<String>, windowSeconds:Float, onTrigger:Void->Void)
+	{
+		this.name = name;
+		this.sequence = sequence;
+		this.windowSeconds = windowSeconds;
+		this.onTrigger = onTrigger;
+	}
+}
+
+typedef RecordedFrame =
+{
+	frame:Int,
+	pressedActions:Array<String>
+}
+
 class Controls
 {
 	public static inline var INPUT_BUFFER_FRAMES:Int = 5;
 	public static inline var ANALOG_DEADZONE:Float = 0.18;
+	public static inline var DOUBLE_TAP_WINDOW:Float = 0.3;
+	public static inline var DEFAULT_CONTEXT:String = "gameplay";
 
 	public var actions:Map<String, ActionBinding> = new Map();
 	public var keyboardBinds:Map<String, Array<FlxKey>>;
@@ -53,7 +85,19 @@ class Controls
 
 	public var controllerMode:Bool = false;
 	public var activeGamepad:FlxGamepad;
+	public var gamepadsByPlayer:Map<Int, FlxGamepad> = new Map();
 	public static var instance:Controls;
+
+	private var contextStack:Array<String> = [DEFAULT_CONTEXT];
+	private var combos:Map<String, ComboBinding> = new Map();
+
+	private var isRecording:Bool = false;
+	private var isPlaying:Bool = false;
+	private var recordBuffer:Array<RecordedFrame> = [];
+	private var playbackBuffer:Array<RecordedFrame> = [];
+	private var recordFrameIndex:Int = 0;
+	private var playbackIndex:Int = 0;
+	private var playbackPressedActions:Map<String, Bool> = new Map();
 
 	public var UI_UP_P(get, never):Bool;
 	public var UI_DOWN_P(get, never):Bool;
@@ -130,7 +174,7 @@ class Controls
 			registerAction(key);
 	}
 
-	public function registerAction(name:String):ActionBinding
+	public function registerAction(name:String, ?contexts:Array<String>):ActionBinding
 	{
 		if (actions.exists(name))
 			return actions.get(name);
@@ -141,6 +185,9 @@ class Controls
 		#if mobile
 		binding.mobileButtons = mobileBinds.exists(name) ? mobileBinds.get(name) : [];
 		#end
+		if (contexts != null)
+			binding.contexts = contexts;
+
 		actions.set(name, binding);
 		return binding;
 	}
@@ -159,19 +206,150 @@ class Controls
 			actions.get(action).gamepadButtons = buttons;
 	}
 
+	public function pushContext(context:String):Void
+	{
+		contextStack.push(context);
+	}
+
+	public function popContext():Void
+	{
+		if (contextStack.length > 1)
+			contextStack.pop();
+	}
+
+	public function replaceContext(context:String):Void
+	{
+		contextStack = [context];
+	}
+
+	public function currentContext():String
+	{
+		return contextStack[contextStack.length - 1];
+	}
+
+	public function isActionAllowed(action:String):Bool
+	{
+		if (!actions.exists(action))
+			return true;
+
+		var binding = actions.get(action);
+		if (binding.locked)
+			return false;
+
+		return binding.contexts.indexOf(currentContext()) != -1;
+	}
+
+	public function lockAction(action:String):Void
+	{
+		if (actions.exists(action))
+			actions.get(action).locked = true;
+	}
+
+	public function unlockAction(action:String):Void
+	{
+		if (actions.exists(action))
+			actions.get(action).locked = false;
+	}
+
+	public function registerCombo(name:String, sequence:Array<String>, windowSeconds:Float, onTrigger:Void->Void):Void
+	{
+		combos.set(name, new ComboBinding(name, sequence, windowSeconds, onTrigger));
+	}
+
+	public function unregisterCombo(name:String):Void
+	{
+		combos.remove(name);
+	}
+
+	public function startRecording():Void
+	{
+		isRecording = true;
+		isPlaying = false;
+		recordBuffer = [];
+		recordFrameIndex = 0;
+	}
+
+	public function stopRecording():Array<RecordedFrame>
+	{
+		isRecording = false;
+		return recordBuffer;
+	}
+
+	public function startPlayback(frames:Array<RecordedFrame>):Void
+	{
+		isPlaying = true;
+		isRecording = false;
+		playbackBuffer = frames;
+		playbackIndex = 0;
+		recordFrameIndex = 0;
+		playbackPressedActions = new Map();
+	}
+
+	public function stopPlayback():Void
+	{
+		isPlaying = false;
+		playbackPressedActions = new Map();
+	}
+
+	public function isPlaybackAction(action:String):Bool
+	{
+		return playbackPressedActions.exists(action) && playbackPressedActions.get(action);
+	}
+
 	public function update(elapsed:Float):Void
 	{
+		if (isPlaying)
+			advancePlayback();
+
 		for (binding in actions)
 			updateBinding(binding, elapsed);
+
+		updateCombos();
+
+		if (isRecording)
+			captureFrame();
+
+		recordFrameIndex++;
+	}
+
+	private function captureFrame():Void
+	{
+		var pressedNow:Array<String> = [];
+		for (binding in actions)
+			if (binding.state == PRESSED || binding.state == HELD)
+				pressedNow.push(binding.name);
+
+		recordBuffer.push({ frame: recordFrameIndex, pressedActions: pressedNow });
+	}
+
+	private function advancePlayback():Void
+	{
+		playbackPressedActions = new Map();
+
+		if (playbackIndex >= playbackBuffer.length)
+		{
+			stopPlayback();
+			return;
+		}
+
+		var entry = playbackBuffer[playbackIndex];
+		if (entry.frame == recordFrameIndex)
+		{
+			for (action in entry.pressedActions)
+				playbackPressedActions.set(action, true);
+			playbackIndex++;
+		}
 	}
 
 	private function updateBinding(binding:ActionBinding, elapsed:Float):Void
 	{
-		var rawPressed = rawJustPressed(binding.keyboardKeys, binding.gamepadButtons #if mobile , binding.mobileButtons #end);
-		var rawHeld = rawPressedState(binding.keyboardKeys, binding.gamepadButtons #if mobile , binding.mobileButtons #end);
-		var rawReleased = rawJustReleased(binding.keyboardKeys, binding.gamepadButtons #if mobile , binding.mobileButtons #end);
+		var allowed = isActionAllowed(binding.name);
 
-		if (binding.analogAxis != null && activeGamepad != null)
+		var rawPressed = allowed && rawJustPressed(binding.keyboardKeys, binding.gamepadButtons #if mobile , binding.mobileButtons #end);
+		var rawHeld = allowed && rawPressedState(binding.keyboardKeys, binding.gamepadButtons #if mobile , binding.mobileButtons #end);
+		var rawReleased = allowed && rawJustReleased(binding.keyboardKeys, binding.gamepadButtons #if mobile , binding.mobileButtons #end);
+
+		if (allowed && binding.analogAxis != null && activeGamepad != null)
 		{
 			var value = analogValue(binding.analogAxis, binding.analogInverted);
 			if (Math.abs(value) >= binding.analogThreshold)
@@ -181,11 +359,19 @@ class Controls
 			}
 		}
 
+		binding.doubleTapped = false;
+
 		if (rawPressed)
 		{
 			binding.state = PRESSED;
 			binding.bufferedFrames = INPUT_BUFFER_FRAMES;
 			binding.heldTime = 0;
+
+			var now = Timer.stamp();
+			if (binding.lastPressStamp >= 0 && (now - binding.lastPressStamp) <= DOUBLE_TAP_WINDOW)
+				binding.doubleTapped = true;
+
+			binding.lastPressStamp = now;
 		}
 		else if (rawHeld)
 		{
@@ -206,8 +392,49 @@ class Controls
 			binding.bufferedFrames--;
 	}
 
+	private function updateCombos():Void
+	{
+		var now = Timer.stamp();
+
+		for (combo in combos)
+		{
+			var expectedAction = combo.sequence[combo.progress];
+
+			if (justPressed(expectedAction))
+			{
+				if (combo.progress > 0 && combo.lastStepStamp >= 0 && (now - combo.lastStepStamp) > combo.windowSeconds)
+					combo.progress = 0;
+
+				combo.progress++;
+				combo.lastStepStamp = now;
+
+				if (combo.progress >= combo.sequence.length)
+				{
+					combo.progress = 0;
+					if (combo.onTrigger != null)
+						combo.onTrigger();
+				}
+			}
+			else if (combo.progress > 0 && combo.lastStepStamp >= 0 && (now - combo.lastStepStamp) > combo.windowSeconds)
+			{
+				combo.progress = 0;
+			}
+		}
+	}
+
+	public function isDoubleTap(action:String):Bool
+	{
+		return actions.exists(action) && actions.get(action).doubleTapped;
+	}
+
 	public function justPressed(key:String):Bool
 	{
+		if (isPlaying)
+			return isPlaybackAction(key);
+
+		if (!isActionAllowed(key))
+			return false;
+
 		var result = FlxG.keys.anyJustPressed(keyboardBinds[key]) == true;
 		if (result) controllerMode = false;
 
@@ -217,6 +444,12 @@ class Controls
 
 	public function pressed(key:String):Bool
 	{
+		if (isPlaying)
+			return isPlaybackAction(key);
+
+		if (!isActionAllowed(key))
+			return false;
+
 		var result = FlxG.keys.anyPressed(keyboardBinds[key]) == true;
 		if (result) controllerMode = false;
 
@@ -226,6 +459,12 @@ class Controls
 
 	public function justReleased(key:String):Bool
 	{
+		if (isPlaying)
+			return false;
+
+		if (!isActionAllowed(key))
+			return false;
+
 		var result = FlxG.keys.anyJustReleased(keyboardBinds[key]) == true;
 		if (result) controllerMode = false;
 
@@ -263,6 +502,25 @@ class Controls
 		binding.analogAxis = axis;
 		binding.analogThreshold = threshold;
 		binding.analogInverted = inverted;
+	}
+
+	public function assignGamepadToPlayer(playerIndex:Int, gamepad:FlxGamepad):Void
+	{
+		gamepadsByPlayer.set(playerIndex, gamepad);
+	}
+
+	public function getGamepadForPlayer(playerIndex:Int):FlxGamepad
+	{
+		return gamepadsByPlayer.exists(playerIndex) ? gamepadsByPlayer.get(playerIndex) : null;
+	}
+
+	public function rumble(strength:Float, duration:Float, ?playerIndex:Int = 0):Void
+	{
+		var gamepad = playerIndex == 0 ? activeGamepad : getGamepadForPlayer(playerIndex);
+		if (gamepad == null)
+			return;
+
+		gamepad.rumble(strength, strength, Math.round(duration * 1000));
 	}
 
 	private function analogValue(axis:FlxGamepadInputID, inverted:Bool):Float
