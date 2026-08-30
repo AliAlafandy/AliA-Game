@@ -1,12 +1,12 @@
 package states.menus;
 
+import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
+import flixel.util.FlxAxes;
 import sys.FileSystem;
 import sys.io.File;
-// import modding.ZipInstaller;
-// import modding.ModLoader;
 
 import states.MenuState;
 
@@ -27,23 +27,26 @@ class ModsState extends GameState {
     override public function create() {
         super.create();
 
-		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
-		add(bg);
+        var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
+        add(bg);
 
-        add(new FlxText(20, 20, 0, "MOD MANAGER", 24));
+        var titleText = new FlxText(0, 20, 0, "MOD MANAGER", 24);
+        titleText.screenCenter(FlxAxes.X);
+        add(titleText);
 
         var yPos = 80;
 
         if (FileSystem.exists(#if mobile StorageUtil.getStorageDirectory() + #end "mods")) {
             for (mod in FileSystem.readDirectory(#if mobile StorageUtil.getStorageDirectory() + #end "mods")) {
-                var txt = new FlxText(20, yPos, 0, mod, 16);
+                var txt = new FlxText(40, yPos, 200, mod, 16);
+                txt.alignment = CENTER;
                 add(txt);
 
-                var enableBtn = new FlxButton(200, yPos, "Enable", function() {
+                var enableBtn = new FlxButton(FlxG.width - 200, yPos, "Enable", function() {
                     //ModLoader.enable(mod);
                 });
 
-                var disableBtn = new FlxButton(280, yPos, "Disable", function() {
+                var disableBtn = new FlxButton(FlxG.width - 110, yPos, "Disable", function() {
                     //ModLoader.disable(mod);
                 });
 
@@ -57,28 +60,20 @@ class ModsState extends GameState {
         var installBtn = new FlxButton(20, yPos + 40, "Install ZIP Mods", function() {
             // installAllZips();
         });
+        installBtn.screenCenter(FlxAxes.X);
         add(installBtn);
 
         var reloadBtn = new FlxButton(20, yPos + 90, "Reload Mods", function() {
             // ModLoader.loadAllMods();
         });
+        reloadBtn.screenCenter(FlxAxes.X);
         add(reloadBtn);
 
-		#if mobile
-		addCustomDPad('NONE', 'BACK');
-		addCustomDPadCam();
-		#end
+        #if mobile
+        addCustomDPad('NONE', 'BACK');
+        addCustomDPadCam();
+        #end
     }
-
-    /*function installAllZips() {
-        var storageFile = StorageUtil.StorageType;
-        var zipDir = "/storage/emulated/0/" + storageFile + "/mods/";
-        if (!FileSystem.exists(zipDir)) return;
-
-        for (zip in FileSystem.readDirectory(zipDir)) {
-            ZipInstaller.install(zipDir + zip);
-        }
-    }*/
 
     override public function update(elapsed:Float) {
         super.update(elapsed);
