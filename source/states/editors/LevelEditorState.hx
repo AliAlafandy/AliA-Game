@@ -339,7 +339,7 @@ class LevelEditorState extends GameState
 	private function loadLevel():Void
 	{
 		#if sys
-		var path = 'levels/$levelName.json';
+		var path = 'levels/$levelName.bin';
 		if (!FileSystem.exists(path))
 			return;
 
