@@ -1,4 +1,4 @@
-package data.controls;
+package;
 
 import flixel.input.gamepad.FlxGamepadButton;
 import flixel.input.gamepad.FlxGamepadInputID;
