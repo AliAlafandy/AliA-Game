@@ -40,7 +40,7 @@ class TextInputField
 	{
 		this.placeholder = placeholder;
 		display = new FlxText(x, y, width, "", 16);
-		display.setFormat(null, 16, FlxColor.WHITE, LEFT);
+		display.setFormat(null, 16, FlxColor.WHITE, CENTER);
 		refresh();
 	}
 
@@ -103,7 +103,7 @@ class TextInputField
 class OnlineState extends GameState
 {
 	static inline var ENTRY_HEIGHT:Int = 60;
-	static inline var LIST_START_Y:Int = 110;
+	static inline var LIST_START_Y:Int = 120;
 	static inline var CHAT_LINES_MAX:Int = 8;
 
 	var mods:Array<Dynamic> = [];
@@ -158,10 +158,12 @@ class OnlineState extends GameState
 		if (MultiPlayer.instance == null)
 			new MultiPlayer();
 
-		add(new FlxText(20, 20, 0, "ONLINE", 24));
+		var titleText = new FlxText(0, 20, 0, "ONLINE", 24);
+		titleText.screenCenter(FlxAxes.X);
+		add(titleText);
 
-		tabModsBtn = new FlxButton(20, 55, "Mods", function() switchTab(MODS));
-		tabMultiBtn = new FlxButton(120, 55, "Multiplayer", function() switchTab(MULTIPLAYER));
+		tabModsBtn = new FlxButton(FlxG.width / 2 - 105, 55, "Mods", function() switchTab(MODS));
+		tabMultiBtn = new FlxButton(FlxG.width / 2 + 5, 55, "Multiplayer", function() switchTab(MULTIPLAYER));
 		add(tabModsBtn);
 		add(tabMultiBtn);
 
@@ -186,7 +188,8 @@ class OnlineState extends GameState
 		modsGroup = new FlxTypedGroup<FlxSprite>();
 		add(modsGroup);
 	
-		statusText = new FlxText(20, LIST_START_Y - 30, 0, "Loading mods...", 16);
+		statusText = new FlxText(0, LIST_START_Y - 30, FlxG.width, "Loading mods...", 16);
+		statusText.alignment = CENTER;
 		modsGroup.add(statusText);
 	
 		listGroup = new FlxSpriteGroup();
@@ -200,38 +203,41 @@ class OnlineState extends GameState
 		multiGroup = new FlxTypedGroup<FlxSprite>();
 		add(multiGroup);
 
-		connectionStatusText = new FlxText(20, LIST_START_Y - 30, 400, "Disconnected", 16);
-		connectionStatusText.setFormat(null, 16, FlxColor.RED, LEFT);
+		connectionStatusText = new FlxText(0, LIST_START_Y - 30, FlxG.width, "Disconnected", 16);
+		connectionStatusText.setFormat(null, 16, FlxColor.RED, CENTER);
 		multiGroup.add(connectionStatusText);
 
-		nameInput = new TextInputField(20, LIST_START_Y, 200, "Player name");
+		var inputWidth = 280;
+		var centerX = (FlxG.width - inputWidth) / 2;
+
+		nameInput = new TextInputField(centerX, LIST_START_Y, inputWidth, "Player name");
 		nameInput.value = MultiPlayer.instance.localPlayerName;
 		multiGroup.add(nameInput.display);
 
-		roomInput = new TextInputField(240, LIST_START_Y, 160, "Room code");
+		roomInput = new TextInputField(centerX, LIST_START_Y + 35, inputWidth, "Room code");
 		roomInput.onSubmit = function(code) attemptJoinRoom(code);
 		multiGroup.add(roomInput.display);
 
-		connectBtn = new FlxButton(20, LIST_START_Y + 30, "Connect", onConnectPressed);
-		joinBtn = new FlxButton(140, LIST_START_Y + 30, "Join Room", onJoinPressed);
-		disconnectBtn = new FlxButton(260, LIST_START_Y + 30, "Disconnect", onDisconnectPressed);
+		connectBtn = new FlxButton(FlxG.width / 2 - 130, LIST_START_Y + 75, "Connect", onConnectPressed);
+		joinBtn = new FlxButton(FlxG.width / 2 - 40, LIST_START_Y + 75, "Join Room", onJoinPressed);
+		disconnectBtn = new FlxButton(FlxG.width / 2 + 50, LIST_START_Y + 75, "Disconnect", onDisconnectPressed);
 		multiGroup.add(connectBtn);
 		multiGroup.add(joinBtn);
 		multiGroup.add(disconnectBtn);
 
-		playerListText = new FlxText(20, LIST_START_Y + 70, 300, "", 14);
-		playerListText.setFormat(null, 14, FlxColor.WHITE, LEFT);
+		playerListText = new FlxText(0, LIST_START_Y + 115, FlxG.width, "", 14);
+		playerListText.setFormat(null, 14, FlxColor.WHITE, CENTER);
 		multiGroup.add(playerListText);
 
-		chatLogText = new FlxText(340, LIST_START_Y + 70, 400, "", 13);
-		chatLogText.setFormat(null, 13, FlxColor.LIME, LEFT);
+		chatLogText = new FlxText(0, LIST_START_Y + 175, FlxG.width, "", 13);
+		chatLogText.setFormat(null, 13, FlxColor.LIME, CENTER);
 		multiGroup.add(chatLogText);
 
-		chatInput = new TextInputField(340, LIST_START_Y + 260, 300, "Type a message...");
+		chatInput = new TextInputField(centerX - 50, LIST_START_Y + 300, 260, "Type a message...");
 		chatInput.onSubmit = function(message) sendChatMessage(message);
 		multiGroup.add(chatInput.display);
 
-		sendChatBtn = new FlxButton(650, LIST_START_Y + 260, "Send", function() sendChatMessage(chatInput.value));
+		sendChatBtn = new FlxButton(centerX + 220, LIST_START_Y + 300, "Send", function() sendChatMessage(chatInput.value));
 		multiGroup.add(sendChatBtn);
 
 		refreshPlayerList();
