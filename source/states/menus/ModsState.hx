@@ -57,14 +57,14 @@ class ModsState extends GameState {
             }
         }
 
-        var installBtn = new FlxButton(0, yPos + 20, "Install ZIP Mods", function() {
-            // installAllZips();
+        /*var installBtn = new FlxButton(0, yPos + 20, "Install ZIP Mods", function() {
+        // installAllZips();
         });
         installBtn.screenCenter(FlxAxes.X);
-        add(installBtn);
+        add(installBtn);*/
 
-        var reloadBtn = new FlxButton(0, yPos + 60, "Reload Mods", function() {
-            // ModLoader.loadAllMods();
+        var reloadBtn = new FlxButton(0, yPos + 20, "Reload Mods", function() { // 60
+        // ModLoader.loadAllMods();
         });
         reloadBtn.screenCenter(FlxAxes.X);
         add(reloadBtn);
