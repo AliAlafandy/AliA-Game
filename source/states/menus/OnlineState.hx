@@ -162,8 +162,8 @@ class OnlineState extends GameState
 		titleText.screenCenter(FlxAxes.X);
 		add(titleText);
 
-		tabModsBtn = new FlxButton(FlxG.width / 2 - 80, 55, "Mods", function() switchTab(MODS));
-		tabMultiBtn = new FlxButton(FlxG.width / 2 + 20, 55, "Multiplayer", function() switchTab(MULTIPLAYER));
+		tabModsBtn = new FlxButton(FlxG.width / 2 - 90, 55, "Mods", function() switchTab(MODS));
+		tabMultiBtn = new FlxButton(FlxG.width / 2 + 10, 55, "Multiplayer", function() switchTab(MULTIPLAYER));
 		add(tabModsBtn);
 		add(tabMultiBtn);
 
