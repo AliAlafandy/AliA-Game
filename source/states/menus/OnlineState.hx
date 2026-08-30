@@ -305,11 +305,12 @@ class OnlineState extends GameState
 			descText.alignment = CENTER;
 			listGroup.add(descText);
 	
-			var btn = new FlxButton(FlxG.width - 110, y, "Download", null);
+			var btn = new FlxButton(0, y + 36, "Download", null);
+			btn.screenCenter(FlxAxes.X);
 			btn.onUp.callback = function() downloadMod(mod.download_url, btn);
 			listGroup.add(btn);
 	
-			y += ENTRY_HEIGHT;
+			y += ENTRY_HEIGHT + 20;
 		}
 	
 		maxScroll = Math.max(0, y - FlxG.height + 140);
