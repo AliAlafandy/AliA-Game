@@ -51,7 +51,7 @@ class CharacterState extends GameState {
         super.update(elapsed);
 
 		if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(Paths.music('select_character', 'menus'));
+			FlxG.sound.playMusic(Paths.music('menus/select_character'));
 
         if (controls.UI_LEFT_P) index--;
         if (controls.UI_RIGHT_P) index++;
