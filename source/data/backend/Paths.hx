@@ -191,7 +191,7 @@ class Paths
 
 	inline static public function music(key:String, ?library:String):Sound
 	{
-		var file:Sound = returnSound('music', key, library);
+		var file:Sound = returnSound(null, key, 'music');
 		return file;
 	}
 
