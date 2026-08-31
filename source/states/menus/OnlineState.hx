@@ -314,7 +314,18 @@ class OnlineState extends GameState
 	
 			var btn = new FlxButton(0, y + 36, "Download", null);
 			btn.screenCenter(FlxAxes.X);
-			btn.onUp.callback = function() downloadMod(mod.download_url, btn);
+			
+			var modId = mod.id;
+			if (modId == null) {
+				modId = mod.download_url.split("/").pop().split(".").shift();
+			}
+
+			if (ModLoader.getLoadedMods().exists(m -> m.id == modId)) {
+				btn.text = "Installed";
+			} else {
+				btn.onUp.callback = function() downloadMod(mod.download_url, btn);
+			}
+
 			listGroup.add(btn);
 	
 			y += ENTRY_HEIGHT + 20;
@@ -365,21 +376,12 @@ class OnlineState extends GameState
 			case Success(meta):
 				ModLoader.loadAllMods();
 				btn.text = "Installed";
+				btn.onUp.callback = null;
 
 			case AlreadyInstalled(meta):
-				btn.text = "Reinstall?";
-				btn.onUp.callback = function()
-				{
-					var overwrite = ModInstaller.install(zipPath, true);
-					switch (overwrite)
-					{
-						case Success(_):
-							ModLoader.loadAllMods();
-							btn.text = "Installed";
-						case _:
-							btn.text = "Failed";
-					}
-				};
+				ModLoader.loadAllMods();
+				btn.text = "Installed";
+				btn.onUp.callback = null;
 
 			case InvalidZip(reason):
 				btn.text = "Invalid ZIP";
