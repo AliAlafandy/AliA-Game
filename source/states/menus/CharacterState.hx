@@ -60,7 +60,7 @@ class CharacterState extends GameState {
         var iconPath = "";
 
         if (charName == "Ellawy+") {
-            iconPath = 'characters/Ellawy+/icon-partner';
+            iconPath = 'characters/Ellawy/icon-partner';
         } else {
             iconPath = 'characters/' + charName + '/icon';
         }
