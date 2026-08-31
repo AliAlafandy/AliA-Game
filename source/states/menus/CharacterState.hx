@@ -6,7 +6,7 @@ class CharacterState extends GameState {
         "Ellawy",
         "Hamedo",
         "Zezo",
-        "Shaban",
+        "Shaaban",
         "Ellawy+"
     ];
     var txt:FlxText;
@@ -61,10 +61,12 @@ class CharacterState extends GameState {
         if (controls.ACCEPT) {
             // Save selected character here
             GameState.switchState(new PlayState());
+			FlxG.sound.play(Paths.sound('confirm_sound'));
 			FlxG.sound.music.volume = 0;
         }
 
         if (controls.BACK) {
+			FlxG.sound.play(Paths.sound('cancel_sound'));
             GameState.switchState(new SelectState());
         }
     }
