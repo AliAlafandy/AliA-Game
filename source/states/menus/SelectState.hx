@@ -57,6 +57,8 @@ class SelectState extends GameState
 			if (selected < 0)
 				selected = saves.length - 1;
 
+			FlxG.sound.play(Paths.sound('scroll_sound'));
+
 			refresh();
 		}
 
@@ -67,15 +69,19 @@ class SelectState extends GameState
 			if (selected >= saves.length)
 				selected = 0;
 
+			FlxG.sound.play(Paths.sound('scroll_sound'));
+
 			refresh();
 		}
 
         if (controls.ACCEPT) {
             GameState.switchState(new CharacterState());
+			FlxG.sound.play(Paths.sound('confirm_sound'));
 			FlxG.sound.music.volume = 0;
         }
 
         if (controls.BACK) {
+			FlxG.sound.play(Paths.sound('cancel_sound'));
             GameState.switchState(new MenuState());
         }
     }
