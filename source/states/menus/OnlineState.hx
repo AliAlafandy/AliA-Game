@@ -376,12 +376,21 @@ class OnlineState extends GameState
 			case Success(meta):
 				ModLoader.loadAllMods();
 				btn.text = "Installed";
-				btn.onUp.callback = null;
 
 			case AlreadyInstalled(meta):
 				ModLoader.loadAllMods();
-				btn.text = "Installed";
-				btn.onUp.callback = null;
+				btn.onUp.callback = function()
+				{
+					var overwrite = ModInstaller.install(zipPath, true);
+					switch (overwrite)
+					{
+						case Success(_):
+							ModLoader.loadAllMods();
+							btn.text = "Installed";
+						case _:
+							btn.text = "Failed";
+					}
+				};
 
 			case InvalidZip(reason):
 				btn.text = "Invalid ZIP";
