@@ -290,6 +290,7 @@ class PlayState extends GameState
 						#end
 						#end))
         {
+			FlxG.sound.play(Paths.sound('cancel_sound'));
             openPauseMenu();
             return;
 		}
