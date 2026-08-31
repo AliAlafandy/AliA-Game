@@ -1,10 +1,10 @@
 {
-	"name": "M.Shaban",
+	"name": "M.Shaaban",
 	"anim": {
 		[
 			"name": "idle",
-			"image": "Shaban",
-			"prefix": "Shaban Idle0",
+			"image": "Shaaban",
+			"prefix": "Shaaban Idle0",
 			"offsets": [0, 0],
 			"scale": 1,
 			"fps": 24,
@@ -12,8 +12,8 @@
 		],
 		[
 			"name": "walking",
-			"image": "Shaban",
-			"prefix": "Shaban Walking0",
+			"image": "Shaaban",
+			"prefix": "Shaaban Walking0",
 			"offsets": [0, 0],
 			"scale": 1,
 			"fps": 24,
@@ -21,8 +21,8 @@
 		],
 		[
 			"name": "running",
-			"image": "Shaban",
-			"prefix": "Shaban Running0",
+			"image": "Shaaban",
+			"prefix": "Shaaban Running0",
 			"offsets": [0, 0],
 			"scale": 1,
 			"fps": 24,
@@ -30,8 +30,8 @@
 		],
 		[
 			"name": "jumping",
-			"image": "Shaban",
-			"prefix": "Shaban Jumping0",
+			"image": "Shaaban",
+			"prefix": "Shaaban Jumping0",
 			"offsets": [0, 0],
 			"scale": 1,
 			"fps": 24,
@@ -39,8 +39,8 @@
 		],
 		[
 			"name": "under",
-			"image": "Shaban",
-			"prefix": "Shaban Under0",
+			"image": "Shaaban",
+			"prefix": "Shaaban Under0",
 			"offsets": [0, 0],
 			"scale": 1,
 			"fps": 24,
@@ -48,8 +48,8 @@
 		],
 		[
 			"name": "expansion",
-			"image": "Shaban",
-			"prefix": "Shaban Expansion0",
+			"image": "Shaaban",
+			"prefix": "Shaaban Expansion0",
 			"offsets": [0, 0],
 			"scale": 1,
 			"fps": 24,
@@ -57,8 +57,8 @@
 		],
 		[
 			"name": "gameOver",
-			"image": "Shaban",
-			"prefix": "Shaban GameOver0",
+			"image": "Shaaban",
+			"prefix": "Shaaban GameOver0",
 			"offsets": [0, 0],
 			"scale": 1,
 			"fps": 24,
