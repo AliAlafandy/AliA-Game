@@ -84,14 +84,18 @@ class EditorState extends GameState
 
 		if (controls.GAME_UP_P)
 			moveSelection(-1);
+			FlxG.sound.play(Paths.sound('scroll_sound'));
 		else if (controls.GAME_DOWN_P)
 			moveSelection(1);
+			FlxG.sound.play(Paths.sound('scroll_sound'));
 
 		if (controls.ACCEPT)
 			options[selectedIndex].action();
+			FlxG.sound.play(Paths.sound('confirm_sound'));
 
 		if (controls.BACK)
 			GameState.switchState(new MenuState());
+			FlxG.sound.play(Paths.sound('cancel_sound'));
 	}
 
 	private function moveSelection(direction:Int):Void
