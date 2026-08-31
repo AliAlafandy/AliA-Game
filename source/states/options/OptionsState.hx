@@ -60,6 +60,8 @@ class OptionsState extends GameState
 			if (selected < 0)
 				selected = options.length - 1;
 
+			FlxG.sound.play(Paths.sound('scroll_sound'));
+
 			refresh();
 		}
 
@@ -70,16 +72,20 @@ class OptionsState extends GameState
 			if (selected >= options.length)
 				selected = 0;
 
+			FlxG.sound.play(Paths.sound('scroll_sound'));
+
 			refresh();
 		}
 
         if (controls.ACCEPT)
         {
+			FlxG.sound.play(Paths.sound('confirm_sound'));
             activate();
         }
 
         if (controls.BACK)
         {
+			FlxG.sound.play(Paths.sound('cancel_sound'));
             GameState.switchState(new MenuState());
         }
     }
