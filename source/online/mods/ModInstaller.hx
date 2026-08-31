@@ -45,19 +45,8 @@ class ModInstaller {
             return InvalidZip("Could not read ZIP: " + Std.string(e));
         }
 
-        var meta = extractMeta(entries);
-        if (meta == null) {
-            return MissingMeta;
-        }
-
         var modsDir = getModsDirectory();
-        var targetDir = modsDir + "/" + meta.id;
-
-        if (FileSystem.exists(targetDir) && !overwrite) {
-            return AlreadyInstalled(meta);
-        }
-
-        var tempDir = modsDir + "/.tmp_" + meta.id + "_" + Std.int(Date.now().getTime());
+        var tempDir = modsDir + "/.tmp_install_" + Std.int(Date.now().getTime());
 
         try {
             extractEntries(entries, tempDir);
@@ -67,18 +56,51 @@ class ModInstaller {
         }
 
         try {
+            FileSystem.deleteFile(zipPath);
+        } catch (e:Dynamic) {}
+
+        var modDirWithMeta = findModDirectoryWithMeta(tempDir);
+        if (modDirWithMeta == null) {
+            removeDirectory(tempDir);
+            return MissingMeta;
+        }
+
+        var meta:ModMeta = null;
+        try {
+            var content = File.getContent(modDirWithMeta + "/" + META_FILENAME);
+            meta = Json.parse(content);
+            if (meta.id == null || meta.name == null || meta.version == null) {
+                removeDirectory(tempDir);
+                return MissingMeta;
+            }
+        } catch (e:Dynamic) {
+            removeDirectory(tempDir);
+            return MissingMeta;
+        }
+
+        var targetDir = modsDir + "/" + meta.id;
+
+        if (FileSystem.exists(targetDir) && !overwrite) {
+            removeDirectory(tempDir);
+            return AlreadyInstalled(meta);
+        }
+
+        try {
             if (FileSystem.exists(targetDir)) {
                 removeDirectory(targetDir);
             }
-            FileSystem.rename(tempDir, targetDir);
+
+            if (modDirWithMeta == tempDir) {
+                FileSystem.rename(tempDir, targetDir);
+            } else {
+                FileSystem.createDirectory(targetDir);
+                moveDirectoryContents(modDirWithMeta, targetDir);
+                removeDirectory(tempDir);
+            }
         } catch (e:Dynamic) {
             removeDirectory(tempDir);
             return Failed("Could not finalize install: " + Std.string(e));
         }
-
-        try {
-            FileSystem.deleteFile(zipPath);
-        } catch (e:Dynamic) {}
 
         return Success(meta);
     }
@@ -106,19 +128,16 @@ class ModInstaller {
         }
     }
 
-    static function extractMeta(entries:List<Entry>):Null<ModMeta> {
-        for (entry in entries) {
-            var name = normalizeEntryName(entry.fileName);
-            if (name == META_FILENAME || name.endsWith("/" + META_FILENAME)) {
-                try {
-                    var content = haxe.zip.Reader.unzip(entry).toString();
-                    var meta:ModMeta = Json.parse(content);
-                    if (meta.id == null || meta.name == null || meta.version == null) {
-                        return null;
-                    }
-                    return meta;
-                } catch (e:Dynamic) {
-                    return null;
+    static function findModDirectoryWithMeta(dir:String):Null<String> {
+        if (FileSystem.exists(dir + "/" + META_FILENAME)) {
+            return dir;
+        }
+
+        for (item in FileSystem.readDirectory(dir)) {
+            var fullPath = dir + "/" + item;
+            if (FileSystem.isDirectory(fullPath)) {
+                if (FileSystem.exists(fullPath + "/" + META_FILENAME)) {
+                    return fullPath;
                 }
             }
         }
@@ -132,7 +151,6 @@ class ModInstaller {
             var name = normalizeEntryName(entry.fileName);
             if (name == "" || name.endsWith("/")) continue;
 
-            // Prevent zip-slip: reject entries that escape the target directory
             if (name.indexOf("..") != -1) {
                 throw "Unsafe path in ZIP entry: " + name;
             }
@@ -145,6 +163,19 @@ class ModInstaller {
 
             var bytes:Bytes = entry.data != null ? haxe.zip.Reader.unzip(entry) : Bytes.alloc(0);
             File.saveBytes(outPath, bytes);
+        }
+    }
+
+    static function moveDirectoryContents(source:String, dest:String):Void {
+        for (item in FileSystem.readDirectory(source)) {
+            var srcPath = source + "/" + item;
+            var destPath = dest + "/" + item;
+            if (FileSystem.isDirectory(srcPath)) {
+                FileSystem.createDirectory(destPath);
+                moveDirectoryContents(srcPath, destPath);
+            } else {
+                File.copy(srcPath, destPath);
+            }
         }
     }
 
