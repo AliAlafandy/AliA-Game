@@ -320,7 +320,15 @@ class OnlineState extends GameState
 				modId = mod.download_url.split("/").pop().split(".").shift();
 			}
 
-			if (ModLoader.getLoadedMods().exists(m -> m.id == modId)) {
+			var isAlreadyInstalled = false;
+			for (loadedMod in ModLoader.getLoadedMods()) {
+				if (loadedMod.id == modId) {
+					isAlreadyInstalled = true;
+					break;
+				}
+			}
+
+			if (isAlreadyInstalled) {
 				btn.text = "Installed";
 			} else {
 				btn.onUp.callback = function() downloadMod(mod.download_url, btn);
