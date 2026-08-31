@@ -56,6 +56,9 @@ class PauseSubState extends GameSubState
 
     override public function update(elapsed:Float):Void
     {
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(Paths.music('menus/pause_menu'));
+
         if (controls.UI_UP_P)
         {
             selected--;
