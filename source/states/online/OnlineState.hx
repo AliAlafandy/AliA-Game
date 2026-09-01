@@ -9,17 +9,17 @@ import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import flixel.util.FlxAxes;
 
-import online.mods.ModLoader;
+import states.online.mods.ModLoader;
 
 import openfl.events.TextEvent;
 import openfl.events.KeyboardEvent;
 
-import online.Network;
-import online.MultiPlayer;
-import online.MultiPlayer.RemotePlayer;
-import online.MultiPlayer.ConnectionState;
-import online.mods.ModInstaller;
-import online.mods.ModInstaller.InstallResult;
+import states.online.Network;
+import states.online.MultiPlayer;
+import states.online.MultiPlayer.RemotePlayer;
+import states.online.MultiPlayer.ConnectionState;
+import states.online.mods.ModInstaller;
+import states.online.mods.ModInstaller.InstallResult;
 
 enum abstract OnlineTab(Int)
 {
