@@ -28,9 +28,9 @@ import vlc.MP4Handler as VideoHandler;
 
 class lTitleState extends GameState
 {
-    public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
+    /*public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
 	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
-	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
+	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];*/
     public var initialized:Bool = false;
     public var transitioning:Bool = false;
 
@@ -42,7 +42,7 @@ class lTitleState extends GameState
 		ClientPrefs.loadPrefs();
 
 		if (initialized) {
-			startIntro();
+			startGame();
 		} else {
 			new FlxTimer().start(1, function(tmr:FlxTimer)
         	{
@@ -65,10 +65,11 @@ class lTitleState extends GameState
         t.y = 480;
         add(t);
 
-		if (initialized)
+		if (initialized) {
 			skipIntro();
-		else
+		} else {
 			initialized = true;
+		}
 
 		new FlxTimer().start(1, function(tmr:FlxTimer)
         {
@@ -92,10 +93,11 @@ class lTitleState extends GameState
 
 		Paths.clearUnusedMemory();
 
-		if (initialized)
+		if (initialized) {
 			skipIntro();
-		else
+		} else {
 			initialized = true;
+		}
 
 		new FlxTimer().start(1, function(tmr:FlxTimer)
         {
@@ -136,8 +138,9 @@ class lTitleState extends GameState
 	var skippedIntro:Bool = false;
 	public function skipIntro()
 	{
-		if (!skippedIntro)
+		if (!skippedIntro) {
 			skippedIntro = true;
+		}
 	}
 
     public function startVideo(name:String)
