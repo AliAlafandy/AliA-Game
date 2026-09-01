@@ -19,7 +19,7 @@ class lMenuState extends GameState {
         #end
 
         "Options",
-        "Quit"
+        "Exit"
     ];
     var texts:Array<FlxText> = [];
 
@@ -70,7 +70,7 @@ class lMenuState extends GameState {
 
                 case "Options": GameState.switchState(new OptionsState());
                     
-                case "Quit": LimeSystem.exit(1); //FlxG.exit();
+                case "Exit": LimeSystem.exit(1); //FlxG.exit();
             }
         }
     }
