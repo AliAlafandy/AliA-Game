@@ -1,4 +1,4 @@
-package online.mods;
+package states.online.mods;
 
 #if sys
 import haxe.io.Bytes;
