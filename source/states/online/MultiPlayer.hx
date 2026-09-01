@@ -1,4 +1,4 @@
-package online;
+package states.online;
 
 import haxe.Json;
 import haxe.Timer;
