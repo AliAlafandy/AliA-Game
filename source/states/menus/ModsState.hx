@@ -59,7 +59,7 @@ class ModsState extends GameState {
                     add(txt);
 
                     var isEnabled = ModLoader.isModEnabled(item);
-                    var enableBtn = new FlxButton(FlxG.width / 2 - 90, yPos + 22, isEnabled ? "Disable" : "Enable", function() {
+                    var enableBtn = new FlxButton(0, yPos + 22, isEnabled ? "Disable" : "Enable", function() {
                         if (isEnabled) {
                             ModLoader.disable(item);
                         } else {
@@ -67,7 +67,7 @@ class ModsState extends GameState {
                         }
                         FlxG.resetState();
                     });
-
+					enableBtn.screenCenter(FlxAxes.X);
                     add(enableBtn);
                     yPos += 70;
                 }
