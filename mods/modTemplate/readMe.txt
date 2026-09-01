@@ -1,1 +1,0 @@
-That's a mod template for Ali Alafandy Game.
