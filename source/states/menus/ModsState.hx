@@ -10,7 +10,7 @@ import sys.FileSystem;
 import sys.io.File;
 
 import states.MenuState;
-import online.mods.ModLoader;
+import states.online.mods.ModLoader;
 
 class ModsState extends GameState {
 
