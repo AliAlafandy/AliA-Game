@@ -4,7 +4,7 @@ package states.online.mods;
 import sys.FileSystem;
 import sys.io.File;
 import haxe.Json;
-import online.mods.ModInstaller.ModMeta;
+import states.online.mods.ModInstaller.ModMeta;
 import haxe.zip.Reader;
 
 class ModLoader {
