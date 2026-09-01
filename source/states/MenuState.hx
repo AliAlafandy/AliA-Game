@@ -17,7 +17,7 @@ import lime.system.System as LimeSystem;
 import lime.app.Application;
 
 import states.menus.SelectState;
-import states.menus.OnlineState;
+import states.online.OnlineState;
 import states.options.OptionsState;
 
 #if MODS_ALLOWED
