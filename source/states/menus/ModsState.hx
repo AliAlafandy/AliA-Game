@@ -13,12 +13,9 @@ import sys.io.File;
 import lime.ui.FileDialog;
 import lime.ui.FileDialogType;
 
-import haxe.io.Bytes;
-import haxe.zip.Reader;
-import haxe.zip.Tools;
-
 import states.MenuState;
 import states.online.mods.ModLoader;
+import states.online.mods.ModInstaller;
 
 class ModsState extends GameState
 {
@@ -88,7 +85,20 @@ class ModsState extends GameState
             var fileDialog = new FileDialog();
             
             fileDialog.onSelect.add(function(path:String) {
-                unzipMod(path, modsDir);
+                var result = ModInstaller.install(path, true);
+                switch (result) {
+                    case Success(meta):
+                        trace("Successfully installed mod: " + meta.name);
+                    case AlreadyInstalled(meta):
+                        trace("Mod already installed: " + meta.name);
+                    case InvalidZip(reason):
+                        trace("Invalid ZIP: " + reason);
+                    case MissingMeta:
+                        trace("Error: Missing or invalid mod.json inside ZIP root or folder structure.");
+                    case Failed(reason):
+                        trace("Installation failed: " + reason);
+                }
+                FlxG.resetState();
             });
             
             fileDialog.open("zip", null, "Select Mod ZIP");
@@ -102,35 +112,6 @@ class ModsState extends GameState
         });
         reloadBtn.screenCenter(FlxAxes.X);
         add(reloadBtn);
-    }
-
-    function unzipMod(zipPath:String, destination:String) {
-        try {
-            var input = File.read(zipPath, true);
-            var entries:List<haxe.zip.Entry> = Reader.readZip(input);
-            input.close();
-
-            for (entry in entries) {
-                var fileName = entry.fileName;
-                var targetPath = destination + "/" + fileName;
-
-                if (StringTools.endsWith(fileName, "/") || StringTools.endsWith(fileName, "\\")) {
-                    FileSystem.createDirectory(targetPath);
-                } else {
-                    var dir = haxe.io.Path.directory(targetPath);
-                    if (!FileSystem.exists(dir)) {
-                        FileSystem.createDirectory(dir);
-                    }
-                    var uncompressedData = Reader.unzip(entry);
-                    File.saveBytes(targetPath, uncompressedData);
-                }
-            }
-            
-            trace("Successfully extracted zip mod!");
-            FlxG.resetState();
-        } catch (e:Dynamic) {
-            trace("Failed to extract zip: " + e);
-        }
     }
 
     override public function update(elapsed:Float) {
