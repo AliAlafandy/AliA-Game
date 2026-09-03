@@ -121,7 +121,7 @@ class ModsState extends GameState
                     if (!FileSystem.exists(dir)) {
                         FileSystem.createDirectory(dir);
                     }
-                    var uncompressedData = Tools.unzip(entry);
+                    var uncompressedData = Reader.unzip(entry);
                     File.saveBytes(targetPath, uncompressedData);
                 }
             }
