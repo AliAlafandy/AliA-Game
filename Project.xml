@@ -99,6 +99,8 @@
 	<config:ios category_type="public.app-category.2D-games" />
 	<config:mac category_type="public.app-category.2D-games" />
 
+	<haxedef name="lime_use_old_deltatime" />
+
 	<config:android install-location="auto" minimum-sdk-version="21" target-sdk-version="35" permissions="android.permission.WRITE_EXTERNAL_STORAGE android.permission.READ_EXTERNAL_STORAGE android.permission.INTERNET" />
 
 	<certificate path="key.keystore" password="@ellawy09" alias="alafandy" alias-password="@ellawy09" if="android" unless="debug" />
@@ -116,7 +118,7 @@
 
 	<haxeflag name="--macro" value="allowPackage('flash')" />
 	<haxeflag name="--macro" value="include('my.pack')" />
-
+		
 	<!-- Custom -->
 	<assets path="documents/app/iconAPP.png" rename="icon.png" if="linux" />
 
