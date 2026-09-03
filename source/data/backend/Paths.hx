@@ -175,6 +175,14 @@ class Paths
 			return file;
 		}
 		#end
+
+		#if mobile
+		var mobilePath:String = getSharedPath('videos/$key.$VIDEO_EXT');
+		if(OpenFlAssets.exists(mobilePath)) {
+			return mobilePath;
+		}
+		#end
+
 		return 'assets/videos/$key.$VIDEO_EXT';
 	}
 
@@ -421,31 +429,47 @@ class Paths
 			if(!currentTrackedSounds.exists(file))
 			{
 				currentTrackedSounds.set(file, Sound.fromFile(file));
-				//trace('precached mod sound: $file');
 			}
 			localTrackedAssets.push(file);
 			return currentTrackedSounds.get(file);
 		}
 		#end
 
-		// I hate this so god damn much
 		var gottenPath:String = '$key.$SOUND_EXT';
 		if(path != null) gottenPath = '$path/$gottenPath';
-		gottenPath = getPath(gottenPath, SOUND, library);
-		gottenPath = gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length);
-		// trace(gottenPath);
-		if(!currentTrackedSounds.exists(gottenPath))
+		
+		var assetPath:String = getPath(gottenPath, SOUND, library);
+		
+		#if mobile
+		if (OpenFlAssets.exists(assetPath, SOUND)) {
+			if (!currentTrackedSounds.exists(assetPath)) {
+				currentTrackedSounds.set(assetPath, OpenFlAssets.getSound(assetPath));
+			}
+			localTrackedAssets.push(assetPath);
+			return currentTrackedSounds.get(assetPath);
+		}
+		#end
+
+		if (assetPath != null && assetPath.indexOf(':') != -1) {
+			assetPath = assetPath.substring(assetPath.indexOf(':') + 1, assetPath.length);
+		}
+
+		if(assetPath != null && !currentTrackedSounds.exists(assetPath))
 		{
 			var retKey:String = (path != null) ? '$path/$key' : key;
 			retKey = ((path == 'music') ? 'music:' : '') + getPath('$retKey.$SOUND_EXT', SOUND, library);
 			if(OpenFlAssets.exists(retKey, SOUND))
 			{
-				currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(retKey));
-				//trace('precached vanilla sound: $retKey');
+				currentTrackedSounds.set(assetPath, OpenFlAssets.getSound(retKey));
 			}
 		}
-		localTrackedAssets.push(gottenPath);
-		return currentTrackedSounds.get(gottenPath);
+		
+		if (assetPath != null) {
+			localTrackedAssets.push(assetPath);
+			return currentTrackedSounds.get(assetPath);
+		}
+		
+		return null;
 	}
 
 	#if MODS_ALLOWED
