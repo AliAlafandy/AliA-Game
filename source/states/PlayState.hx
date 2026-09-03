@@ -8,8 +8,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 
 import data.objects.Player;
 
-import online.MultiPlayer;
-import online.MultiPlayer.RemotePlayer;
+import states.online.MultiPlayer;
+import states.online.MultiPlayer.RemotePlayer;
 
 import substates.PauseSubState;
 
