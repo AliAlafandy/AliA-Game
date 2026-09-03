@@ -25,7 +25,7 @@ import sys.io.File;
 import sys.FileSystem;
 #end
 
-import online.MultiPlayer;
+import states.online.MultiPlayer;
 
 import states.TitleState;
 
