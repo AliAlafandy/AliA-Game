@@ -10,6 +10,8 @@ import haxe.Json;
 import sys.FileSystem;
 import sys.io.File;
 
+using StringTools;
+
 typedef ModMeta = {
     var id:String;
     var name:String;
@@ -139,6 +141,10 @@ class ModInstaller {
                 if (FileSystem.exists(fullPath + "/" + META_FILENAME)) {
                     return fullPath;
                 }
+                var nested = findModDirectoryWithMeta(fullPath);
+                if (nested != null) {
+                    return nested;
+                }
             }
         }
         return null;
@@ -149,7 +155,7 @@ class ModInstaller {
 
         for (entry in entries) {
             var name = normalizeEntryName(entry.fileName);
-            if (name == "" || name.endsWith("/")) continue;
+            if (name == "" || name.endsWith("/") || name.indexOf("__MACOSX") != -1) continue;
 
             if (name.indexOf("..") != -1) {
                 throw "Unsafe path in ZIP entry: " + name;
