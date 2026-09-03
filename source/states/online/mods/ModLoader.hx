@@ -5,7 +5,8 @@ import sys.FileSystem;
 import sys.io.File;
 import haxe.Json;
 import states.online.mods.ModInstaller.ModMeta;
-import haxe.zip.Reader;
+
+using StringTools;
 
 class ModLoader {
 	public static var loadedMods:Array<ModMeta> = [];
@@ -67,43 +68,20 @@ class ModLoader {
 		for (item in FileSystem.readDirectory(modsDir))
 		{
 			var fullPath = modsDir + "/" + item;
-			if (!FileSystem.isDirectory(fullPath) && StringTools.endsWith(item.toLowerCase(), ".zip"))
+			if (!FileSystem.isDirectory(fullPath) && item.toLowerCase().endsWith(".zip"))
 			{
-				var folderName = item.substr(0, item.length - 4);
-				var targetDir = modsDir + "/" + folderName;
-				
-				if (!FileSystem.exists(targetDir)) {
-					FileSystem.createDirectory(targetDir);
-
-					try {
-						var input = File.read(fullPath, true);
-						var reader = new Reader(input);
-						var entries = reader.read();
-						input.close();
-
-						for (entry in entries)
-						{
-							var fileName = entry.fileName;
-							var destPath = targetDir + "/" + fileName;
-
-							if (StringTools.endsWith(fileName, "/") || StringTools.endsWith(fileName, "\\"))
-							{
-								FileSystem.createDirectory(destPath);
-							}
-							else
-							{
-								var dir = haxe.io.Path.directory(destPath);
-								if (!FileSystem.exists(dir))
-								{
-									FileSystem.createDirectory(dir);
-								}
-								var uncompressedData = Reader.unzip(entry);
-								File.saveBytes(destPath, uncompressedData);
-							}
-						}
-					} catch (e:Dynamic) {
-						trace("Failed to extract ZIP mod: " + item + " - " + e);
-					}
+				var result = ModInstaller.install(fullPath, true);
+				switch (result) {
+					case Success(meta):
+						trace("Successfully auto-installed ZIP mod: " + meta.name);
+					case AlreadyInstalled(meta):
+						trace("ZIP mod already installed: " + meta.name);
+					case InvalidZip(reason):
+						trace("Invalid ZIP found: " + reason);
+					case MissingMeta:
+						trace("ZIP mod skipped (Missing mod.json): " + item);
+					case Failed(reason):
+						trace("Failed to install ZIP mod: " + reason);
 				}
 			}
 		}
