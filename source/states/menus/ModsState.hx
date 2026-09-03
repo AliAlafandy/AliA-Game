@@ -121,10 +121,10 @@ class ModsState extends GameState
                 }
             }
             
-            Trace.math("Successfully extracted zip mod!");
+            trace("Successfully extracted zip mod!");
             FlxG.resetState();
         } catch (e:Dynamic) {
-            Trace.error("Failed to extract zip: " + e);
+            trace("Failed to extract zip: " + e);
         }
     }
 
