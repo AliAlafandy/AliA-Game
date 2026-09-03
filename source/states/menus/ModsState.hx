@@ -6,11 +6,16 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxAxes;
+#if sys
 import sys.FileSystem;
 import sys.io.File;
+#end
 import lime.ui.FileDialog;
 import lime.ui.FileDialogType;
+
 import haxe.io.Bytes;
+import haxe.zip.Reader;
+import haxe.zip.Tools;
 
 import states.MenuState;
 import states.online.mods.ModLoader;
@@ -102,7 +107,7 @@ class ModsState extends GameState
     function unzipMod(zipPath:String, destination:String) {
         try {
             var input = File.read(zipPath, true);
-            var entries = format.zip.Reader.readAll(input);
+            var entries:List<haxe.zip.Entry> = Reader.readZip(input);
             input.close();
 
             for (entry in entries) {
@@ -116,7 +121,7 @@ class ModsState extends GameState
                     if (!FileSystem.exists(dir)) {
                         FileSystem.createDirectory(dir);
                     }
-                    var uncompressedData = format.zip.Tools.unzip(entry);
+                    var uncompressedData = Tools.unzip(entry);
                     File.saveBytes(targetPath, uncompressedData);
                 }
             }
