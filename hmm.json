@@ -69,6 +69,11 @@
 			"dir": null,
 			"ref": "main",
 			"url": "https://github.com/AliAlafandy/ellawy"
+		},
+		{
+			"name": "format",
+			"type": "haxelib",
+			"version": null
 		}
 	]
 }
