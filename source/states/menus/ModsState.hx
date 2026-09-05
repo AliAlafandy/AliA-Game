@@ -119,6 +119,7 @@ class ModsState extends GameState
 
         if (controls.BACK) {
             FlxG.sound.play(Paths.sound('cancel_sound'));
+            GameState.switchState(new MenuState());
         }
     }
 }
