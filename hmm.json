@@ -47,11 +47,11 @@
 			"url": "https://github.com/polybiusproxy/hxCodec"
 		},
 		{
-	      "name": "SScript",
-	      "type": "git",
-	      "dir": null,
-	      "ref": "main",
-	      "url": "https://github.com/AlafandyPorting/SScript"
+	    	"name": "SScript",
+	    	"type": "git",
+	    	"dir": null,
+	    	"ref": "main",
+	    	"url": "https://github.com/AlafandyPorting/SScript"
 	    },
 		{
 			"name": "tjson",
