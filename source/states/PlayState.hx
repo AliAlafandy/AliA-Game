@@ -6,6 +6,8 @@ import flixel.util.FlxColor;
 import flixel.group.FlxGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
+import openfl.utils.Assets as OpenFlAssets;
+
 import data.objects.Player;
 
 import states.online.MultiPlayer;
