@@ -12,6 +12,7 @@ import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 
 import openfl.Assets;
+import openfl.utils.Assets as OpenFlAssets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 
