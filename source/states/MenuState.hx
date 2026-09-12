@@ -12,8 +12,10 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.frames.FlxFramesCollection;
-import lime.system.System as LimeSystem;
 
+import openfl.utils.Assets as OpenFlAssets;
+
+import lime.system.System as LimeSystem;
 import lime.app.Application;
 
 import states.menus.SelectState;
