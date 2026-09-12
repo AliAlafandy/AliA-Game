@@ -5,6 +5,8 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxAxes;
 
+import openfl.utils.Assets as OpenFlAssets;
+
 class CharacterState extends GameState {
     var index:Int = 0;
     var chars:Array<String> = [
@@ -38,7 +40,8 @@ class CharacterState extends GameState {
         charPlace.updateHitbox();
         add(charPlace);
 
-        iconSprite = new FlxSprite(charPlace.x, charPlace.y);
+        iconSprite = new FlxSprite(charPlace.x - (charPlace.x / 2), charPlace.y - (charPlace.y / 2));
+		iconSprite.scale.set(0.9, 0.9);
         add(iconSprite);
 
         txt = new FlxText(0, 0, 0, "", 16);
