@@ -62,7 +62,7 @@ import data.backend.ClientPrefs;
 import data.backend.Mods;
 
 import data.objects.BGSprite;
-
+import openfl.utils.Assets as OpenFlAssets;
 import states.PlayState;
 
 import flixel.FlxState;
