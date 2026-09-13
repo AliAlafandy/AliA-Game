@@ -12,7 +12,7 @@ import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 
 import openfl.Assets;
-import openfl.utils.Assets as OpenFlAssets;
+// import openfl.utils.Assets as OpenFlAssets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 
@@ -45,7 +45,7 @@ class TitleState extends GameState
         add(title);
 
 		var press = new FlxText(0, 0, 0, "", 12);
-		press.screenCenter(X);
+		// press.screenCenter(X);
         press.y = 200;
         add(press);
 
