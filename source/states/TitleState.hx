@@ -12,7 +12,7 @@ import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 
 import openfl.Assets;
-// import openfl.utils.Assets as OpenFlAssets;
+import openfl.utils.Assets as OpenFlAssets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 
@@ -36,7 +36,7 @@ class TitleState extends GameState
 	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
 	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
     public var initialized:Bool = false;
-    //public var startIntro:Bool = false;
+    // public var startIntro:Bool = false;
 
     override public function create() {
         var title = new FlxText(0, 0, 0, "Ali Alafandy Game", 24);
