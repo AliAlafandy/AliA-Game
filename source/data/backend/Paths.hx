@@ -88,7 +88,7 @@ class Paths
 		}
 		// flags everything to be cleared out next unused memory clear
 		localTrackedAssets = [];
-		#if !html5 openfl.Assets.cache.clear("songs"); #end
+		#if !html5 openfl.Assets.cache.clear("music"); #end
 	}
 
 	static public var currentLevel:String;
@@ -188,7 +188,7 @@ class Paths
 
 	static public function sound(key:String, ?library:String):Sound
 	{
-		var sound:Sound = returnSound('sounds', key, 'music');
+		var sound:Sound = returnSound('music/sounds', key, null);
 		return sound;
 	}
 
@@ -199,7 +199,7 @@ class Paths
 
 	inline static public function music(key:String, ?library:String):Sound
 	{
-		var file:Sound = returnSound(null, key, 'music');
+		var file:Sound = returnSound('music', key, null);
 		return file;
 	}
 
