@@ -41,7 +41,7 @@ class CharacterState extends GameState {
         add(charPlace);
 
         iconSprite = new FlxSprite(charPlace.x - (charPlace.x / 2), charPlace.y - (charPlace.y / 2));
-		iconSprite.scale.set(0.9, 0.9);
+		iconSprite.scale.set(0.75, 0.75);
         add(iconSprite);
 
         txt = new FlxText(0, 0, 0, "", 16);
