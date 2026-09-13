@@ -297,6 +297,9 @@ class PlayState extends GameState
             return;
 		}
 
+		if (FlxG.sound.music == null)
+			FlxG.sound.music.resume();
+
 		super.update(elapsed);
 	}
 
