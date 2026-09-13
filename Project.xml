@@ -51,11 +51,11 @@
 	<assets path="assets/mobile" if="mobile"/>
 	<assets path="assets/videos" library="videos" if="VIDEOS_ALLOWED"/>
 
-	<assets path="assets/music" library="music" exclude="*.ogg" if="web"/>
-	<assets path="assets/music" library="music" exclude="*.mp3" unless="web"/>
+	<assets path="assets/music" exclude="*.ogg" if="web"/> <!-- library="music" -->
+	<assets path="assets/music" exclude="*.mp3" unless="web"/> <!-- library="music" -->
 
-	<library name="videos" preload="true" if="VIDEOS_ALLOWED"/>
-	<library name="music" preload="true" />
+	<library name="videos" if="VIDEOS_ALLOWED"/> <!-- preload="true" -->
+	<!-- <library name="music" preload="true" /> -->
 
 	<define name="CHECK_FOR_UPDATES" />
 
