@@ -35,7 +35,7 @@ class CharacterState extends GameState {
         var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
         add(bg);
 
-        var charPlace:FlxSprite = new FlxSprite(30, 30).loadGraphic(Paths.image('menus/Selects/char_place'));
+        var charPlace:FlxSprite = new FlxSprite(30, 30).loadGraphic(Paths.image('menus/Selects/char_place_old'));
         charPlace.scale.set(0.5, 0.5);
         charPlace.updateHitbox();
         add(charPlace);
