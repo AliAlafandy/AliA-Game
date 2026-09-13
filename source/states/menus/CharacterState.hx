@@ -41,7 +41,6 @@ class CharacterState extends GameState {
         add(charPlace);
 
         iconSprite = new FlxSprite(charPlace.x - (charPlace.x / 2), charPlace.y - (charPlace.y / 2));
-		iconSprite.scale.set(0.5, 0.5);
         add(iconSprite);
 
         txt = new FlxText(0, 0, 0, "", 16);
@@ -74,7 +73,7 @@ class CharacterState extends GameState {
             iconSprite.makeGraphic(64, 64, 0x00000000);
         }
         
-        iconSprite.scale.set(0.65, 0.65);
+        iconSprite.scale.set(0.5, 0.5);
         iconSprite.updateHitbox();
     }
 
@@ -82,7 +81,9 @@ class CharacterState extends GameState {
         super.update(elapsed);
 
         if (FlxG.sound.music == null)
-            FlxG.sound.playMusic(Paths.music('menus/select_character'));
+			FlxG.sound.music.resume();
+
+        FlxG.sound.playMusic(Paths.music('menus/select_character'));
 
         var oldIndex = index;
         if (controls.UI_LEFT_P) index--;
