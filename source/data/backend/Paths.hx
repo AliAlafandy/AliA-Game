@@ -188,7 +188,7 @@ class Paths
 
 	static public function sound(key:String, ?library:String):Sound
 	{
-		var sound:Sound = returnSound('music/sounds', key, null);
+		var sound:Sound = returnSound('music/sounds', key, library);
 		return sound;
 	}
 
@@ -199,7 +199,7 @@ class Paths
 
 	inline static public function music(key:String, ?library:String):Sound
 	{
-		var file:Sound = returnSound('music', key, null);
+		var file:Sound = returnSound('music', key, library);
 		return file;
 	}
 
@@ -289,11 +289,9 @@ class Paths
 		if (currentLevel != null)
 		{
 			var levelPath:String = '';
-			if(currentLevel != 'shared') {
-				levelPath = getLibraryPathForce(key, 'week_assets', currentLevel);
-				if (FileSystem.exists(levelPath))
-					return File.getContent(levelPath);
-			}
+			levelPath = getLibraryPathForce(key, 'levels', currentLevel);
+			if (FileSystem.exists(levelPath))
+			return File.getContent(levelPath);
 		}
 		#end
 		var path:String = getPath(key, TEXT);
