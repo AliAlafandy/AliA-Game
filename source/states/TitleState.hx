@@ -45,7 +45,7 @@ class TitleState extends GameState
         add(title);
 
 		var press = new FlxText(0, 0, 0, "", 12);
-		// press.screenCenter(X);
+		press.screenCenter(X);
         press.y = 200;
         add(press);
 
