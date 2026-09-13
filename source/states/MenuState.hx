@@ -13,7 +13,7 @@ import flixel.tweens.FlxTween;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.frames.FlxFramesCollection;
 
-import openfl.utils.Assets as OpenFlAssets;
+// import openfl.utils.Assets as OpenFlAssets;
 
 import lime.system.System as LimeSystem;
 import lime.app.Application;
