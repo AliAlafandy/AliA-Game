@@ -44,10 +44,16 @@ class TitleState extends GameState
         title.y = 140;
         add(title);
 
-        var press = new FlxText(0, 0, 0, "Press Any Button", 12);
-        press.screenCenter(X);
+		var press = new FlxText(0, 0, 0, "", 12);
+		press.screenCenter(X);
         press.y = 200;
         add(press);
+
+		#if mobile
+		press.text = "Touch On Screen";
+		#else
+        press.text = "Press Any Button";
+		#end
 
         FlxG.sound.play(Paths.music('themes/start_nice'));
 
