@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxAxes;
 
-import openfl.utils.Assets as OpenFlAssets;
+// import openfl.utils.Assets as OpenFlAssets;
 
 class CharacterState extends GameState {
     var index:Int = 0;
