@@ -48,6 +48,8 @@ class CharacterState extends GameState {
         add(txt);
         updateChar();
 
+		FlxG.sound.music.resume();
+
         #if mobile
         addCustomDPad('EXITE', 'MENU');
         addCustomDPadCam();
@@ -81,9 +83,7 @@ class CharacterState extends GameState {
         super.update(elapsed);
 
         if (FlxG.sound.music == null)
-			FlxG.sound.music.resume();
-
-        FlxG.sound.playMusic(Paths.music('menus/select_character'));
+			FlxG.sound.playMusic(Paths.music('menus/select_character'));
 
         var oldIndex = index;
         if (controls.UI_LEFT_P) index--;
