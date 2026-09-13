@@ -9,6 +9,7 @@ import flixel.input.gamepad.FlxGamepad;
 // import haxe.Json;
 
 import openfl.Assets;
+import openfl.utils.Assets as OpenFlAssets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 
@@ -84,12 +85,18 @@ class lTitleState extends GameState
         title.y = 140;
         add(title);
 
-        var press = new FlxText(0, 0, 0, "Press Any Button", 12);
+        var press = new FlxText(0, 0, 0, "", 12);
         press.screenCenter(X);
         press.y = 200;
         add(press);
 
-        FlxG.sound.playMusic(Paths.music('themes/start_nice'));
+		#if mobile
+		press.text = "Touch On Screen";
+		#else
+        press.text = "Press Any Button";
+		#end
+
+        FlxG.sound.play(Paths.music('themes/start_nice'));
 
 		Paths.clearUnusedMemory();
 
