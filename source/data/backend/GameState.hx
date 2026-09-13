@@ -175,6 +175,7 @@ class GameState extends FlxUIState
 	override function update(elapsed:Float)
 	{
 		timePassedOnState += elapsed;
+		if(FlxG.save.data != null) FlxG.save.data.fullscreen = FlxG.fullscreen;
 		super.update(elapsed);
 	}
 
