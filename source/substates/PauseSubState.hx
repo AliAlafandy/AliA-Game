@@ -131,7 +131,7 @@ class PauseSubState extends GameSubState
 
     override public function close():Void
     {
-        FlxG.sound.music.resume();
+        FlxG.sound.playMusic(Paths.music('menus/menu'));
         super.close();
 
 		#if mobile
