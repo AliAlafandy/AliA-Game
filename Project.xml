@@ -51,8 +51,8 @@
 	<assets path="assets/mobile" if="mobile"/>
 	<assets path="assets/videos" library="videos" if="VIDEOS_ALLOWED"/>
 
-	<assets path="assets/music"/> <!-- exclude="*.ogg" if="web" --> <!--  library="music" -->
-	<!-- <assets path="assets/music" exclude="*.mp3" unless="web" --> <!-- library="music" -->
+	<assets path="assets/music" exclude="*.ogg" if="web"/> <!-- library="music" -->
+	<assets path="assets/music" exclude="*.mp3" unless="web"/> <!-- library="music" -->
 
 	<library name="videos" preload="true" if="VIDEOS_ALLOWED"/>
 	<!-- <library name="music" preload="true" /> -->
