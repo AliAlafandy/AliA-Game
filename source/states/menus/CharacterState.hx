@@ -41,7 +41,7 @@ class CharacterState extends GameState {
         add(charPlace);
 
         iconSprite = new FlxSprite(charPlace.x - (charPlace.x / 2), charPlace.y - (charPlace.y / 2));
-		iconSprite.scale.set(0.75, 0.75);
+		iconSprite.scale.set(0.5, 0.5);
         add(iconSprite);
 
         txt = new FlxText(0, 0, 0, "", 16);
@@ -96,12 +96,13 @@ class CharacterState extends GameState {
         if (controls.ACCEPT) {
             GameState.switchState(new PlayState());
             FlxG.sound.play(Paths.sound('confirm_sound'));
-            FlxG.sound.music.volume = 0;
+            FlxG.sound.music.stop();
         }
 
         if (controls.BACK) {
             FlxG.sound.play(Paths.sound('cancel_sound'));
             GameState.switchState(new SelectState());
+			FlxG.sound.music.stop();
         }
     }
 }
