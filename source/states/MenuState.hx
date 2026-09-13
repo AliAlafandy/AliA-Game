@@ -109,7 +109,6 @@ class MenuState extends GameState
 
 		super.create();
 
-		// TODO: plugar seu próprio sistema de touch controls aqui (mobile.controls.*)
 		#if mobile
 		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
@@ -134,6 +133,7 @@ class MenuState extends GameState
 				selectedSomethin = true;
 				FlxG.sound.play(Paths.sound('cancel_sound'));
 				GameState.switchState(new states.TitleState());
+				FlxG.sound.music.stop();
 			}
 
 			if (controls.ACCEPT)
