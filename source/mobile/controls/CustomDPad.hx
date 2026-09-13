@@ -83,7 +83,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		padBG.alpha = ClientPrefs.data.controlsAlpha;
 		padBG.antialiasing = ClientPrefs.data.antialiasing;
 
-		dPad = new TouchButton(padBG.x + (offset - 3), padBG.y + offset, []);
+		dPad = new TouchButton(padBG.x + (offset - 2), padBG.y + offset, []);
 		if (customFrames != null)
 		{
 			dPad.frames = customFrames;
