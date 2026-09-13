@@ -132,6 +132,8 @@ class PlayState extends GameState
 		help.setFormat(null, 16, FlxColor.WHITE, CENTER);
 		add(help);*/
 
+		FlxG.sound.music.resume();
+
 		#if mobile
 		addCustomDPad('EXITE', 'PLAY');
 		addCustomDPadCam();
@@ -296,9 +298,6 @@ class PlayState extends GameState
             openPauseMenu();
             return;
 		}
-
-		if (FlxG.sound.music == null)
-			FlxG.sound.music.resume();
 
 		super.update(elapsed);
 	}
