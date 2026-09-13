@@ -281,7 +281,7 @@ class Main extends Sprite
 	private function setupEventListeners():Void
 	{
 		#if desktop
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, toggleFullScreen);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_F11, toggleFullScreen);
 		FlxG.stage.addEventListener(FocusEvent.FOCUS_OUT, onWindowBlur);
 		FlxG.stage.addEventListener(FocusEvent.FOCUS_IN, onWindowFocus);
 		#end
