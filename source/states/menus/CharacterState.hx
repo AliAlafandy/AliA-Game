@@ -5,8 +5,6 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxAxes;
 
-// import openfl.utils.Assets as OpenFlAssets;
-
 class CharacterState extends GameState {
     var index:Int = 0;
     var chars:Array<String> = [
@@ -97,13 +95,13 @@ class CharacterState extends GameState {
         if (controls.ACCEPT) {
             GameState.switchState(new PlayState());
             FlxG.sound.play(Paths.sound('confirm_sound'));
-            FlxG.sound.music.stop();
+            FlxG.sound.music.pause();
         }
 
         if (controls.BACK) {
             FlxG.sound.play(Paths.sound('cancel_sound'));
             GameState.switchState(new SelectState());
-			FlxG.sound.music.stop();
+			FlxG.sound.music.pause();
         }
     }
 }
