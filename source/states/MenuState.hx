@@ -118,9 +118,9 @@ class MenuState extends GameState
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music == null)
-			FlxG.sound.music.resume();
+			FlxG.sound.playMusic(Paths.music('menus/menu'));
 
-		FlxG.sound.playMusic(Paths.music('menus/menu'));
+		FlxG.sound.music.resume();
 
 		if (!selectedSomethin)
 		{
