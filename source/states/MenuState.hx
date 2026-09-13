@@ -13,8 +13,6 @@ import flixel.tweens.FlxTween;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.frames.FlxFramesCollection;
 
-// import openfl.utils.Assets as OpenFlAssets;
-
 import lime.system.System as LimeSystem;
 import lime.app.Application;
 
@@ -135,7 +133,7 @@ class MenuState extends GameState
 				selectedSomethin = true;
 				FlxG.sound.play(Paths.sound('cancel_sound'));
 				GameState.switchState(new states.TitleState());
-				FlxG.sound.music.stop();
+				FlxG.sound.music.pause();
 			}
 
 			if (controls.ACCEPT)
