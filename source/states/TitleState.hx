@@ -49,7 +49,7 @@ class TitleState extends GameState
         press.y = 200;
         add(press);
 
-        FlxG.sound.playMusic(Paths.music('themes/start_nice'));
+        FlxG.sound.play(Paths.music('themes/start_nice'));
 
         new FlxTimer().start(1, function(tmr:FlxTimer)
         {
