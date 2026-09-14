@@ -118,21 +118,22 @@ class PauseSubState extends GameSubState
         {
             case 'RESUME':
                 close();
+				FlxG.sound.music.resume();
 
             case 'RESTART':
                 close();
+				FlxG.sound.music.resume();
                 GameState.resetState();
 
             case 'QUIT':
                 close();
-				FlxG.sound.playMusic(Paths.music('menus/menu'));
+				FlxG.sound.music.stop();
                 GameState.switchState(new MenuState());
         }
     }
 
     override public function close():Void
     {
-		FlxG.sound.music.resume();
         super.close();
 
 		#if mobile
