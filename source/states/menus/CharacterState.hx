@@ -38,7 +38,7 @@ class CharacterState extends GameState {
         charPlace.updateHitbox();
         add(charPlace);
 
-        iconSprite = new FlxSprite(charPlace.x + ((charPlace.x / 2) - 5), charPlace.y + ((charPlace.y / 2) - 5));
+        iconSprite = new FlxSprite(charPlace.x + ((charPlace.x / 2) - 10), charPlace.y + ((charPlace.y / 2) - 10));
         add(iconSprite);
 
         txt = new FlxText(0, 0, 0, "", 16);
