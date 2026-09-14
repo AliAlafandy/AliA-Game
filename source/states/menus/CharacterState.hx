@@ -38,7 +38,7 @@ class CharacterState extends GameState {
         charPlace.updateHitbox();
         add(charPlace);
 
-        iconSprite = new FlxSprite(charPlace.x + (charPlace.x / 2), charPlace.y + (charPlace.y / 2));
+        iconSprite = new FlxSprite(charPlace.x + ((charPlace.x / 2) - 5), charPlace.y + ((charPlace.y / 2) - 5));
         add(iconSprite);
 
         txt = new FlxText(0, 0, 0, "", 16);
@@ -46,7 +46,7 @@ class CharacterState extends GameState {
         add(txt);
         updateChar();
 
-		FlxG.sound.music.resume();
+		FlxG.sound.playMusic(Paths.music('menus/select_character'));
 
         #if mobile
         addCustomDPad('EXITE', 'MENU');
@@ -95,13 +95,13 @@ class CharacterState extends GameState {
         if (controls.ACCEPT) {
             GameState.switchState(new PlayState());
             FlxG.sound.play(Paths.sound('confirm_sound'));
-            FlxG.sound.music.pause();
+            FlxG.sound.music.stop();
         }
 
         if (controls.BACK) {
             FlxG.sound.play(Paths.sound('cancel_sound'));
             GameState.switchState(new SelectState());
-			FlxG.sound.music.pause();
+			FlxG.sound.music.stop();
         }
     }
 }
