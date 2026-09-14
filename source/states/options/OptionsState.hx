@@ -53,6 +53,9 @@ class OptionsState extends GameState
     {
         super.update(elapsed);
 
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(Paths.music('menus/menu'));
+
         if (controls.UI_UP_P)
 		{
 			selected--;
