@@ -3,7 +3,7 @@ color 0a
 cd ..
 echo Installing dependencies...
 echo This might take a few moments depending on your internet speed.
-haxelib git lime https://github.com/ArkoseLabsOfficial/lime --quiet
+haxelib git lime https://github.com/AlafandyPorting/lime-0.7.3 --quiet
 haxelib install openfl --quiet
 haxelib install flixel --quiet
 haxelib install flixel-addons --quiet
