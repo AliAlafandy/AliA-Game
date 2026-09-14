@@ -103,6 +103,8 @@ class MenuState extends GameState
 		version.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(version);*/
 
+		FlxG.sound.music.resume();
+
 		changeItem();
 
 		super.create();
@@ -117,8 +119,6 @@ class MenuState extends GameState
 	{
 		if (FlxG.sound.music == null)
 			FlxG.sound.playMusic(Paths.music('menus/menu'));
-
-		FlxG.sound.music.resume();
 
 		if (!selectedSomethin)
 		{
