@@ -117,6 +117,9 @@ class ModsState extends GameState
     override public function update(elapsed:Float) {
         super.update(elapsed);
 
+        if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(Paths.music('menus/menu'));
+
         if (controls.BACK) {
             FlxG.sound.play(Paths.sound('cancel_sound'));
             GameState.switchState(new MenuState());
