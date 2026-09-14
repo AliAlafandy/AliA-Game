@@ -103,7 +103,7 @@ class MenuState extends GameState
 		version.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(version);*/
 
-		FlxG.sound.music.resume();
+		FlxG.sound.playMusic(Paths.music('menus/menu'));
 
 		changeItem();
 
@@ -133,7 +133,7 @@ class MenuState extends GameState
 				selectedSomethin = true;
 				FlxG.sound.play(Paths.sound('cancel_sound'));
 				GameState.switchState(new states.TitleState());
-				FlxG.sound.music.pause();
+				FlxG.sound.music.stop();
 			}
 
 			if (controls.ACCEPT)
