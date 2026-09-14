@@ -50,6 +50,9 @@ class SelectState extends GameState
     override public function update(elapsed:Float) {
         super.update(elapsed);
 
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(Paths.music('menus/menu'));
+
 		if (controls.UI_UP_P)
 		{
 			selected--;
