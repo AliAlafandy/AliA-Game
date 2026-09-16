@@ -126,3 +126,15 @@ class ModsState extends GameState
         }
     }
 }
+
+class ModPack extends FlxSpriteGroup
+{
+	public var folder:String = 'unknownMod';
+	public var icon:FlxSprite;
+	public var name:FlxText = 'Unknown Mod';
+	public var author:FlxText = 'Unknown User';
+	public var desc:String = 'No description provided.';
+	public var mod:Dynamic = null;
+	public var mustRestart:Bool = false;
+	public var settings:Array<Dynamic> = null;
+}
