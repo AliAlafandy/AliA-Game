@@ -134,7 +134,12 @@ class ModPack extends FlxSpriteGroup
 	public var name:FlxText = 'Unknown Mod';
 	public var author:FlxText = 'Unknown User';
 	public var desc:String = 'No description provided.';
-	public var mod:Dynamic = null;
+	public var pack:Dynamic = null;
 	public var mustRestart:Bool = false;
 	public var settings:Array<Dynamic> = null;
+
+	public function new(folder:String)
+	{
+		super();
+	}
 }
