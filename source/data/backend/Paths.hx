@@ -507,9 +507,11 @@ class Paths
 		return modFolders(key + '.json');
 	}
 
-	/* Goes unused for now
+	inline static public function modsEllawy(key:String) {
+		return modFolders(key + '.ellawy');
+	}
 
-	inline static public function modsShaderFragment(key:String, ?library:String)
+	/*inline static public function modsShaderFragment(key:String, ?library:String)
 	{
 		return modFolders('shaders/' + key + '.frag');
 	}
