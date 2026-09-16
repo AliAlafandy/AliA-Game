@@ -459,9 +459,9 @@ class PlayState extends GameState
 			}
 
 			hscriptArray.push(newScript);
-			if (newScript.exists('onCreate'))
+			if (newScript.exists('onGame'))
 			{
-				var callValue = newScript.call('onCreate');
+				var callValue = newScript.call('onGame');
 				if (!callValue.succeeded)
 				{
 					for (e in callValue.exceptions)
