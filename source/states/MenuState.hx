@@ -103,7 +103,8 @@ class MenuState extends GameState
 		version.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(version);*/
 
-		FlxG.sound.playMusic(Paths.music('menus/menu'));
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(Paths.music('menus/menu'));
 
 		changeItem();
 
@@ -202,10 +203,10 @@ class MenuState extends GameState
 			if (i == curSelected)
 			{
 				item.alpha = 1.0;
-				item.scale.set(1.0, 1.0);
+				item.scale.set(0.9, 0.9);
 			} else {
 				item.alpha = 0.6;
-				item.scale.set(0.9, 0.9);
+				item.scale.set(0.75, 0.75);
 			}
 			
 			item.updateHitbox();
