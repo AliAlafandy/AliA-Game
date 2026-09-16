@@ -15,8 +15,10 @@ class Mods
 	static public var currentModDirectory:String = '';
 	public static var ignoreModFolders:Array<String> = [
 		'characters',
+		'fonts',
 		'levels',
 		'music',
+		'mobile',
 		'scripts',
 		'videos'
 	];
@@ -125,7 +127,7 @@ class Mods
 		#if MODS_ALLOWED
 		if(folder == null) folder = Mods.currentModDirectory;
 
-		var path = Paths.mods(folder + '/pack.json');
+		var path = Paths.mods(folder + '/mod.json');
 		if(FileSystem.exists(path)) {
 			try {
 				#if sys
