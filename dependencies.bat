@@ -9,7 +9,7 @@ haxelib install flixel --quiet
 haxelib install flixel-addons --quiet
 haxelib install flixel-tools --quiet
 haxelib install flixel-ui --quiet
-haxelib git hxcpp https://github.com/AlafandyPorting/hxcpp-0.7.3 --quiet
+haxelib git hxcpp https://github.com/AlafandyPorting/hxcpp --quiet
 haxelib git hxCodec https://github.com/polybiusproxy/hxCodec --quiet
 haxelib git SScript https://github.com/AlafandyPorting/SScript --quiet
 haxelib install tjson --quiet
