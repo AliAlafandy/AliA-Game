@@ -124,6 +124,6 @@
 	<!-- Custom -->
 	<assets path="documents/app/iconAPP.png" rename="icon.png" if="linux" />
 
-	<icon path="documents/app/iconOG.png" if="desktop" />
+	<icon path="documents/app/iconOG.png" unless="mobile" />
 	<icon path="documents/app/iconAPP.png" if="mobile" />
 </project>
