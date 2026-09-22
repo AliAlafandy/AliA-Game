@@ -16,32 +16,45 @@ class OptionsState extends GameState
 		'Gameplay',
     ];
 
+	public var bg:FlxSprite;
     private var text:FlxText;
 
-    #if mobile
-    public var manager:MobileInputManager;
-    #end
+    function openSelectedSubstate(label:String) {
+		switch(label) {
+			case 'Data':
+				openSubState(new substates.options.DataSubState());
+			case 'Controls':
+				openSubState(new substates.options.ControlsSubState());
+			case 'Graphics':
+				openSubState(new substates.options.GraphicsSubState());
+			case 'Audio':
+				openSubState(new substates.options.AudioSubState());
+			case 'Gameplay':
+				openSubState(new substates.options.GameplaySubState());
+		}
+	}
 
-    public function new():Void
-    {
-        super();
-        #if mobile
-        manager = new MobileInputManager();
-        #end
-    }
-
-    override public function create():Void
+    override function create()
     {
         super.create();
 
-        var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/Options/background'));
+        bg = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/Options/background'));
 		add(bg);
+
+		for (i in 0...options.length)
+		{
+			var optionText:FlxText = new FlxText(0, 0, FlxG.width, options[i], 24);
+			optionText.setFormat(null, 24, FlxColor.WHITE, CENTER);
+			optionText.screenCenter();
+			optionText.y += (100 * (i - (options.length / 2))) + 50;
+			add(optionText);
+		}
 
         text = new FlxText(0, 0, FlxG.width, '', 24);
         text.setFormat(null, 24, FlxColor.WHITE, CENTER);
         add(text);
 
-        refresh();
+		refresh();
 
 		#if mobile
 		addCustomDPad('EXITE', 'MENU');
@@ -49,7 +62,24 @@ class OptionsState extends GameState
 		#end
     }
 
-    override public function update(elapsed:Float):Void
+	override function closeSubState() {
+		super.closeSubState();
+
+		#if DISCORD_ALLOWED
+		DiscordClient.changePresence("Options Menu", null);
+		#end
+
+		ClientPrefs.saveSettings();
+		ClientPrefs.loadPrefs();
+		controls.isInSubstate = false;
+
+		#if mobile
+		removeCustomDPad();
+		addCustomDPad("EXITE", "MENU");
+		#end
+	}
+
+    override function update(elapsed:Float)
     {
         super.update(elapsed);
 
@@ -83,7 +113,7 @@ class OptionsState extends GameState
         if (controls.ACCEPT)
         {
 			FlxG.sound.play(Paths.sound('confirm_sound'));
-            activate();
+            openSelectedSubstate(options[curSelected]);
         }
 
         if (controls.BACK)
@@ -198,4 +228,10 @@ class OptionsState extends GameState
         text.text = output;
         text.screenCenter();
     }
+
+	override function destroy()
+	{
+		ClientPrefs.loadPrefs();
+		super.destroy();
+	}
 }
