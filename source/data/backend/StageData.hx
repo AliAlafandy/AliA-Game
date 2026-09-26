@@ -50,7 +50,7 @@ class StageData {
 
     public static function getStageFile(stageName:String, act:Int):BINValue {
         var fileName:String = "act" + act;
-        var path:String = Paths.getLevelPath('levels/' + stageName.toLowerCase() + '/' + fileName + '.bin');
+        var path:String = Paths.getSharedPath('levels/' + stageName.toLowerCase() + '/' + fileName + '.bin');
         var parsedData:BINValue = null;
 
         #if MODS_ALLOWED
