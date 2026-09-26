@@ -4,7 +4,7 @@ import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 
-class OptionsState extends GameState
+class lOptionsState extends GameState
 {
     private var selected:Int = 0;
 
