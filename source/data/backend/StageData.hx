@@ -1,13 +1,17 @@
 package data.backend;
 
 import openfl.utils.Assets;
-// import haxe.Json;
+import openfl.utils.ByteArray;
+#if sys
+import sys.FileSystem;
+import sys.io.File;
+#endif
 
 class StageData {
 	public static var forceNextDirectory:String = null;
 
 	public static function loadDirectory() {
-		var stage:String = [
+		var stages:Array = [
 			'ATown',
 			'Neon',
 			'Nature',
@@ -22,35 +26,38 @@ class StageData {
 			'Flash',
 			'Special'
 		];
+		
+		var currentStageName:String = stages[0]; 
 
-		var stageFile:StageFile = getStageFile(stage);
-		if(stageFile == null) { //preventing crashes
+		var stageDataBytes:ByteArray = getStageFileBytes(currentStageName);
+		
+		if(stageDataBytes == null) {
 			forceNextDirectory = '';
 		} else {
-			forceNextDirectory = stageFile.directory;
+			stageDataBytes.position = 0;
+			forceNextDirectory = currentStageName.toLowerCase();
 		}
 	}
 
-	public static function getStageFile(stage:String) {
-		var raw:String = null;
+	public static function getStageFileBytes(stage:String):ByteArray {
 		var path:String = Paths.getLevelPath('levels/' + stage + '/' + stage + '.bin');
+		var bytes:ByteArray = null;
 
 		#if MODS_ALLOWED
 		var modPath:String = Paths.modFolders('levels/' + stage + '/' + stage + '.bin');
 		if(FileSystem.exists(modPath)) {
-			raw = File.getContent(modPath);
+			var rawBytes = File.getBytes(modPath);
+			bytes = ByteArray.fromBytes(rawBytes);
 		} else if(FileSystem.exists(path)) {
-			raw = File.getContent(path);
+			var rawBytes = File.getBytes(path);
+			bytes = ByteArray.fromBytes(rawBytes);
 		}
 		#else
 		if(Assets.exists(path)) {
-			raw = Assets.getText(path);
+			bytes = Assets.getBytes(path);
 		}
 		#end
-		else
-		{
-			return null;
-		}
-		// return cast ellawy.BIN.parse(raw);
+
+		return bytes;
 	}
 }
