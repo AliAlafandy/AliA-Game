@@ -1,16 +1,18 @@
 package data.backend;
 
 import openfl.utils.Assets;
-import openfl.utils.ByteArray;
+import ellawy.bin.BIN;
+import ellawy.bin.BINValue;
+import ellawy.bin.BINObject;
+
 #if sys
 import sys.FileSystem;
-import sys.io.File;
-#endif
+#end
 
 class StageData {
 	public static var forceNextDirectory:String = null;
 
-	public static function loadDirectory() {
+	public static function loadDirectory(stageName:String) {
 		var stages:Array = [
 			'ATown',
 			'Neon',
@@ -26,38 +28,46 @@ class StageData {
 			'Flash',
 			'Special'
 		];
-		
-		var currentStageName:String = stages[0]; 
 
-		var stageDataBytes:ByteArray = getStageFileBytes(currentStageName);
-		
-		if(stageDataBytes == null) {
+		var stageData:BINValue = getStageFile(stageName);
+
+		if (stageData == null) {
 			forceNextDirectory = '';
 		} else {
-			stageDataBytes.position = 0;
-			forceNextDirectory = currentStageName.toLowerCase();
+			if (stageData.isObject()) {
+				var obj:BINObject = stageData.asObject();
+				
+				if (obj.exists("directory")) {
+					forceNextDirectory = obj.get("directory").asString();
+				} else {
+					forceNextDirectory = stageName.toLowerCase();
+				}
+			} else {
+				forceNextDirectory = stageName.toLowerCase();
+			}
 		}
 	}
 
-	public static function getStageFileBytes(stage:String):ByteArray {
+	public static function getStageFile(stage:String):BINValue {
 		var path:String = Paths.getLevelPath('levels/' + stage + '/' + stage + '.bin');
-		var bytes:ByteArray = null;
+		var parsedData:BINValue = null;
 
 		#if MODS_ALLOWED
 		var modPath:String = Paths.modFolders('levels/' + stage + '/' + stage + '.bin');
-		if(FileSystem.exists(modPath)) {
-			var rawBytes = File.getBytes(modPath);
-			bytes = ByteArray.fromBytes(rawBytes);
-		} else if(FileSystem.exists(path)) {
-			var rawBytes = File.getBytes(path);
-			bytes = ByteArray.fromBytes(rawBytes);
+		if (FileSystem.exists(modPath)) {
+			parsedData = BIN.read(modPath);
+		} else if (FileSystem.exists(path)) {
+			parsedData = BIN.read(path);
 		}
 		#else
-		if(Assets.exists(path)) {
-			bytes = Assets.getBytes(path);
+		if (Assets.exists(path)) {
+			var bytes = Assets.getBytes(path);
+			if (bytes != null) {
+				parsedData = BIN.parse(bytes);
+			}
 		}
 		#end
 
-		return bytes;
+		return parsedData;
 	}
 }
