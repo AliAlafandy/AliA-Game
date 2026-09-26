@@ -1,73 +1,74 @@
 package data.backend;
 
 import openfl.utils.Assets;
-import ellawy.bin.BIN;
-import ellawy.bin.BINValue;
-import ellawy.bin.BINObject;
+import bin.BIN;
+import bin.BINValue;
+import bin.BINObject;
 
 #if sys
 import sys.FileSystem;
 #end
 
 class StageData {
-	public static var forceNextDirectory:String = null;
+    public static var forceNextDirectory:String = null;
+    public static var currentAct:Int = 1;
 
-	public static function loadDirectory(stageName:String) {
-		var stages:Array = [
-			'ATown',
-			'Neon',
-			'Nature',
-			'Wet',
-			'Water',
-			'Desert',
-			'Mountain',
-			'Fire',
-			'Air',
-			'Space',
-			'Doom',
-			'Flash',
-			'Special'
-		];
+    public static function loadDirectory(stageName:String, act:Int = 1) {
+        currentAct = act;
+        
+        var stageData:BINValue = getStageFile(stageName, act);
 
-		var stageData:BINValue = getStageFile(stageName);
+        if (stageData == null) {
+            forceNextDirectory = '';
+        } else {
+            if (stageData.isObject()) {
+                var obj:BINObject = stageData.asObject();
+                
+                if (obj.exists("directory")) {
+                    forceNextDirectory = obj.get("directory").asString();
+                } else {
+                    forceNextDirectory = (stageName + act).toLowerCase();
+                }
+            } else {
+                forceNextDirectory = (stageName + act).toLowerCase();
+            }
+        }
+    }
 
-		if (stageData == null) {
-			forceNextDirectory = '';
-		} else {
-			if (stageData.isObject()) {
-				var obj:BINObject = stageData.asObject();
-				
-				if (obj.exists("directory")) {
-					forceNextDirectory = obj.get("directory").asString();
-				} else {
-					forceNextDirectory = stageName.toLowerCase();
-				}
-			} else {
-				forceNextDirectory = stageName.toLowerCase();
-			}
-		}
-	}
+	public static function getLevelAssetPath(stageName:String, act:Int, fileName:String):String {
+        var folderPath:String = 'levels/' + stageName.toLowerCase() + '/';
+        
+        #if MODS_ALLOWED
+        var modPath:String = Paths.modFolders(folderPath + fileName);
+        if (sys.FileSystem.exists(modPath)) {
+            return modPath;
+        }
+        #end
+        
+        return folderPath + fileName;
+    }
 
-	public static function getStageFile(stage:String):BINValue {
-		var path:String = Paths.getLevelPath('levels/' + stage + '/' + stage + '.bin');
-		var parsedData:BINValue = null;
+    public static function getStageFile(stageName:String, act:Int):BINValue {
+        var fileName:String = "act" + act;
+        var path:String = Paths.getLevelPath('levels/' + stageName.toLowerCase() + '/' + fileName + '.bin');
+        var parsedData:BINValue = null;
 
-		#if MODS_ALLOWED
-		var modPath:String = Paths.modFolders('levels/' + stage + '/' + stage + '.bin');
-		if (FileSystem.exists(modPath)) {
-			parsedData = BIN.read(modPath);
-		} else if (FileSystem.exists(path)) {
-			parsedData = BIN.read(path);
-		}
-		#else
-		if (Assets.exists(path)) {
-			var bytes = Assets.getBytes(path);
-			if (bytes != null) {
-				parsedData = BIN.parse(bytes);
-			}
-		}
-		#end
+        #if MODS_ALLOWED
+        var modPath:String = Paths.modFolders('levels/' + stageName.toLowerCase() + '/' + fileName + '.bin');
+        if (FileSystem.exists(modPath)) {
+            parsedData = BIN.read(modPath);
+        } else if (FileSystem.exists(path)) {
+            parsedData = BIN.read(path);
+        }
+        #else
+        if (Assets.exists(path)) {
+            var bytes = Assets.getBytes(path);
+            if (bytes != null) {
+                parsedData = BIN.parse(bytes);
+            }
+        }
+        #end
 
-		return parsedData;
-	}
+        return parsedData;
+    }
 }

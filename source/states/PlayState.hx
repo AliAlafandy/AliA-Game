@@ -8,6 +8,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 
 import data.objects.Player;
 
+import data.backend.StageData;
+
 import states.online.MultiPlayer;
 import states.online.MultiPlayer.RemotePlayer;
 
@@ -51,6 +53,7 @@ class PlayState extends GameState
 {
 	public var player:Player;
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
+	public static var curStage:String = 'ATown';
 
 	private var elapsedTime:Float = 0;
 	private var rpcTimer:Float = 0;
@@ -98,6 +101,27 @@ class PlayState extends GameState
 	override public function create():Void
 	{
 		super.create();
+
+		StageData.loadDirectory(curStage, StageData.currentAct);
+
+		var stageBinData = StageData.getStageFile(curStage, StageData.currentAct);
+		if (stageBinData != null && stageBinData.isObject()) {
+			var obj = stageBinData.asObject();
+		}
+
+		var imagePath = StageData.getLevelAssetPath(curStage, StageData.currentAct, "background.png");
+
+		var actBackground = new FlxSprite(0, 0);
+
+		#if MODS_ALLOWED
+		if (sys.FileSystem.exists(imagePath)) {
+			actBackground.loadGraphic(imagePath);
+		}
+		#else
+		actBackground.loadGraphic(Paths.getPath(imagePath, IMAGE));
+		#end
+
+		add(actBackground);
 
 		debugGroup = new FlxTypedGroup<FlxText>();
 		add(debugGroup);
@@ -272,7 +296,7 @@ class PlayState extends GameState
 		if (rpcTimer >= 1)
 		{
 			rpcTimer = 0;
-			DiscordClient.changePresence('Playing Ali-A Game\n' + 'Play - ATown Act1' + "Time :" + Std.int(elapsedTime), null);
+			DiscordClient.changePresence('Playing Ali-A Game\n' + 'Play - ' + curStage + " Act: " + StageData.currentAct + " Time: " + Std.int(elapsedTime), null);
 		}
 		#end
 
@@ -401,6 +425,19 @@ class PlayState extends GameState
 		#if (js || sys)
 		openfl.Lib.current.stage.removeEventListener(openfl.events.TextEvent.TEXT_INPUT, onChatTextInput);
 		#end
+	}
+
+		function goToNextAct() {
+		StageData.currentAct++;
+		
+		var nextActFile = StageData.getStageFile(curStage, StageData.currentAct);
+		
+		if (nextActFile != null) {
+			StageData.loadDirectory(curStage, StageData.currentAct);
+			FlxG.switchState(new PlayState());
+		} else {
+			//endLevel();
+		}
 	}
 
 	#if HSCRIPT_ALLOWED
