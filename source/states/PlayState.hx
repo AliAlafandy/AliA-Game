@@ -102,7 +102,7 @@ class PlayState extends GameState
 	{
 		super.create();
 
-		StageData.loadDirectory(curStage, StageData.currentAct);
+		/*StageData.loadDirectory(curStage, StageData.currentAct);
 
 		var stageBinData = StageData.getStageFile(curStage, StageData.currentAct);
 		if (stageBinData != null && stageBinData.isObject()) {
@@ -121,7 +121,7 @@ class PlayState extends GameState
 		actBackground.loadGraphic(Paths.getPath(imagePath, IMAGE));
 		#end
 
-		add(actBackground);
+		add(actBackground);*/
 
 		debugGroup = new FlxTypedGroup<FlxText>();
 		add(debugGroup);
