@@ -38,14 +38,16 @@ class Player extends FlxSprite
 	public var curCharacter:String = DEFAULT_CHARACTER;
 	public var animationsArray:Array = [];
 
-	public function new(x:Float, y:Float, ?character:String = 'Ellawy')
+	public function new(x:Float, y:Float, ?character:String = 'Ellawy', ?isPlayer:Bool = false)
 	{
 		super(x, y);
-
+	
 		curCharacter = character;
-		
-		var path:String = Paths.getPath('characters/$curCharacter/$curCharacter.json', TEXT, null, true);
-
+		this.isPlayer = isPlayer;
+	
+		var jsonKey:String = 'characters/$curCharacter/$curCharacter';
+		var path:String = Paths.getPath('$jsonKey.json', TEXT, null, true);
+	
 		try
 		{
 			#if MODS_ALLOWED
@@ -60,7 +62,7 @@ class Player extends FlxSprite
 		{
 			FlxG.log.warn('Could not load character json: $e');
 		}
-
+	
 		if (animationsArray.length > 0)
 		{
 			playAnim(animationsArray[0].name);
