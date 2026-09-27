@@ -18,17 +18,17 @@ import openfl.display.BitmapData;
 
 import states.MenuState;
 
-#if VIDEOS_ALLOWED
-import hxvlc.flixel.FlxVideo as VideoHandler;
-#end
+import hxvlc.flixel.FlxVideoSprite;
+import hxvlc.impl.Instance;
 
 class TitleState extends GameState
 {
-    public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
-	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
-	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
+    public static var muteKeys:Array = [FlxKey.ZERO];
+	public static var volumeDownKeys:Array = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
+	public static var volumeUpKeys:Array = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
     public var initialized:Bool = false;
-    // public var startIntro:Bool = false;
+    
+    var videoSprite:FlxVideoSprite;
 
     override public function create() {
         var title = new FlxText(0, 0, 0, "Ali Alafandy Game", 24);
@@ -58,6 +58,13 @@ class TitleState extends GameState
 
     override public function update(elapsed:Float) {
         super.update(elapsed);
+        
+        if (videoSprite != null)
+        {
+            if (FlxG.keys.justPressed.SPACE)
+                videoSprite.togglePaused();
+        }
+
         if (FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed) {
 			FlxG.sound.play(Paths.sound('confirm_sound'));
             GameState.switchState(new MenuState());
@@ -66,8 +73,8 @@ class TitleState extends GameState
 
     public function startVideo(name:String)
     {
-        #if VIDEOS_ALLOWED
         var filepath:String = Paths.video(name);
+        
         #if sys
         if(!FileSystem.exists(filepath))
         #else
@@ -77,28 +84,33 @@ class TitleState extends GameState
             FlxG.log.warn('Couldnt find video file: ' + name);
             return;
         }
-        var video:VideoHandler = new VideoHandler();
-            #if (hxCodec >= "3.0.0")
-            // Recent versions
-            video.play(filepath);
-            video.onEndReached.add(function()
+
+        videoSprite = new FlxVideoSprite(0, 0);
+
+        videoSprite.bitmap.onEndReached.add(function():Void
+        {
+            if (videoSprite != null)
             {
-                video.dispose();
-                //startIntro();
-                initialized = true;
-                return;
-            }, true);
-            #else
-            // Older versions
-            video.playVideo(filepath);
-            video.finishCallback = function()
-            {
-                return;
+                remove(videoSprite);
+                videoSprite.destroy();
+                videoSprite = null;
             }
-            #end
-        #else
-        FlxG.log.warn('Platform not supported!');
-        return;
-        #end
-	}
+            initialized = true;
+        });
+
+        videoSprite.bitmap.onFormatSetup.add(function():Void
+        {
+            if (videoSprite.bitmap != null && videoSprite.bitmap.bitmapData != null)
+            {
+                final scale:Float = Math.min(FlxG.width / videoSprite.bitmap.bitmapData.width, FlxG.height / videoSprite.bitmap.bitmapData.height);
+
+                videoSprite.setGraphicSize(videoSprite.bitmap.bitmapData.width * scale, videoSprite.bitmap.bitmapData.height * scale);
+                videoSprite.updateHitbox();
+                videoSprite.screenCenter();
+            }
+        });
+
+        add(videoSprite);
+        videoSprite.load(filepath);
+    }
 }
