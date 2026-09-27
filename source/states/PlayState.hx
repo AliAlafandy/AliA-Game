@@ -296,7 +296,7 @@ class PlayState extends GameState
 		if (rpcTimer >= 1)
 		{
 			rpcTimer = 0;
-			DiscordClient.changePresence('Playing Ali-A Game\n' + 'Play - ' + curStage + " Act: " + StageData.currentAct + " Time: " + Std.int(elapsedTime), null);
+			DiscordClient.changePresence('Playing Ali-A Game\n' + 'Play - ' /*+ curStage + " Act: " + StageData.currentAct +*/ + " Time: " + Std.int(elapsedTime), null);
 		}
 		#end
 
