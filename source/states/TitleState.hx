@@ -18,16 +18,20 @@ import openfl.display.BitmapData;
 
 import states.MenuState;
 
+#if VIDEOS_ALLOWED
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.impl.Instance;
+#end
 
 class TitleState extends GameState
 {
-    public static var muteKeys:Array = [FlxKey.ZERO];
-	public static var volumeDownKeys:Array = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
-	public static var volumeUpKeys:Array = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
+    public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
+	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
+	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
     public var initialized:Bool = false;
-    
+	// public var startIntro:Bool = false;
+
+	#i
     var videoSprite:FlxVideoSprite;
 
     override public function create() {
@@ -73,8 +77,9 @@ class TitleState extends GameState
 
     public function startVideo(name:String)
     {
+		#if VIDEO_ALLOWED
         var filepath:String = Paths.video(name);
-        
+
         #if sys
         if(!FileSystem.exists(filepath))
         #else
@@ -86,7 +91,6 @@ class TitleState extends GameState
         }
 
         videoSprite = new FlxVideoSprite(0, 0);
-
         videoSprite.bitmap.onEndReached.add(function():Void
         {
             if (videoSprite != null)
@@ -97,7 +101,6 @@ class TitleState extends GameState
             }
             initialized = true;
         });
-
         videoSprite.bitmap.onFormatSetup.add(function():Void
         {
             if (videoSprite.bitmap != null && videoSprite.bitmap.bitmapData != null)
@@ -109,8 +112,8 @@ class TitleState extends GameState
                 videoSprite.screenCenter();
             }
         });
-
         add(videoSprite);
         videoSprite.load(filepath);
+		#end
     }
 }
