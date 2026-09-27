@@ -1,77 +1,125 @@
 {
-	"name": "M.Shaaban",
+	"charName": "M. Shaaban",
 	"anim": {
 		[
 			"name": "idle",
 			"image": "Shaaban",
 			"prefix": "Shaaban Idle0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
+		],
+		[
+			"name": "waiting",
+			"image": "Shaaban",
+			"prefix": "Shaaban Waiting0",
+			"offsets": [0, 0],
+			"loop": true,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
 		],
 		[
 			"name": "walking",
 			"image": "Shaaban",
 			"prefix": "Shaaban Walking0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "running",
 			"image": "Shaaban",
 			"prefix": "Shaaban Running0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
+		],
+		[
+			"name": "stop",
+			"image": "Shaaban",
+			"prefix": "Shaaban Stop0",
+			"offsets": [0, 0],
+			"loop": true,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
+		],
+		[
+			"name": "fall",
+			"image": "Shaaban",
+			"prefix": "Shaaban Fall0",
+			"offsets": [0, 0],
+			"loop": true,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
 		],
 		[
 			"name": "jumping",
 			"image": "Shaaban",
 			"prefix": "Shaaban Jumping0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "up",
 			"image": "Shaaban",
 			"prefix": "Shaaban LookUP0",
 			"offsets": [0, 0],
+			"loop": false,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "down",
 			"image": "Shaaban",
 			"prefix": "Shaaban Under0",
 			"offsets": [0, 0],
+			"loop": false,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "power",
 			"image": "Shaaban",
 			"prefix": "Shaaban Expansion0",
 			"offsets": [0, 0],
+			"loop": false,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
+		],
+		[
+			"name": "victory",
+			"image": "Shaaban",
+			"prefix": "Shaaban VicPose0",
+			"offsets": [0, 0],
+			"loop": false,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
 		],
 		[
 			"name": "gameOver",
 			"image": "Shaaban",
 			"prefix": "Shaaban GameOver0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		]
 	}
 }
