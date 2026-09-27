@@ -35,16 +35,20 @@ class Player extends FlxSprite
 	public static final DEFAULT_CHARACTER:String = 'Ellawy';
 
 	public var animOffsets:Map<Float, String> = new Map();
-	public var curCharacter:String = DEFAULT_CHARACTER;
-	public var animationsArray:Array = [];
-	public var isPlayer:Bool = false;
+	public var debugMode:Bool = false;
+	// public var extraData:Map<String, Dynamic> = new Map<String, Dynamic>();
 
-	public function new(x:Float, y:Float, ?character:String = 'Ellawy', ?isPlayer:Bool = false)
+	public var isPartner:Bool = false;
+	public var curCharacter:String = DEFAULT_CHARACTER;
+
+	public var animationsArray:Array = [];
+
+	public function new(x:Float, y:Float, ?character:String = 'Ellawy', ?isPartner:Bool = false)
 	{
 		super(x, y);
 	
 		curCharacter = character;
-		this.isPlayer = isPlayer;
+		this.isPartner = isPartner;
 	
 		var jsonKey:String = 'characters/$curCharacter/$curCharacter';
 		var path:String = Paths.getPath('$jsonKey.json', TEXT, null, true);
