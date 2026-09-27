@@ -1,16 +1,16 @@
 package data.backend;
 
 import openfl.utils.Assets;
-import bin.BIN;
-import bin.BINValue;
-import bin.BINObject;
+//import bin.BIN;
+//import bin.BINValue;
+//import bin.BINObject;
 
 #if sys
 import sys.FileSystem;
 #end
 
 class StageData {
-    public static var forceNextDirectory:String = null;
+  /*public static var forceNextDirectory:String = null;
     public static var currentAct:Int = 1;
 
     public static function loadDirectory(stageName:String, act:Int = 1) {
@@ -70,5 +70,5 @@ class StageData {
         #end
 
         return parsedData;
-    }
+    }*/
 }
