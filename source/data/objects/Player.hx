@@ -41,7 +41,7 @@ class Player extends FlxSprite
 	public var isPartner:Bool = false;
 	public var curCharacter:String = DEFAULT_CHARACTER;
 
-	public var animationsArray:Array<Null> = [];
+	public var animationsArray:Array = [];
 
 	public function new(x:Float, y:Float, ?character:String = 'Ellawy', ?isPartner:Bool = false)
 	{
