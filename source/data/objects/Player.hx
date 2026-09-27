@@ -23,11 +23,11 @@ typedef AnimArray = {
 	var name:String;
 	var image:String;
 	var prefix:String;
-	var offsets:Array;
+	var offsets:Array<Int>;
 	var loop:Bool;
 	var scale:Float;
 	var fps:Int;
-	var indices:Array;
+	var indices:Array<Int>;
 }
 
 class Player extends FlxSprite
