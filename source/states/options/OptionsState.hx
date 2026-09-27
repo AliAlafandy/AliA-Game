@@ -43,6 +43,9 @@ class OptionsState extends GameState
 
         refresh();
 
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(Paths.music('menus/menu'));
+
 		#if mobile
 		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
