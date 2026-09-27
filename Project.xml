@@ -72,7 +72,7 @@
 	<haxedef name="NO_PRECOMPILED_HEADERS" if="linux"/>
 
 	<haxelib name="hxcpp-debug-server" if="debug"/>
-	<haxedef name="HXC_LIBVLC_LOGGING" if="VIDEOS_ALLOWED debug"/>
+	<!-- <haxedef name="HXC_LIBVLC_LOGGING" if="VIDEOS_ALLOWED debug"/> -->
 
 	<!-- Haxedefines -->
 	<!--<haxedef name="FLX_RECORD"/>
