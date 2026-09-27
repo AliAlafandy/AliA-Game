@@ -34,7 +34,7 @@ class Player extends FlxSprite
 {
 	public static final DEFAULT_CHARACTER:String = 'Ellawy';
 
-	public var animOffsets:Map> = new Map>();
+	public var animOffsets:Map<Float, String> = new Map();
 	public var curCharacter:String = DEFAULT_CHARACTER;
 	public var animationsArray:Array = [];
 	public var isPlayer:Bool = false;
@@ -46,7 +46,7 @@ class Player extends FlxSprite
 		curCharacter = character;
 		this.isPlayer = isPlayer;
 	
-		var jsonKey:String = 'characters/\(curCharacter/\)curCharacter';
+		var jsonKey:String = 'characters/$curCharacter/$curCharacter';
 		var path:String = Paths.getPath('$jsonKey.json', TEXT, null, true);
 	
 		try
@@ -87,7 +87,7 @@ class Player extends FlxSprite
 				var animLoop:Bool = anim.loop;
 				var animIndices:Array = anim.indices;
 
-				var assetKey:String = 'characters/\(curCharacter/\)imageName';
+				var assetKey:String = 'characters/$curCharacter/$imageName';
 
 				var imageLoaded = Paths.image(assetKey, null, true);
 				var xmlPath = Paths.getPath('$assetKey.xml', TEXT, null, true);
