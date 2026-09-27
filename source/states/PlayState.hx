@@ -427,8 +427,8 @@ class PlayState extends GameState
 		#end
 	}
 
-		function goToNextAct() {
-		StageData.currentAct++;
+	/*function goToNextAct() {
+		//StageData.currentAct++;
 		
 		var nextActFile = StageData.getStageFile(curStage, StageData.currentAct);
 		
@@ -438,7 +438,7 @@ class PlayState extends GameState
 		} else {
 			//endLevel();
 		}
-	}
+	}*/
 
 	#if HSCRIPT_ALLOWED
 	public function startScriptsNamed(scriptFile:String)
