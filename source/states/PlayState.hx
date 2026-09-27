@@ -142,7 +142,7 @@ class PlayState extends GameState
 
 		FlxG.camera.bgColor = FlxColor.BLACK;
 
-		player = new Player(0, 0, 'Ellawy', true);
+		var player:Player = new Player(0, 0, CharacterState.selectedCharacter);
 		player.screenCenter();
 		add(player);
 
