@@ -46,7 +46,8 @@ class CharacterState extends GameState {
         add(txt);
         updateChar();
 
-		FlxG.sound.playMusic(Paths.music('menus/select_character'));
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(Paths.music('menus/select_character'));
 
         #if mobile
         addCustomDPad('EXITE', 'MENU');
@@ -95,13 +96,13 @@ class CharacterState extends GameState {
         if (controls.ACCEPT) {
             GameState.switchState(new PlayState());
             FlxG.sound.play(Paths.sound('confirm_sound'));
-            FlxG.sound.music.stop();
+            FlxG.sound.music.destroy();
         }
 
         if (controls.BACK) {
             FlxG.sound.play(Paths.sound('cancel_sound'));
             GameState.switchState(new SelectState());
-			FlxG.sound.music.stop();
+			FlxG.sound.music.destroy();
         }
     }
 }
