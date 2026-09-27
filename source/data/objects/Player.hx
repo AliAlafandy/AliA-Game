@@ -16,7 +16,7 @@ import data.backend.Paths;
 
 typedef CharacterFile = {
 	var charName:String;
-	var anim:Array;
+	var anim:Array<AnimArray>;
 }
 
 typedef AnimArray = {
