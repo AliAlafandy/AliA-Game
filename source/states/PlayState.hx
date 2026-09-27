@@ -142,9 +142,15 @@ class PlayState extends GameState
 
 		FlxG.camera.bgColor = FlxColor.BLACK;
 
-		var player:Player = new Player(0, 0, CharacterState.selectedCharacter);
+		var character:String = CharacterState.selectedCharacter;
+		if (character == null || character.length == 0)
+			character = Player.DEFAULT_CHARACTER;
+
+		player = new Player(0, 0, character);
 		player.screenCenter();
 		add(player);
+
+		FlxG.camera.follow(player, flixel.FlxCameraFollowStyle.LOCKON, 1.0);
 
 		/*var title:FlxText = new FlxText(0, 20, FlxG.width, 'ALI ALAFANDY GAME', 24);
 		title.setFormat(null, 24, FlxColor.WHITE, CENTER);
