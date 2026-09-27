@@ -41,6 +41,9 @@ class SelectState extends GameState
 
 		refresh();
 
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(Paths.music('menus/menu'));
+
         #if mobile
 		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
@@ -80,7 +83,7 @@ class SelectState extends GameState
         if (controls.ACCEPT) {
             GameState.switchState(new CharacterState());
 			FlxG.sound.play(Paths.sound('confirm_sound'));
-			FlxG.sound.music.volume = 0;
+			FlxG.sound.music.destroy();
         }
 
         if (controls.BACK) {
