@@ -1,77 +1,125 @@
 {
-	"name": "Ahmed Alafandy",
+	"charName": "Ahmed Alafandy",
 	"anim": {
 		[
 			"name": "idle",
 			"image": "Hamedo",
 			"prefix": "Hamedo Idle0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
+		],
+		[
+			"name": "waiting",
+			"image": "Hamedo",
+			"prefix": "Hamedo Waiting0",
+			"offsets": [0, 0],
+			"loop": true,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
 		],
 		[
 			"name": "walking",
 			"image": "Hamedo",
 			"prefix": "Hamedo Walking0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "running",
 			"image": "Hamedo",
 			"prefix": "Hamedo Running0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
+		],
+		[
+			"name": "stop",
+			"image": "Hamedo",
+			"prefix": "Hamedo Stop0",
+			"offsets": [0, 0],
+			"loop": true,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
+		],
+		[
+			"name": "fall",
+			"image": "Hamedo",
+			"prefix": "Hamedo Fall0",
+			"offsets": [0, 0],
+			"loop": true,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
 		],
 		[
 			"name": "jumping",
 			"image": "Hamedo",
 			"prefix": "Hamedo Jumping0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "up",
 			"image": "Hamedo",
 			"prefix": "Hamedo LookUP0",
 			"offsets": [0, 0],
+			"loop": false,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "down",
 			"image": "Hamedo",
 			"prefix": "Hamedo Under0",
 			"offsets": [0, 0],
+			"loop": false,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "power",
 			"image": "Hamedo",
-			"prefix": "Hamedo Fliying0",
+			"prefix": "Hamedo Flying0",
 			"offsets": [0, 0],
+			"loop": false,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
+		],
+		[
+			"name": "victory",
+			"image": "Hamedo",
+			"prefix": "Hamedo VicPose0",
+			"offsets": [0, 0],
+			"loop": false,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
 		],
 		[
 			"name": "gameOver",
 			"image": "Hamedo",
 			"prefix": "Hamedo GameOver0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		]
 	}
 }
