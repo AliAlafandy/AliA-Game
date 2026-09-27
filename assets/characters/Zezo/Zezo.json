@@ -1,77 +1,125 @@
 {
-	"name": "Ahmed Zezo",
+	"charName": "Ahmed Zezo",
 	"anim": {
 		[
 			"name": "idle",
 			"image": "Zezo",
 			"prefix": "Zezo Idle0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
+		],
+		[
+			"name": "waiting",
+			"image": "Zezo",
+			"prefix": "Zezo Waiting0",
+			"offsets": [0, 0],
+			"loop": true,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
 		],
 		[
 			"name": "walking",
 			"image": "Zezo",
 			"prefix": "Zezo Walking0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "running",
 			"image": "Zezo",
 			"prefix": "Zezo Running0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
+		],
+		[
+			"name": "stop",
+			"image": "Zezo",
+			"prefix": "Zezo Stop0",
+			"offsets": [0, 0],
+			"loop": true,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
+		],
+		[
+			"name": "fall",
+			"image": "Zezo",
+			"prefix": "Zezo Fall0",
+			"offsets": [0, 0],
+			"loop": true,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
 		],
 		[
 			"name": "jumping",
 			"image": "Zezo",
 			"prefix": "Zezo Jumping0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "up",
 			"image": "Zezo",
 			"prefix": "Zezo LookUP0",
 			"offsets": [0, 0],
+			"loop": false,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "down",
 			"image": "Zezo",
 			"prefix": "Zezo Under0",
 			"offsets": [0, 0],
+			"loop": false,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		],
 		[
 			"name": "power",
 			"image": "Zezo",
 			"prefix": "Zezo Disappearance0",
 			"offsets": [0, 0],
+			"loop": false,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
+		],
+		[
+			"name": "victory",
+			"image": "Zezo",
+			"prefix": "Zezo VicPose0",
+			"offsets": [0, 0],
+			"loop": false,
+			"scale": 1,
+			"fps": 24,
+			"indices": []
 		],
 		[
 			"name": "gameOver",
 			"image": "Zezo",
 			"prefix": "Zezo GameOver0",
 			"offsets": [0, 0],
+			"loop": true,
 			"scale": 1,
 			"fps": 24,
-			"include": []
+			"indices": []
 		]
 	}
 }
