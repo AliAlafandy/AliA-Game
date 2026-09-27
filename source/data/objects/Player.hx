@@ -108,9 +108,13 @@ class Player extends FlxSprite
 
 					var spritemap = FlxAtlasFrames.fromSparrow(imageLoaded, xmlContent);
 					if (frames == null)
-						frames = spritemap;
+					{
+					    frames = spritemap;
+					}
 					else
-						frames.addAtlas(spritemap);
+					{
+					    cast(frames, FlxAtlasFrames).addAtlas(spritemap);
+					}
 				}
 
 				if (animIndices != null && animIndices.length > 0)
