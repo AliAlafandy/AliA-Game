@@ -31,7 +31,7 @@ class TitleState extends GameState
     public var initialized:Bool = false;
 	// public var startIntro:Bool = false;
 
-	#i
+	#if VIDEOS_ALLOWED
     var videoSprite:FlxVideoSprite;
 
     override public function create() {
