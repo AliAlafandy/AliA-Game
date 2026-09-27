@@ -33,6 +33,7 @@ class TitleState extends GameState
 
 	#if VIDEOS_ALLOWED
     var videoSprite:FlxVideoSprite;
+	#end
 
     override public function create() {
         var title = new FlxText(0, 0, 0, "Ali Alafandy Game", 24);
