@@ -34,7 +34,7 @@ class Player extends FlxSprite
 {
 	public static final DEFAULT_CHARACTER:String = 'Ellawy';
 
-	public var animOffsets:Map<String, Array<Dynamic>> = new Map<String, Array<Dynamic>>();;
+	public var animOffsets:Map<String, Array<Dynamic>> = new Map<String, Array<Dynamic>>();
 	public var debugMode:Bool = false;
 	// public var extraData:Map<String, Dynamic> = new Map<String, Dynamic>();
 
