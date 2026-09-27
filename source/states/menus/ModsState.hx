@@ -43,6 +43,9 @@ class ModsState extends GameState
 
         reloadModList();
 
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(Paths.music('menus/menu'));
+
         #if mobile
         addCustomDPad('NONE', 'BACK');
         addCustomDPadCam();
