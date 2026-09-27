@@ -7,6 +7,7 @@ import flixel.group.FlxGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
 import data.objects.Player;
+import states.menus.CharacterState;
 
 import data.backend.StageData;
 
