@@ -6,6 +6,8 @@ import flixel.text.FlxText;
 import flixel.util.FlxAxes;
 
 class CharacterState extends GameState {
+	public static var selectedCharacter:String = "Ellawy";
+	
     var index:Int = 0;
     var chars:Array<String> = [
         "Ellawy",
@@ -94,6 +96,7 @@ class CharacterState extends GameState {
         }
 
         if (controls.ACCEPT) {
+			selectedCharacter = chars[index];
             GameState.switchState(new PlayState());
             FlxG.sound.play(Paths.sound('confirm_sound'));
             FlxG.sound.music.destroy();
