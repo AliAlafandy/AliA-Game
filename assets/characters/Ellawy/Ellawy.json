@@ -38,7 +38,16 @@
 			"include": []
 		],
 		[
-			"name": "under",
+			"name": "up",
+			"image": "Ellawy",
+			"prefix": "Ellawy LookUP0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "down",
 			"image": "Ellawy",
 			"prefix": "Ellawy Under0",
 			"offsets": [0, 0],
@@ -47,7 +56,7 @@
 			"include": []
 		],
 		[
-			"name": "flash",
+			"name": "power",
 			"image": "Ellawy",
 			"prefix": "Ellawy Flash0",
 			"offsets": [0, 0],
