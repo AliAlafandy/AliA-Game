@@ -38,7 +38,16 @@
 			"include": []
 		],
 		[
-			"name": "under",
+			"name": "up",
+			"image": "Shaaban",
+			"prefix": "Shaaban LookUP0",
+			"offsets": [0, 0],
+			"scale": 1,
+			"fps": 24,
+			"include": []
+		],
+		[
+			"name": "down",
 			"image": "Shaaban",
 			"prefix": "Shaaban Under0",
 			"offsets": [0, 0],
@@ -47,7 +56,7 @@
 			"include": []
 		],
 		[
-			"name": "expansion",
+			"name": "power",
 			"image": "Shaaban",
 			"prefix": "Shaaban Expansion0",
 			"offsets": [0, 0],
