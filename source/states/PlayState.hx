@@ -360,8 +360,8 @@ class PlayState extends GameState
 		#if mobile
 		if (customDPad != null)
 		{
-			leftPressed = leftPressed || customDPad.leftButton.justPressed || customDPad.leftButton.pressed;
-			rightPressed = rightPressed || customDPad.rightButton.justPressed || customDPad.rightButton.pressed;
+			leftPressed = leftPressed || customDPad.buttonLeft.justPressed || customDPad.buttonLeft.pressed;
+			rightPressed = rightPressed || customDPad.buttonRight.justPressed || customDPad.buttonRight.pressed;
 			jumpPressed = jumpPressed || customDPad.jumpButton.justPressed || customDPad.jumpButton.pressed;
 		}
 		#end
