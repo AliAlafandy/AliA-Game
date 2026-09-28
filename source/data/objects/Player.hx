@@ -17,14 +17,12 @@ import sys.io.File;
 
 import data.backend.Paths;
 
-typedef CharacterFile =
-{
+typedef CharacterFile = {
 	var charName:String;
 	var anim:Array<AnimArray>;
 }
 
-typedef AnimArray =
-{
+typedef AnimArray = {
 	var name:String;
 	var image:String;
 	var prefix:String;
