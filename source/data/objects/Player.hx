@@ -2,6 +2,7 @@ package data.objects;
 
 import flixel.FlxG;
 import flixel.FlxObject;
+import flixel.util.FlxDirectionFlags;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
@@ -244,7 +245,7 @@ class Player extends FlxSprite
 		maxVelocity.y = maxFallSpeed;
 		drag.x = moveFriction;
 		immovable = false;
-		allowCollisions = FlxObject.ANY;
+		allowCollisions = FlxDirectionFlags.ANY;
 	}
 
 	public function moveCharacter(direction:Float, jumpPressed:Bool):Void
@@ -274,9 +275,9 @@ class Player extends FlxSprite
 			velocity.x = FlxMath.lerp(velocity.x, direction * moveSpeed, 0.20);
 
 			if (direction < 0)
-				facing = FlxObject.LEFT;
+				facing = FlxDirectionFlags.LEFT;
 			else
-				facing = FlxObject.RIGHT;
+				facing = FlxDirectionFlags.RIGHT;
 		} else {
 			if (velocity.x > 0)
 			{
@@ -366,7 +367,7 @@ class Player extends FlxSprite
 
 	public function updateGroundState():Void
 	{
-		grounded = isTouching(FlxObject.FLOOR);
+		grounded = isTouching(FlxDirectionFlags.FLOOR);
 		updateMovementAnimation();
 	}
 
