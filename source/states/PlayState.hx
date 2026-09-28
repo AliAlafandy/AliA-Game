@@ -2,6 +2,7 @@ package states;
 
 import flixel.FlxG;
 import flixel.FlxObject;
+import flixel.util.FlxDirectionFlags;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -130,7 +131,7 @@ class PlayState extends GameState
 		testGround = new FlxSprite(-2000, FlxG.height - 32);
 		testGround.makeGraphic(FlxG.width + 4000, 32, FlxColor.TRANSPARENT);
 		testGround.immovable = true;
-		testGround.allowCollisions = FlxObject.UP;
+		testGround.allowCollisions = FlxDirectionFlags.UP;
 		testGround.visible = false;
 		add(testGround);
 
