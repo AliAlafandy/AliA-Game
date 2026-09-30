@@ -1,0 +1,73 @@
+{
+	"dependencies": [
+		{
+			"name": "lime",
+			"type": "haxelib",
+			"version": null
+		},
+		{
+			"name": "openfl",
+			"type": "haxelib",
+			"version": null
+		},
+		{
+			"name": "flixel",
+			"type": "haxelib",
+			"version": null
+		},
+		{
+			"name": "flixel-addons",
+			"type": "haxelib",
+			"version": null
+		},
+		{
+			"name": "flixel-tools",
+			"type": "haxelib",
+			"version": null
+		},
+		{
+			"name": "flixel-ui",
+			"type": "haxelib",
+			"version": null
+		},
+		{
+			"name": "hxcpp",
+			"type": "git",
+			"version": null
+		},
+		{
+			"name": "hxvlc",
+			"type": "haxelib",
+			"version": null
+		},
+		{
+	    	"name": "SScript",
+	    	"type": "git",
+	    	"dir": null,
+	    	"ref": "main",
+	    	"url": "https://github.com/AlafandyPorting/SScript"
+	    },
+		{
+			"name": "tjson",
+			"type": "haxelib",
+			"version": null
+		},
+		{
+			"name": "hxdiscord_rpc",
+			"type": "haxelib",
+			"version": null
+		},
+		{
+			"name": "ellawy",
+			"type": "git",
+			"dir": null,
+			"ref": "main",
+			"url": "https://github.com/AliAlafandy/ellawy"
+		},
+		{
+			"name": "format",
+			"type": "haxelib",
+			"version": null
+		}
+	]
+}
