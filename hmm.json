@@ -32,7 +32,7 @@
 		},
 		{
 			"name": "hxcpp",
-			"type": "git",
+			"type": "haxelib",
 			"version": null
 		},
 		{
