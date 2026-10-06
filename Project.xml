@@ -8,7 +8,7 @@
 	<app package="com.alafandy.aliagame"/>
 	<app main="Main"/>
 	<app version="1.0.0"/>
-	<app company="AliAlafandy"/>
+	<app company="Alafandy"/>
 
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
 	<!--<haxedef name="LINC_ELLAWY_RELATIVE_DYNAMIC_LIB"/>-->
