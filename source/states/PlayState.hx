@@ -187,7 +187,7 @@ class PlayState extends GameState
 
 		// Ellawy is the default character; other registered characters remain
 		// selectable. Enlarge the sprite for a readable platform-game camera.
-		player = new Player(500, 80, characterName, false);
+		player = new Player(500, 50, characterName, false);
 		// Player.hx is suposed handle scale now ?
 		//player.scale.set(0.4, 0.4);
 		player.updateHitbox();
