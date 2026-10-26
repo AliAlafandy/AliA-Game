@@ -308,14 +308,20 @@ class OnlineState extends GameState
 		for (mod in mods)
 		{
 			var nameText = new FlxText(0, y, FlxG.width, mod.name, 16);
-			nameText.alignment = CENTER;
+			nameText.setFormat(null, 16, FlxColor.YELLOW, CENTER);
 			listGroup.add(nameText);
 	
-			var descText = new FlxText(0, y + 18, FlxG.width, mod.description, 12);
-			descText.alignment = CENTER;
+			var authorName:String = mod.uploader != null ? mod.uploader : "Unknown";
+			var likesCount:Int = mod.likes != null ? mod.likes : 0;
+			var infoText = new FlxText(0, y + 20, FlxG.width, 'By: $authorName  |  ❤️ Likes: $likesCount', 12);
+			infoText.setFormat(null, 12, FlxColor.WHITE, CENTER);
+			listGroup.add(infoText);
+
+			var descText = new FlxText(0, y + 38, FlxG.width, mod.description, 11);
+			descText.setFormat(null, 11, FlxColor.GRAY, CENTER);
 			listGroup.add(descText);
 	
-			var btn = new FlxButton(0, y + 36, "Download", null);
+			var btn = new FlxButton(0, y + 56, "Download", null);
 			btn.screenCenter(FlxAxes.X);
 			
 			var modId = mod.id;
@@ -339,7 +345,7 @@ class OnlineState extends GameState
 
 			listGroup.add(btn);
 	
-			y += ENTRY_HEIGHT + 20;
+			y += ENTRY_HEIGHT + 45;
 		}
 	
 		maxScroll = Math.max(0, y - FlxG.height + 140);
