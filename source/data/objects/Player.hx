@@ -60,6 +60,7 @@ class Player extends FlxSprite
 	public var moveDirection:Int = 0;
 	private var lastMovementAnimation:String = "";
 	public var isJumping:Bool = false;
+	public var hasJumped:Bool = false;
 	
 	private var idleTimer:Float = 0;
 	private static inline var IDLE_TIMEOUT:Float = 300.0;
@@ -282,11 +283,13 @@ class Player extends FlxSprite
 			velocity.y = -jumpSpeed;
 			grounded = false;
 			isJumping = true;
+			hasJumped = true;
 		}
 
 		if (isOnGround)
 		{
 			isJumping = false;
+			hasJumped = false;
 		}
 
 		updateMovementAnimation(upPressed, downPressed);
@@ -337,17 +340,17 @@ class Player extends FlxSprite
 	
 		if (!isOnGround)
 		{
-			if (isJumping && velocity.y < 0)
+			if (hasJumped)
 			{
 				playMovementAnimation('jumping', 'jump');
 				return;
 			}
-			else if (!isJumping && velocity.y >= 0)
+			else if (velocity.y >= 0)
 			{
 				playMovementAnimation('fall', 'jumping');
 				return;
 			}
-			else if (velocity.y < 0)
+			else
 			{
 				playMovementAnimation('jumping', 'jump');
 				return;
