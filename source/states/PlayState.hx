@@ -82,6 +82,8 @@ class PlayState extends GameState
 
 	private var paused:Bool = false;
 	private var testGround:FlxSprite;
+	private var grassTop:FlxSprite;
+	private var backgroundLayers:FlxTypedGroup<FlxSprite>;
 
 	#if mobile
 	public var manager:MobileInputManager;
@@ -126,14 +128,43 @@ class PlayState extends GameState
 			}
 		}
 
-		FlxG.camera.bgColor = FlxColor.BLACK;
+		// Sonic-inspired scenery: use the existing ATown background as a
+		// distant parallax layer. The repeated panels keep it visible as the
+		// camera follows Ellawy through the level.
+		FlxG.camera.bgColor = FlxColor.fromRGB(105, 190, 255);
+		backgroundLayers = new FlxTypedGroup<FlxSprite>();
+		add(backgroundLayers);
 
-		testGround = new FlxSprite(-2000, FlxG.height - 32);
-		testGround.makeGraphic(FlxG.width + 4000, 32, FlxColor.TRANSPARENT);
+		var backgroundGraphic = Paths.image('levels/ATown/background', null, true);
+		if (backgroundGraphic != null)
+		{
+			var panelWidth:Int = FlxG.width + 400;
+			for (i in 0...12)
+			{
+				var scenery = new FlxSprite(-1000 + i * panelWidth, 0);
+				scenery.loadGraphic(backgroundGraphic);
+				scenery.setGraphicSize(panelWidth, FlxG.height);
+				scenery.updateHitbox();
+				scenery.scrollFactor.set(0.22, 0.12);
+				backgroundLayers.add(scenery);
+			}
+		}
+
+		// Long visible ground so the game feels like a side-scrolling
+		// platformer instead of a character standing on an invisible floor.
+		var groundY:Float = FlxG.height - 48;
+		testGround = new FlxSprite(-2000, groundY);
+		testGround.makeGraphic(32000, 48, FlxColor.fromRGB(130, 78, 42));
 		testGround.immovable = true;
 		testGround.allowCollisions = FlxDirectionFlags.UP;
-		testGround.visible = false;
+		testGround.visible = true;
 		add(testGround);
+
+		grassTop = new FlxSprite(-2000, groundY);
+		grassTop.makeGraphic(32000, 10, FlxColor.fromRGB(70, 180, 65));
+		grassTop.allowCollisions = FlxDirectionFlags.NONE;
+		grassTop.scrollFactor.set(1, 1);
+		add(grassTop);
 
 		var characterName:String = CharacterState.selectedCharacter;
 		if (characterName == null || characterName.length == 0)
@@ -141,11 +172,13 @@ class PlayState extends GameState
 			characterName = Player.DEFAULT_CHARACTER;
 		}
 
+		// Ellawy remains the default main character. The character selector
+		// can still choose another supported character.
 		player = new Player(100, 100, characterName, false);
-		player.y = FlxG.height - 32 - player.height;
+		player.y = groundY - player.height;
 		add(player);
 
-		FlxG.camera.follow(player, LOCKON, 1.0);
+		FlxG.camera.follow(player, PLATFORMER, 1.0);
 
 		FlxG.sound.music.resume();
 
