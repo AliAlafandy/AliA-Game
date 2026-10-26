@@ -433,6 +433,8 @@ class PlayState extends GameState
 		{
 			leftPressed = leftPressed || customDPad.buttonLeft.justPressed || customDPad.buttonLeft.pressed;
 			rightPressed = rightPressed || customDPad.buttonRight.justPressed || customDPad.buttonRight.pressed;
+			upPressed = upPressed || customDPad.buttonUp.justPressed || customDPad.buttonUp.pressed;
+			downPressed = downPressed || customDPad.buttonDown.justPressed || customDPad.buttonDown.pressed;
 			jumpPressed = jumpPressed || customDPad.jumpButton.justPressed || customDPad.jumpButton.pressed;
 		}
 		#end
