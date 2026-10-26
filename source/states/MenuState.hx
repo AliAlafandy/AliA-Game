@@ -61,6 +61,11 @@ class MenuState extends GameState
 
 	override function create()
 	{
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
+		{
+		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
+		}
+		
 		#if MODS_ALLOWED
 		Mods.pushGlobalMods();
 		Mods.loadTopMod();
@@ -103,11 +108,6 @@ class MenuState extends GameState
 		version.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(version);*/
 
-		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
-		{
-		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
-		}
-
 		changeItem();
 
 		super.create();
@@ -120,8 +120,10 @@ class MenuState extends GameState
 
 	override function update(elapsed:Float)
 	{
-		if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(Paths.music('menus/menu'));
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
+		{
+		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
+		}
 
 		if (!selectedSomethin)
 		{
