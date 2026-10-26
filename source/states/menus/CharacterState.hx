@@ -47,8 +47,8 @@ class CharacterState extends GameState {
 	}
 
 	override public function create() {
+		var selectMusic = Paths.music('menus/select_character');
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
-			var selectMusic = Paths.music('menus/select_character');
 			if (selectMusic != null) {
 				FlxG.sound.playMusic(selectMusic, 1, true);
 			}
