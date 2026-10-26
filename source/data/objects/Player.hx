@@ -367,6 +367,7 @@ class Player extends FlxSprite
 		if (!animation.exists(AnimName))
 			return;
 
+		var oldHeight:Float = height;
 		animation.play(AnimName, Force, Reversed, Frame);
 
 		if (animOffsets.exists(AnimName))
