@@ -6,6 +6,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxAxes;
+import flixel.graphics.frames.FlxAtlasFrames;
 
 #if MODS_ALLOWED
 import sys.FileSystem;
@@ -31,9 +32,9 @@ class CharacterState extends GameState {
 	var nameTxt:FlxText;
 
 	static inline var SLOTS:Int = 5;
-	static inline var BOX_SIZE:Float = 20;
-	static inline var SPACING_X:Float = 40;
-	static inline var SPACING_Y:Float = 20;
+	static inline var BOX_SIZE:Float = 80;
+	static inline var SPACING_X:Float = 15;
+	static inline var SPACING_Y:Float = 15;
 
 	#if mobile
 	public var manager:MobileInputManager;
@@ -82,7 +83,7 @@ class CharacterState extends GameState {
 		chars = defaultChars.copy();
 
 		#if MODS_ALLOWED
-		var charactersDir:String = Mods.getModDirectories() + "/characters";
+		var charactersDir:String = Paths.getModsDirectory() + "/characters";
 		if (FileSystem.exists(charactersDir)) {
 			for (folder in FileSystem.readDirectory(charactersDir)) {
 				if (FileSystem.isDirectory(charactersDir + "/" + folder)) {
@@ -101,7 +102,7 @@ class CharacterState extends GameState {
 
 		var totalSLOTS:Int = SLOTS;
 		var startX:Float = (FlxG.width - (totalSLOTS * BOX_SIZE + (totalSLOTS - 1) * SPACING_X)) / 2;
-		var startY:Float = 100;
+		var startY:Float = 80;
 
 		for (i in 0...chars.length) {
 			var col:Int = i % SLOTS;
@@ -112,10 +113,16 @@ class CharacterState extends GameState {
 
 			var box:FlxSprite = new FlxSprite(posX, posY);
 			try {
-				box.loadGraphic(Paths.image('menus/Selects/char_place_old'));
+				var atlas:FlxAtlasFrames = Paths.getSparrowAtlas('menus/Selects/char_place');
+				box.frames = atlas;
+				box.animation.addByPrefix('idle', 'Idle0000', 24, true);
+				box.animation.addByPrefix('select', 'Select0000', 24, true);
+				box.animation.addByPrefix('press', 'Press0000', 24, false);
+				box.animation.play('idle');
 			} catch (e:Dynamic) {
 				box.makeGraphic(Std.int(BOX_SIZE), Std.int(BOX_SIZE), 0xFF1B1A33);
 			}
+
 			box.setGraphicSize(Std.int(BOX_SIZE), Std.int(BOX_SIZE));
 			box.updateHitbox();
 			box.ID = i;
@@ -128,9 +135,9 @@ class CharacterState extends GameState {
 			try {
 				icon.loadGraphic(Paths.image(iconPath));
 			} catch (e:Dynamic) {
-				icon.makeGraphic(64, 64, FlxColor.TRANSPARENT);
+				icon.makeGraphic(48, 48, FlxColor.TRANSPARENT);
 			}
-			icon.setGraphicSize(Std.int(BOX_SIZE * 0.75), Std.int(BOX_SIZE * 0.75));
+			icon.setGraphicSize(Std.int(BOX_SIZE * 0.7), Std.int(BOX_SIZE * 0.7));
 			icon.updateHitbox();
 			icon.setPosition(
 				posX + (BOX_SIZE - icon.width) / 2,
@@ -147,13 +154,15 @@ class CharacterState extends GameState {
 			var icon = iconGroup.members[i];
 
 			if (i == index) {
-				box.color = FlxColor.YELLOW;
-				box.scale.set(1.1, 1.1);
-				if (icon != null) icon.scale.set(0.85, 0.85);
+				if (box.animation.exists('select'))
+					box.animation.play('select');
+				box.scale.set(1.08, 1.08);
+				if (icon != null) icon.scale.set(0.78, 0.78);
 			} else {
-				box.color = FlxColor.WHITE;
+				if (box.animation.exists('idle'))
+					box.animation.play('idle');
 				box.scale.set(1.0, 1.0);
-				if (icon != null) icon.scale.set(0.75, 0.75);
+				if (icon != null) icon.scale.set(0.7, 0.7);
 			}
 		}
 
@@ -194,6 +203,11 @@ class CharacterState extends GameState {
 
 		if (controls.ACCEPT) {
 			selectedCharacter = chars[index];
+			var activeBox = gridGroup.members[index];
+			if (activeBox != null && activeBox.animation.exists('press')) {
+				activeBox.animation.play('press');
+			}
+
 			GameState.switchState(new PlayState());
 			FlxG.sound.play(Paths.sound('confirm_sound'));
 		}
