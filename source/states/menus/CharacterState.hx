@@ -112,17 +112,13 @@ class CharacterState extends GameState {
 			var posY:Float = startY + row * (BOX_SIZE + SPACING_Y);
 
 			var box:FlxSprite = new FlxSprite(posX, posY);
-			try {
-				var atlas:FlxAtlasFrames = Paths.getSparrowAtlas('menus/Selects/char_place');
-				box.frames = atlas;
-				box.animation.addByPrefix('idle', 'Idle0000', 24, true);
-				box.animation.addByPrefix('select', 'Select0000', 24, true);
-				box.animation.addByPrefix('press', 'Press0000', 24, false);
-				box.animation.play('idle');
-			} catch (e:Dynamic) {
-				box.makeGraphic(Std.int(BOX_SIZE), Std.int(BOX_SIZE), 0xFF1B1A33);
-			}
-
+			var atlas:FlxAtlasFrames = Paths.getSparrowAtlas('menus/Selects/char_place');
+			// box.loadGraphic(Paths.image('menus/Selects/char_place_old'));
+			box.frames = atlas;
+			box.animation.addByPrefix('idle', 'Idle0000', 24, true);
+			box.animation.addByPrefix('select', 'Select0000', 24, true);
+			box.animation.addByPrefix('press', 'Press0000', 24, false);
+			box.animation.play('idle');
 			box.setGraphicSize(Std.int(BOX_SIZE), Std.int(BOX_SIZE));
 			box.updateHitbox();
 			box.ID = i;
@@ -132,11 +128,7 @@ class CharacterState extends GameState {
 			var iconPath:String = (charName == "Ellawy+") ? 'characters/Ellawy/icon-partner' : 'characters/$charName/icon';
 
 			var icon:FlxSprite = new FlxSprite(posX, posY);
-			try {
-				icon.loadGraphic(Paths.image(iconPath));
-			} catch (e:Dynamic) {
-				icon.makeGraphic(48, 48, FlxColor.TRANSPARENT);
-			}
+			icon.loadGraphic(Paths.image(iconPath));
 			icon.setGraphicSize(Std.int(BOX_SIZE * 0.7), Std.int(BOX_SIZE * 0.7));
 			icon.updateHitbox();
 			icon.setPosition(
@@ -154,15 +146,9 @@ class CharacterState extends GameState {
 			var icon = iconGroup.members[i];
 
 			if (i == index) {
-				if (box.animation.exists('select'))
-					box.animation.play('select');
-				box.scale.set(1.08, 1.08);
-				if (icon != null) icon.scale.set(0.78, 0.78);
+				if (box.animation.exists('select')) box.animation.play('select');
 			} else {
-				if (box.animation.exists('idle'))
-					box.animation.play('idle');
-				box.scale.set(1.0, 1.0);
-				if (icon != null) icon.scale.set(0.7, 0.7);
+				if (box.animation.exists('idle')) box.animation.play('idle');
 			}
 		}
 
