@@ -170,7 +170,9 @@ class Player extends FlxSprite
 
 			try
 			{
-				var imageLoaded = Paths.image(assetKey, null, true);
+				// Keep character atlases in regular BitmapData on mobile. The GPU texture cache
+				// can corrupt this large sprite sheet on some devices (pink/striped output).
+				var imageLoaded = Paths.image(assetKey, null, false);
 
 				var xmlExists:Bool = Paths.fileExists('$assetKey.xml', TEXT, true);
 				if (imageLoaded != null && xmlExists)
