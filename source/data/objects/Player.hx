@@ -358,8 +358,8 @@ class Player extends FlxSprite
 
     public function updateGroundState():Void
     {
-        grounded = isTouching(FlxDirectionFlags.FLOOR) || (velocity.y == 0);
-        updateMovementAnimation();
+        grounded = isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
+		updateMovementAnimation();
     }
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
