@@ -550,6 +550,14 @@ class Paths
 		return modFolders(key + '.xml');
 	}
 
+	inline static public function modsCharactersImage(key:String) {
+		return modFolders('characters/' + key + '.png');
+	}
+
+	inline static public function modsCharactersXml(key:String) {
+		return modFolders('characters/' + key + '.xml');
+	}
+
 	inline static public function modsTxt(key:String) {
 		return modFolders(key + '.txt');
 	}
