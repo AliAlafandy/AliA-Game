@@ -71,6 +71,19 @@ class Player extends FlxSprite
 		curCharacter = character;
 
 		loadCharacter();
+
+		// Ellawy is the fast character: stronger acceleration and higher top speed.
+		// Other characters keep the shared default physics values.
+		if (curCharacter.toLowerCase() == 'ellawy')
+		{
+			moveSpeed = 820;
+			maxMoveSpeed = 820;
+			moveAcceleration = 3200;
+			moveFriction = 1050;
+			jumpSpeed = 620;
+			maxFallSpeed = 1150;
+			setupPhysics();
+		}
 	}
 
 	private function loadCharacter():Void
@@ -249,7 +262,8 @@ class Player extends FlxSprite
 
 		if (direction != 0)
 		{
-			velocity.x = FlxMath.lerp(velocity.x, direction * moveSpeed, 0.20);
+			var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * FlxG.elapsed / Math.max(moveSpeed, 1));
+			velocity.x = FlxMath.lerp(velocity.x, direction * moveSpeed, accelerationBlend);
 
 			if (direction < 0)
 				facing = FlxDirectionFlags.LEFT;
