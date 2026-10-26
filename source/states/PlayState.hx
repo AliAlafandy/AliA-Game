@@ -194,9 +194,14 @@ class PlayState extends GameState
 		player.scale.set(2.5, 2.5);
 		player.updateHitbox();
 		player.y = groundY - player.height;
+		player.velocity.set(0, 0);
+		player.grounded = true;
+		player.touching = FlxDirectionFlags.FLOOR;
 		add(player);
 
 		FlxG.camera.follow(player, PLATFORMER, 1.0);
+		// Keep more of the level visible ahead of fast-moving Ellawy.
+		FlxG.camera.followLead.set(180, 0);
 
 		FlxG.sound.music.resume();
 
@@ -782,6 +787,7 @@ class PlayState extends GameState
 
 		#if mobile
 		addCustomDPad('EXITE', 'PLAY');
+		addCustomDPadCam();
 		#end
 	}
 
