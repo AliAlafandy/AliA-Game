@@ -5,6 +5,7 @@ import data.debug.DiscordRPC;
 
 #if ELLAWY_ALLOWED
 import ellawy.*;
+import scripts.*;
 #end
 
 #if ACHIEVEMENTS_ALLOWED
