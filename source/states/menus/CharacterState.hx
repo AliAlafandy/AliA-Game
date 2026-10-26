@@ -48,8 +48,10 @@ class CharacterState extends GameState {
         add(txt);
         updateChar();
 
-		if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(Paths.music('menus/select_character'));
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
+		{
+		    FlxG.sound.playMusic(Paths.music('menus/select_character'), 1, true);
+		}
 
         #if mobile
         addCustomDPad('EXITE', 'MENU');
@@ -83,8 +85,10 @@ class CharacterState extends GameState {
     override public function update(elapsed:Float) {
         super.update(elapsed);
 
-        if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(Paths.music('menus/select_character'));
+        if (FlxG.sound.music == null || !FlxG.sound.music.playing)
+		{
+		    FlxG.sound.playMusic(Paths.music('menus/select_character'), 1, true);
+		}
 
         var oldIndex = index;
         if (controls.UI_LEFT_P) index--;
