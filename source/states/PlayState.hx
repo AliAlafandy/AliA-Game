@@ -208,7 +208,7 @@ class PlayState extends GameState
 			(FlxG.height / 2) - 100, 
 			200, 
 			200
-		)
+		);
 
 		FlxG.sound.music.resume();
 
