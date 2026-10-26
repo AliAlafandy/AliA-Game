@@ -114,6 +114,7 @@ class CharacterState extends GameState {
 
 			var box:FlxSprite = new FlxSprite(posX, posY);
 			var atlas:FlxAtlasFrames = Paths.getSparrowAtlas('menus/Selects/char_place');
+			// box.loadGraphic(Paths.image('menus/Selects/char_place_old'));
 			box.frames = atlas;
 			box.animation.addByPrefix('idle', 'Idle0000', 24, true);
 			box.animation.addByPrefix('select', 'Select0000', 24, true);
