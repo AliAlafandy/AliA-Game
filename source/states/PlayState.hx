@@ -6,6 +6,7 @@ import flixel.util.FlxDirectionFlags;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.util.FlxSpriteUtil;
 import flixel.group.FlxGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
@@ -128,42 +129,67 @@ class PlayState extends GameState
 			}
 		}
 
-		// Sonic-inspired scenery: use the existing ATown background as a
-		// distant parallax layer. The repeated panels keep it visible as the
-		// camera follows Ellawy through the level.
+		// Sonic-inspired scenery built from small generated shapes. Avoid
+		// stretching a placeholder/missing texture across the entire screen.
 		FlxG.camera.bgColor = FlxColor.fromRGB(105, 190, 255);
 		backgroundLayers = new FlxTypedGroup<FlxSprite>();
 		add(backgroundLayers);
 
-		var backgroundGraphic = Paths.image('levels/ATown/background', null, true);
-		if (backgroundGraphic != null)
+		// Distant rolling hills. Each hill uses a modest texture size and a
+		// slower scroll factor to create a simple parallax effect.
+		var hillColors:Array<FlxColor> = [
+			FlxColor.fromRGB(90, 190, 100),
+			FlxColor.fromRGB(55, 160, 80),
+			FlxColor.fromRGB(40, 135, 70)
+		];
+		for (i in 0...18)
 		{
-			var panelWidth:Int = FlxG.width + 400;
-			for (i in 0...12)
-			{
-				var scenery = new FlxSprite(-1000 + i * panelWidth, 0);
-				scenery.loadGraphic(backgroundGraphic);
-				scenery.setGraphicSize(panelWidth, FlxG.height);
-				scenery.updateHitbox();
-				scenery.scrollFactor.set(0.22, 0.12);
-				backgroundLayers.add(scenery);
-			}
+			var hill = new FlxSprite(-900 + i * 420, 210 + (i % 3) * 28);
+			hill.makeGraphic(840, 420, FlxColor.TRANSPARENT);
+			FlxSpriteUtil.drawCircle(hill, 420, 420, 390, hillColors[i % hillColors.length]);
+			hill.scrollFactor.set(0.35, 0.55);
+			backgroundLayers.add(hill);
 		}
 
-		// Long visible ground so the game feels like a side-scrolling
-		// platformer instead of a character standing on an invisible floor.
+		// Soft cloud clusters behind the hills.
+		for (i in 0...14)
+		{
+			var cloud = new FlxSprite(i * 560 - 300, 65 + (i % 4) * 35);
+			cloud.makeGraphic(260, 100, FlxColor.TRANSPARENT);
+			FlxSpriteUtil.drawCircle(cloud, 75, 60, 38, FlxColor.WHITE);
+			FlxSpriteUtil.drawCircle(cloud, 125, 42, 48, FlxColor.WHITE);
+			FlxSpriteUtil.drawCircle(cloud, 180, 60, 36, FlxColor.WHITE);
+			cloud.scrollFactor.set(0.12, 0.08);
+			backgroundLayers.add(cloud);
+		}
+
+		// Keep every texture comfortably below common GPU texture limits.
+		// Repeating 1024px segments avoids the artifacts from a 32000px sprite.
 		var groundY:Float = FlxG.height - 48;
-		testGround = new FlxSprite(-2000, groundY);
-		testGround.makeGraphic(32000, 48, FlxColor.fromRGB(130, 78, 42));
+		testGround = new FlxSprite(-2048, groundY);
+		testGround.makeGraphic(1024, 48, FlxColor.fromRGB(130, 78, 42));
 		testGround.immovable = true;
 		testGround.allowCollisions = FlxDirectionFlags.UP;
 		testGround.visible = true;
-		add(testGround);
+		for (i in 0...34)
+		{
+			var dirt = new FlxSprite(-2048 + i * 1024, groundY);
+			dirt.makeGraphic(1024, 48, FlxColor.fromRGB(130, 78, 42));
+			dirt.immovable = true;
+			dirt.allowCollisions = FlxDirectionFlags.UP;
+			add(dirt);
 
-		grassTop = new FlxSprite(-2000, groundY);
-		grassTop.makeGraphic(32000, 10, FlxColor.fromRGB(70, 180, 65));
-		grassTop.scrollFactor.set(1, 1);
-		add(grassTop);
+			var grass = new FlxSprite(-2048 + i * 1024, groundY);
+			grass.makeGraphic(1024, 10, FlxColor.fromRGB(70, 180, 65));
+			add(grass);
+		}
+		// The prototype's ground is made from the repeated segments above.
+		// Keep the legacy reference assigned for existing update/collision code.
+		testGround = new FlxSprite(-2048, groundY);
+		testGround.makeGraphic(1024, 48, FlxColor.fromRGB(130, 78, 42));
+		testGround.immovable = true;
+		testGround.allowCollisions = FlxDirectionFlags.UP;
+		add(testGround);
 
 		var characterName:String = CharacterState.selectedCharacter;
 		if (characterName == null || characterName.length == 0)
@@ -171,9 +197,11 @@ class PlayState extends GameState
 			characterName = Player.DEFAULT_CHARACTER;
 		}
 
-		// Ellawy remains the default main character. The character selector
-		// can still choose another supported character.
+		// Ellawy is the default character; other registered characters remain
+		// selectable. Enlarge the sprite for a readable platform-game camera.
 		player = new Player(100, 100, characterName, false);
+		player.scale.set(2.5, 2.5);
+		player.updateHitbox();
 		player.y = groundY - player.height;
 		add(player);
 
