@@ -7,7 +7,7 @@
 			"prefix": "Ellawy Idle0",
 			"offsets": [0, 180],
 			"loop": true,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		},
@@ -17,7 +17,7 @@
 			"prefix": "Ellawy Waiting0",
 			"offsets": [0, 180],
 			"loop": true,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		},
@@ -27,7 +27,7 @@
 			"prefix": "Ellawy Walking0",
 			"offsets": [0, 180],
 			"loop": true,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		},
@@ -37,7 +37,7 @@
 			"prefix": "Ellawy Running0",
 			"offsets": [0, 180],
 			"loop": true,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		},
@@ -47,7 +47,7 @@
 			"prefix": "Ellawy Stop0",
 			"offsets": [0, 180],
 			"loop": true,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		},
@@ -57,7 +57,7 @@
 			"prefix": "Ellawy Fall0",
 			"offsets": [0, 180],
 			"loop": true,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		},
@@ -67,7 +67,7 @@
 			"prefix": "Ellawy Jumping0",
 			"offsets": [0, 180],
 			"loop": true,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		},
@@ -77,7 +77,7 @@
 			"prefix": "Ellawy LookUP0",
 			"offsets": [0, 180],
 			"loop": false,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		},
@@ -87,7 +87,7 @@
 			"prefix": "Ellawy Under0",
 			"offsets": [0, 126],
 			"loop": false,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		},
@@ -97,7 +97,7 @@
 			"prefix": "Ellawy Flash0",
 			"offsets": [0, 180],
 			"loop": false,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		},
@@ -107,7 +107,7 @@
 			"prefix": "Ellawy VicPose0",
 			"offsets": [0, 180],
 			"loop": false,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		},
@@ -117,7 +117,7 @@
 			"prefix": "Ellawy GameOver0",
 			"offsets": [0, 180],
 			"loop": true,
-			"scale": 1,
+			"scale": 0.4,
 			"fps": 24,
 			"indices": []
 		}
