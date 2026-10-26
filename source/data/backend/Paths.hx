@@ -385,6 +385,57 @@ class Paths
 		#end
 	}
 
+	static public function characterImage(key:String, ?allowGPU:Bool = true):FlxGraphic
+	{
+		var bitmap:BitmapData = null;
+		var file:String = null;
+
+		#if MODS_ALLOWED
+		file = modsCharactersImage(key);
+		if (currentTrackedAssets.exists(file))
+		{
+			localTrackedAssets.push(file);
+			return currentTrackedAssets.get(file);
+		}
+		else if (FileSystem.exists(file))
+			bitmap = BitmapData.fromFile(file);
+		else
+		#end
+		{
+			file = getPath('characters/$key.png', IMAGE);
+			if (currentTrackedAssets.exists(file))
+			{
+				localTrackedAssets.push(file);
+				return currentTrackedAssets.get(file);
+			}
+			else if (OpenFlAssets.exists(file, IMAGE))
+				bitmap = OpenFlAssets.getBitmapData(file);
+		}
+
+		if (bitmap != null)
+		{
+			var retVal = cacheBitmap(file, bitmap, allowGPU);
+			if(retVal != null) return retVal;
+		}
+
+		return null;
+	}
+
+	inline static public function getCharacterSparrowAtlas(key:String, ?allowGPU:Bool = true):FlxAtlasFrames
+	{
+		var imageLoaded:FlxGraphic = characterImage(key, allowGPU);
+		
+		#if MODS_ALLOWED
+		var xmlExists:Bool = false;
+		var xml:String = modsCharactersXml(key);
+		if(FileSystem.exists(xml)) xmlExists = true;
+
+		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath('characters/$key.xml', TEXT)));
+		#else
+		return FlxAtlasFrames.fromSparrow(imageLoaded, getPath('characters/$key.xml', TEXT));
+		#end
+	}
+
 	inline static public function getPackerAtlas(key:String, ?library:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
 	{
 		var imageLoaded:FlxGraphic = image(key, library, allowGPU);
