@@ -30,7 +30,7 @@ class CharacterState extends GameState {
 	var iconGroup:FlxTypedGroup<FlxSprite>;
 	var nameTxt:FlxText;
 
-	static inline var COLS:Int = 5;
+	static inline var Chars:Int = 5;
 	static inline var BOX_SIZE:Float = 110;
 	static inline var SPACING_X:Float = 20;
 	static inline var SPACING_Y:Float = 20;
@@ -96,13 +96,13 @@ class CharacterState extends GameState {
 		gridGroup.clear();
 		iconGroup.clear();
 
-		var totalCols:Int = COLS;
-		var startX:Float = (FlxG.width - (totalCols * BOX_SIZE + (totalCols - 1) * SPACING_X)) / 2;
+		var totalSLOTS:Int = SLOTS;
+		var startX:Float = (FlxG.width - (totalSLOTS * BOX_SIZE + (totalSLOTS - 1) * SPACING_X)) / 2;
 		var startY:Float = 100;
 
 		for (i in 0...chars.length) {
-			var col:Int = i % COLS;
-			var row:Int = Std.int(i / COLS);
+			var col:Int = i % SLOTS;
+			var row:Int = Std.int(i / SLOTS);
 
 			var posX:Float = startX + col * (BOX_SIZE + SPACING_X);
 			var posY:Float = startY + row * (BOX_SIZE + SPACING_Y);
@@ -175,10 +175,10 @@ class CharacterState extends GameState {
 			if (index >= chars.length) index = 0;
 		}
 		if (controls.UI_UP_P) {
-			if (index - COLS >= 0) index -= COLS;
+			if (index - SLOTS >= 0) index -= SLOTS;
 		}
 		if (controls.UI_DOWN_P) {
-			if (index + COLS < chars.length) index += COLS;
+			if (index + SLOTS < chars.length) index += SLOTS;
 		}
 
 		if (oldIndex != index) {
