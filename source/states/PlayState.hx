@@ -190,8 +190,8 @@ class PlayState extends GameState
 
 		// Ellawy is the default character; other registered characters remain
 		// selectable. Enlarge the sprite for a readable platform-game camera.
-		player = new Player(100, 100, characterName, false);
-		player.scale.set(2.5, 2.5);
+		player = new Player(500, 100, characterName, false);
+		player.scale.set(1, 1);
 		player.updateHitbox();
 		player.y = groundY - player.height;
 		player.velocity.set(0, 0);
@@ -199,9 +199,16 @@ class PlayState extends GameState
 		player.touching = FlxDirectionFlags.FLOOR;
 		add(player);
 
-		FlxG.camera.follow(player, PLATFORMER, 1.0);
-		// Keep more of the level visible ahead of fast-moving Ellawy.
-		FlxG.camera.followLead.set(180, 0);
+		FlxG.camera.follow(player, LOCKON, 0.05);
+
+		FlxG.camera.setScrollBounds(0, 10000, 0, FlxG.height);
+
+		FlxG.camera.deadzone = new flixel.math.FlxRect(
+			(FlxG.width / 2) - 100, 
+			(FlxG.height / 2) - 100, 
+			200, 
+			200
+		)
 
 		FlxG.sound.music.resume();
 
