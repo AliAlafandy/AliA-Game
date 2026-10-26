@@ -83,6 +83,7 @@ class PlayState extends GameState
 
 	private var paused:Bool = false;
 	private var testGround:FlxSprite;
+	private var groundSegments:FlxTypedGroup<FlxSprite>;
 	private var grassTop:FlxSprite;
 	private var backgroundLayers:FlxTypedGroup<FlxSprite>;
 
@@ -163,33 +164,24 @@ class PlayState extends GameState
 			backgroundLayers.add(cloud);
 		}
 
-		// Keep every texture comfortably below common GPU texture limits.
-		// Repeating 1024px segments avoids the artifacts from a 32000px sprite.
+		// Keep textures small for mobile GPUs; tile the ground across the level.
 		var groundY:Float = FlxG.height - 48;
-		testGround = new FlxSprite(-2048, groundY);
-		testGround.makeGraphic(1024, 48, FlxColor.fromRGB(130, 78, 42));
-		testGround.immovable = true;
-		testGround.allowCollisions = FlxDirectionFlags.UP;
-		testGround.visible = true;
+		groundSegments = new FlxTypedGroup<FlxSprite>();
+		add(groundSegments);
 		for (i in 0...34)
 		{
 			var dirt = new FlxSprite(-2048 + i * 1024, groundY);
 			dirt.makeGraphic(1024, 48, FlxColor.fromRGB(130, 78, 42));
 			dirt.immovable = true;
 			dirt.allowCollisions = FlxDirectionFlags.UP;
-			add(dirt);
+			groundSegments.add(dirt);
 
 			var grass = new FlxSprite(-2048 + i * 1024, groundY);
 			grass.makeGraphic(1024, 10, FlxColor.fromRGB(70, 180, 65));
+			grass.allowCollisions = FlxDirectionFlags.NONE;
 			add(grass);
 		}
-		// The prototype's ground is made from the repeated segments above.
-		// Keep the legacy reference assigned for existing update/collision code.
-		testGround = new FlxSprite(-2048, groundY);
-		testGround.makeGraphic(1024, 48, FlxColor.fromRGB(130, 78, 42));
-		testGround.immovable = true;
-		testGround.allowCollisions = FlxDirectionFlags.UP;
-		add(testGround);
+		testGround = groundSegments.members[0];
 
 		var characterName:String = CharacterState.selectedCharacter;
 		if (characterName == null || characterName.length == 0)
@@ -368,7 +360,7 @@ class PlayState extends GameState
 
 		if (!paused && player != null && testGround != null)
 		{
-			FlxG.collide(player, testGround);
+			FlxG.collide(player, groundSegments);
 			player.updateGroundState();
 		}
 
