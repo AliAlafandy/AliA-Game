@@ -322,6 +322,7 @@ class Player extends FlxSprite
 		if (isOnGround)
 		{
 			isJumping = false;
+			hasJumped = false;
 		}
 	
 		if (isOnGround && Math.abs(velocity.x) <= 10)
