@@ -409,7 +409,18 @@ class Paths
 				return currentTrackedAssets.get(file);
 			}
 			else if (OpenFlAssets.exists(file, IMAGE))
+			{
 				bitmap = OpenFlAssets.getBitmapData(file);
+			}
+			else 
+			{
+				var fallbackPath:String = 'assets/characters/$key.png';
+				if (OpenFlAssets.exists(fallbackPath, IMAGE))
+				{
+					file = fallbackPath;
+					bitmap = OpenFlAssets.getBitmapData(file);
+				}
+			}
 		}
 
 		if (bitmap != null)
@@ -432,7 +443,12 @@ class Paths
 
 		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath('characters/$key.xml', TEXT)));
 		#else
-		return FlxAtlasFrames.fromSparrow(imageLoaded, getPath('characters/$key.xml', TEXT));
+		var xmlPath:String = getPath('characters/$key.xml', TEXT);
+		if (!OpenFlAssets.exists(xmlPath, TEXT))
+		{
+			xmlPath = 'assets/characters/$key.xml';
+		}
+		return FlxAtlasFrames.fromSparrow(imageLoaded, xmlPath);
 		#end
 	}
 
