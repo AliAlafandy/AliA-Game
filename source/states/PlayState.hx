@@ -162,7 +162,6 @@ class PlayState extends GameState
 
 		grassTop = new FlxSprite(-2000, groundY);
 		grassTop.makeGraphic(32000, 10, FlxColor.fromRGB(70, 180, 65));
-		grassTop.allowCollisions = FlxDirectionFlags.NONE;
 		grassTop.scrollFactor.set(1, 1);
 		add(grassTop);
 
