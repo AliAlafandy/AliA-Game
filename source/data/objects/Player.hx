@@ -170,51 +170,23 @@ class Player extends FlxSprite
 
 			try
 			{
-				// Keep character atlases in regular BitmapData on mobile. The GPU texture cache
-				// can corrupt this large sprite sheet on some devices (pink/striped output).
-				var imageLoaded = Paths.image(assetKey, null, false);
-
-				var xmlExists:Bool = Paths.fileExists('$assetKey.xml', TEXT, true);
-				if (imageLoaded != null && xmlExists)
+				// Use the engine's existing Sparrow-atlas loader so the PNG and
+				// XML are resolved with the same asset-path rules as other game art.
+				// The previous custom path check could leave FlxSprite on its tiny
+				// fallback checker graphic instead of Ellawy's real frames.
+				if (frames == null)
 				{
-					var xmlPath:String = Paths.getPath('$assetKey.xml', TEXT, null, true);
-					var xmlContent:String = "";
-
-					#if MODS_ALLOWED
-					if (FileSystem.exists(xmlPath))
-					{
-						xmlContent = File.getContent(xmlPath);
-					}
-					else
-					#end
-
-					if (Assets.exists(xmlPath))
-					{
-						xmlContent = Assets.getText(xmlPath);
-					}
-
-					if (xmlContent.length > 0)
-					{
-						var spriteMap:FlxAtlasFrames = FlxAtlasFrames.fromSparrow(imageLoaded, xmlContent);
-						if (spriteMap != null)
-						{
-							if (frames == null)
-							{
-								frames = spriteMap;
-							} else {
-								for (frame in spriteMap.frames)
-								{
-									if (!frames.frames.contains(frame))
-										frames.frames.push(frame);
-								}
-							}
-						}
-					}
+					var spriteMap:FlxAtlasFrames = Paths.getSparrowAtlas(assetKey, null, false);
+					if (spriteMap != null)
+						frames = spriteMap;
 				}
+
+				if (frames == null || frames.frames == null || frames.frames.length == 0)
+					FlxG.log.warn('Character atlas has no frames: ' + assetKey);
 			}
 			catch (e:Dynamic)
 			{
-				FlxG.log.warn('Failed to load atlas for ' + '$curCharacter/$imageName: $e');
+				FlxG.log.warn('Failed to load character atlas ' + assetKey + ': ' + e);
 			}
 
 			if (animIndices != null && animIndices.length > 0)
