@@ -32,6 +32,11 @@ class CharacterState extends GameState {
     }
 
     override public function create() {
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
+		{
+		    FlxG.sound.playMusic(Paths.music('menus/select_character'), 1, true);
+		}
+		
         var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
         add(bg);
 
@@ -47,11 +52,6 @@ class CharacterState extends GameState {
         txt.screenCenter();
         add(txt);
         updateChar();
-
-		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
-		{
-		    FlxG.sound.playMusic(Paths.music('menus/select_character'), 1, true);
-		}
 
         #if mobile
         addCustomDPad('EXITE', 'MENU');
