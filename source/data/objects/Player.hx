@@ -179,7 +179,7 @@ class Player extends FlxSprite
 			if (animFps <= 0)
 				animFps = 12;
 
-			var assetKey:String = 'characters/$curCharacter/$imageName';
+			var assetKey:String = '$curCharacter/$imageName';    
 
 			try
 			{
@@ -188,11 +188,11 @@ class Player extends FlxSprite
 				// The previous custom path check could leave FlxSprite on its tiny
 				// fallback checker graphic instead of Ellawy's real frames.
 				if (frames == null)
-				{
-					var spriteMap:FlxAtlasFrames = Paths.getSparrowAtlas(assetKey, null, false);
-					if (spriteMap != null)
-						frames = spriteMap;
-				}
+			    {
+			        var spriteMap:FlxAtlasFrames = Paths.getCharacterSparrowAtlas(assetKey, false);
+			        if (spriteMap != null)
+			            frames = spriteMap;
+			    }
 
 				if (frames == null || frames.frames == null || frames.frames.length == 0)
 					FlxG.log.warn('Character atlas has no frames: ' + assetKey);
