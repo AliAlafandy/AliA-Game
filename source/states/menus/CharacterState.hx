@@ -32,9 +32,9 @@ class CharacterState extends GameState {
 	var nameTxt:FlxText;
 
 	static inline var SLOTS:Int = 5;
-	static inline var BOX_SIZE:Float = 80;
-	static inline var SPACING_X:Float = 15;
-	static inline var SPACING_Y:Float = 15;
+	static inline var BOX_SIZE:Float = 45;
+	static inline var SPACING_X:Float = 20;
+	static inline var SPACING_Y:Float = 40;
 
 	#if mobile
 	public var manager:MobileInputManager;
@@ -101,8 +101,9 @@ class CharacterState extends GameState {
 		iconGroup.clear();
 
 		var totalSLOTS:Int = SLOTS;
-		var startX:Float = (FlxG.width - (totalSLOTS * BOX_SIZE + (totalSLOTS - 1) * SPACING_X)) / 2;
-		var startY:Float = 80;
+		var gridWidth:Float = (totalSLOTS * BOX_SIZE) + ((totalSLOTS - 1) * SPACING_X);
+		var startX:Float = (FlxG.width - gridWidth) / 2;
+		var startY:Float = 140;
 
 		for (i in 0...chars.length) {
 			var col:Int = i % SLOTS;
@@ -113,12 +114,12 @@ class CharacterState extends GameState {
 
 			var box:FlxSprite = new FlxSprite(posX, posY);
 			var atlas:FlxAtlasFrames = Paths.getSparrowAtlas('menus/Selects/char_place');
-			// box.loadGraphic(Paths.image('menus/Selects/char_place_old'));
 			box.frames = atlas;
 			box.animation.addByPrefix('idle', 'Idle0000', 24, true);
 			box.animation.addByPrefix('select', 'Select0000', 24, true);
 			box.animation.addByPrefix('press', 'Press0000', 24, false);
 			box.animation.play('idle');
+			
 			box.setGraphicSize(Std.int(BOX_SIZE), Std.int(BOX_SIZE));
 			box.updateHitbox();
 			box.ID = i;
@@ -128,7 +129,11 @@ class CharacterState extends GameState {
 			var iconPath:String = (charName == "Ellawy+") ? 'characters/Ellawy/icon-partner' : 'characters/$charName/icon';
 
 			var icon:FlxSprite = new FlxSprite(posX, posY);
-			icon.loadGraphic(Paths.image(iconPath));
+			try {
+				icon.loadGraphic(Paths.image(iconPath));
+			} catch (e:Dynamic) {
+				icon.makeGraphic(32, 32, FlxColor.TRANSPARENT);
+			}
 			icon.setGraphicSize(Std.int(BOX_SIZE * 0.7), Std.int(BOX_SIZE * 0.7));
 			icon.updateHitbox();
 			icon.setPosition(
@@ -143,7 +148,6 @@ class CharacterState extends GameState {
 	private function updateSelection():Void {
 		for (i in 0...gridGroup.members.length) {
 			var box = gridGroup.members[i];
-			var icon = iconGroup.members[i];
 
 			if (i == index) {
 				if (box.animation.exists('select')) box.animation.play('select');
