@@ -7,7 +7,7 @@
 			"prefix": "Ellawy Idle0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": true,
 			"scale": 1,
@@ -20,7 +20,7 @@
 			"prefix": "Ellawy Waiting0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": true,
 			"scale": 1,
@@ -33,7 +33,7 @@
 			"prefix": "Ellawy Walking0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": true,
 			"scale": 1,
@@ -46,7 +46,7 @@
 			"prefix": "Ellawy Running0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": true,
 			"scale": 1,
@@ -59,7 +59,7 @@
 			"prefix": "Ellawy Stop0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": true,
 			"scale": 1,
@@ -72,7 +72,7 @@
 			"prefix": "Ellawy Fall0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": true,
 			"scale": 1,
@@ -85,7 +85,7 @@
 			"prefix": "Ellawy Jumping0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": true,
 			"scale": 1,
@@ -98,7 +98,7 @@
 			"prefix": "Ellawy LookUP0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": false,
 			"scale": 1,
@@ -111,7 +111,7 @@
 			"prefix": "Ellawy Under0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": false,
 			"scale": 1,
@@ -124,7 +124,7 @@
 			"prefix": "Ellawy Flash0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": false,
 			"scale": 1,
@@ -137,7 +137,7 @@
 			"prefix": "Ellawy VicPose0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": false,
 			"scale": 1,
@@ -150,7 +150,7 @@
 			"prefix": "Ellawy GameOver0",
 			"offsets": [
 				0,
-				0
+				180
 			],
 			"loop": true,
 			"scale": 1,
