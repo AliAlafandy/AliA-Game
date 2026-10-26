@@ -58,6 +58,10 @@ class Player extends FlxSprite
 	public var grounded:Bool = false;
 	public var moveDirection:Int = 0;
 	private var lastMovementAnimation:String = "";
+	public var isJumping:Bool = false;
+	
+	private var idleTimer:Float = 0;
+	private static inline var IDLE_TIMEOUT:Float = 300.0;
 
 	public function new(x:Float, y:Float, character:String = 'Ellawy', ?isPartner:Bool = false)
 	{
@@ -232,13 +236,18 @@ class Player extends FlxSprite
 		allowCollisions = FlxDirectionFlags.ANY;
 	}
 
-	public function moveCharacter(direction:Float, jumpPressed:Bool):Void
+	public function moveCharacter(direction:Float, jumpPressed:Bool, upPressed:Bool, downPressed:Bool):Void
 	{
 		if (!canMove)
 		{
 			stopHorizontalMovement();
-			updateMovementAnimation();
+			updateMovementAnimation(false, false);
 			return;
+		}
+
+		if (direction != 0 || jumpPressed || upPressed || downPressed)
+		{
+			idleTimer = 0;
 		}
 
 		if (direction < -1)
@@ -275,13 +284,21 @@ class Player extends FlxSprite
 			}
 		}
 
-		if (jumpPressed && (grounded || isTouching(FlxDirectionFlags.FLOOR)))
+		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
+
+		if (jumpPressed && isOnGround)
 		{
 			velocity.y = -jumpSpeed;
 			grounded = false;
+			isJumping = true;
 		}
 
-		updateMovementAnimation();
+		if (isOnGround)
+		{
+			isJumping = false;
+		}
+
+		updateMovementAnimation(upPressed, downPressed);
 	}
 
 	private function stopHorizontalMovement():Void
@@ -304,22 +321,42 @@ class Player extends FlxSprite
 		}
 	}
 
-	public function updateMovementAnimation():Void
+	public function updateMovementAnimation(upPressed:Bool, downPressed:Bool):Void
 	{
-		if (!grounded && !isTouching(FlxDirectionFlags.FLOOR) && velocity.y < 0)
+		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
+
+		if (isOnGround && Math.abs(velocity.x) <= 10)
 		{
-			playMovementAnimation('jumping', 'jump');
-			return;
+			if (upPressed)
+			{
+				playMovementAnimation('up', 'idle');
+				return;
+			}
+			if (downPressed)
+			{
+				playMovementAnimation('down', 'idle');
+				return;
+			}
 		}
-		if (!grounded && !isTouching(FlxDirectionFlags.FLOOR) && velocity.y >= 0)
+
+		if (!isOnGround)
 		{
-			if (animation.exists('fall'))
-				playMovementAnimation('fall', 'jumping');
-			else
+			if (isJumping && velocity.y < 0)
+			{
 				playMovementAnimation('jumping', 'jump');
-			return;
+				return;
+			}
+			else
+			{
+				if (animation.exists('fall'))
+					playMovementAnimation('fall', 'jumping');
+				else
+					playMovementAnimation('jumping', 'jump');
+				return;
+			}
 		}
-		if (grounded && Math.abs(velocity.x) > moveSpeed * 0.75)
+
+		if (isOnGround && Math.abs(velocity.x) > moveSpeed * 0.75)
 		{
 			if (animation.exists('running') || animation.exists('run'))
 			{
@@ -327,14 +364,22 @@ class Player extends FlxSprite
 				return;
 			}
 		}
-		if (grounded && Math.abs(velocity.x) > 10)
+		if (isOnGround && Math.abs(velocity.x) > 10)
 		{
 			playMovementAnimation('walking', 'walk');
 			return;
 		}
-		if (grounded)
+
+		if (isOnGround)
 		{
-			playMovementAnimation('idle', 'waiting');
+			if (idleTimer >= IDLE_TIMEOUT)
+			{
+				playMovementAnimation('waiting', 'idle');
+			}
+			else
+			{
+				playMovementAnimation('idle', 'waiting');
+			}
 		}
 	}
 
@@ -356,18 +401,20 @@ class Player extends FlxSprite
 		lastMovementAnimation = animationName;
 	}
 
-    public function updateGroundState():Void
-    {
-        grounded = isTouching(FlxDirectionFlags.FLOOR) || touching.has(FlxDirectionFlags.FLOOR) || (velocity.y >= 0 && y >= (FlxG.height - 48 - height));
-		updateMovementAnimation();
-    }
+	public function updateGroundState():Void
+	{
+		grounded = isTouching(FlxDirectionFlags.FLOOR) || touching.has(FlxDirectionFlags.FLOOR) || (velocity.y == 0);
+		if (grounded)
+		{
+			isJumping = false;
+		}
+	}
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
 		if (!animation.exists(AnimName))
 			return;
 
-		var oldHeight:Float = height;
 		animation.play(AnimName, Force, Reversed, Frame);
 
 		if (animOffsets.exists(AnimName))
@@ -389,5 +436,14 @@ class Player extends FlxSprite
 		super.update(elapsed);
 		if (velocity.y > maxFallSpeed)
 			velocity.y = maxFallSpeed;
+
+		if (Math.abs(velocity.x) <= 10 && (grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0))
+		{
+			idleTimer += elapsed;
+		}
+		else
+		{
+			idleTimer = 0;
+		}
 	}
 }
