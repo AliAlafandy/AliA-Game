@@ -40,6 +40,7 @@ class Player extends FlxSprite
 
 	public var curCharacter:String = DEFAULT_CHARACTER;
 	public var animOffsets:Map<String, Array<Dynamic>> = new Map<String, Array<Dynamic>>();
+	public var animScales:Map<String, Float> = new Map<String, Float>();
 	public var animationsArray:Array<AnimArray> = [];
 
 	public var isPartner:Bool = false;
@@ -159,70 +160,60 @@ class Player extends FlxSprite
 
 		for (anim in animationsArray)
 		{
-			if (anim == null)
-				continue;
-
-			var animName:String = anim.name;
-			var imageName:String = anim.image;
-			var animPrefix:String = anim.prefix;
-			var animFps:Int = anim.fps;
-			var animLoop:Bool = anim.loop;
-			var animIndices:Array<Int> = anim.indices;
-
-			if (animName == null || animName.length == 0)
-				continue;
-
-			if (imageName == null || imageName.length == 0)
-				imageName = curCharacter;
-
-			if (animPrefix == null || animPrefix.length == 0)
-				animPrefix = animName;
-
-			if (animFps <= 0)
-				animFps = 12;
-
-			var assetKey:String = '$curCharacter/$imageName';
-
-			try
-			{
-				if (frames == null)
-				{
-					var spriteMap:FlxAtlasFrames = Paths.getCharacterSparrowAtlas(assetKey, false);
-					if (spriteMap != null)
-						frames = spriteMap;
-				}
-
-				if (frames == null || frames.frames == null || frames.frames.length == 0)
-					FlxG.log.warn('Character atlas has no frames: ' + assetKey);
-			}
-			catch (e:Dynamic)
-			{
-				FlxG.log.warn('Failed to load character atlas ' + assetKey + ': ' + e);
-			}
-
-			if (animIndices != null && animIndices.length > 0)
-			{
-				animation.addByIndices(animName, animPrefix, animIndices, "", animFps, animLoop);
-			} else {
-				animation.addByPrefix(animName, animPrefix, animFps, animLoop);
-			}
-
-			if (anim.offsets != null && anim.offsets.length >= 2)
-			{
-				addOffset(animName, anim.offsets[0], anim.offsets[1]);
-			} else {
-				addOffset(animName, 0, 0);
-			}
-		}
-
-		if (animationsArray != null && animationsArray.length > 0)
-		{
-			var characterScale:Float = animationsArray[0].scale;
-			if (characterScale <= 0)
-				characterScale = 1;
-
-			scale.set(characterScale, characterScale);
-			updateHitbox();
+		    if (anim == null)
+		        continue;
+		
+		    var animName:String = anim.name;
+		    var imageName:String = anim.image;
+		    var animPrefix:String = anim.prefix;
+		    var animFps:Int = anim.fps;
+		    var animLoop:Bool = anim.loop;
+		    var animIndices:Array<Int> = anim.indices;
+		    var animScale:Float = anim.scale;
+		
+		    if (animName == null || animName.length == 0)
+		        continue;
+		
+		    if (imageName == null || imageName.length == 0)
+		        imageName = curCharacter;
+		
+		    if (animPrefix == null || animPrefix.length == 0)
+		        animPrefix = animName;
+		
+		    if (animFps <= 0)
+		        animFps = 12;
+		
+		    if (animScale <= 0)
+		        animScale = 1;
+		
+		    animScales.set(animName, animScale);
+		
+		    var assetKey:String = '$curCharacter/$imageName';
+		
+		    try
+		    {
+		        if (frames == null)
+		        {
+		            var spriteMap:FlxAtlasFrames = Paths.getCharacterSparrowAtlas(assetKey, false);
+		            if (spriteMap != null)
+		                frames = spriteMap;
+		        }
+		    }
+		    catch (e:Dynamic) {}
+		
+		    if (animIndices != null && animIndices.length > 0)
+		    {
+		        animation.addByIndices(animName, animPrefix, animIndices, "", animFps, animLoop);
+		    } else {
+		        animation.addByPrefix(animName, animPrefix, animFps, animLoop);
+		    }
+		
+		    if (anim.offsets != null && anim.offsets.length >= 2)
+		    {
+		        addOffset(animName, anim.offsets[0], anim.offsets[1]);
+		    } else {
+		        addOffset(animName, 0, 0);
+		    }
 		}
 	}
 
@@ -411,18 +402,25 @@ class Player extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-		if (!animation.exists(AnimName))
-			return;
-
-		animation.play(AnimName, Force, Reversed, Frame);
-
-		if (animOffsets.exists(AnimName))
-		{
-			var daOffset = animOffsets.get(AnimName);
-			offset.set(daOffset[0], daOffset[1]);
-		} else {
-			offset.set(0, 0);
-		}
+	    if (!animation.exists(AnimName))
+	        return;
+	
+	    animation.play(AnimName, Force, Reversed, Frame);
+	
+	    if (animScales.exists(AnimName))
+	    {
+	        var daScale:Float = animScales.get(AnimName);
+	        scale.set(daScale, daScale);
+	        updateHitbox();
+	    }
+	
+	    if (animOffsets.exists(AnimName))
+	    {
+	        var daOffset = animOffsets.get(AnimName);
+	        offset.set(daOffset[0], daOffset[1]);
+	    } else {
+	        offset.set(0, 0);
+	    }
 	}
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0):Void
