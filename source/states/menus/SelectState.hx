@@ -41,8 +41,10 @@ class SelectState extends GameState
 
 		refresh();
 
-		if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(Paths.music('menus/menu'));
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
+		{
+		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
+		}
 
         #if mobile
 		addCustomDPad('EXITE', 'MENU');
@@ -53,8 +55,10 @@ class SelectState extends GameState
     override public function update(elapsed:Float) {
         super.update(elapsed);
 
-		if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(Paths.music('menus/menu'));
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
+		{
+		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
+		}
 
 		if (controls.UI_UP_P)
 		{
