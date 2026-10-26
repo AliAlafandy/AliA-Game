@@ -324,7 +324,12 @@ class Player extends FlxSprite
 	public function updateMovementAnimation(upPressed:Bool, downPressed:Bool):Void
 	{
 		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
-
+	
+		if (isOnGround)
+		{
+			isJumping = false;
+		}
+	
 		if (isOnGround && Math.abs(velocity.x) <= 10)
 		{
 			if (upPressed)
@@ -338,7 +343,7 @@ class Player extends FlxSprite
 				return;
 			}
 		}
-
+	
 		if (!isOnGround)
 		{
 			if (isJumping && velocity.y < 0)
@@ -346,16 +351,18 @@ class Player extends FlxSprite
 				playMovementAnimation('jumping', 'jump');
 				return;
 			}
-			else
+			else if (!isJumping && velocity.y >= 0)
 			{
-				if (animation.exists('fall'))
-					playMovementAnimation('fall', 'jumping');
-				else
-					playMovementAnimation('jumping', 'jump');
+				playMovementAnimation('fall', 'jumping');
+				return;
+			}
+			else if (velocity.y < 0)
+			{
+				playMovementAnimation('jumping', 'jump');
 				return;
 			}
 		}
-
+	
 		if (isOnGround && Math.abs(velocity.x) > moveSpeed * 0.75)
 		{
 			if (animation.exists('running') || animation.exists('run'))
@@ -369,17 +376,9 @@ class Player extends FlxSprite
 			playMovementAnimation('walking', 'walk');
 			return;
 		}
-
 		if (isOnGround)
 		{
-			if (idleTimer >= IDLE_TIMEOUT)
-			{
-				playMovementAnimation('waiting', 'idle');
-			}
-			else
-			{
-				playMovementAnimation('idle', 'waiting');
-			}
+			playMovementAnimation('idle', 'waiting');
 		}
 	}
 
