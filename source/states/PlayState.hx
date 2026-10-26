@@ -87,7 +87,7 @@ class PlayState extends GameState
 	#end
 
 	#if ELLAWY_ALLOWED
-	public var ellawyScripts:Array<data.scripts.GameEllawyScript> = [];
+	public var ellawyScripts:Array<data.scripts.GameEllawy.GameEllawyScript> = [];
 	#end
 
 	public var debugGroup:FlxTypedGroup<FlxText>;
