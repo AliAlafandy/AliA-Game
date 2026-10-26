@@ -178,7 +178,6 @@ class PlayState extends GameState
 
 			var grass = new FlxSprite(-2048 + i * 1024, groundY);
 			grass.makeGraphic(1024, 10, FlxColor.fromRGB(70, 180, 65));
-			grass.allowCollisions = FlxDirectionFlags.NONE;
 			add(grass);
 		}
 		testGround = groundSegments.members[0];
