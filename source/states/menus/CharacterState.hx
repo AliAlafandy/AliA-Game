@@ -31,8 +31,8 @@ class CharacterState extends GameState {
 	var nameTxt:FlxText;
 
 	static inline var SLOTS:Int = 5;
-	static inline var BOX_SIZE:Float = 110;
-	static inline var SPACING_X:Float = 20;
+	static inline var BOX_SIZE:Float = 20;
+	static inline var SPACING_X:Float = 40;
 	static inline var SPACING_Y:Float = 20;
 
 	#if mobile
