@@ -28,11 +28,6 @@ import mobile.data.MobileInputManager;
 import data.debug.DiscordRPC;
 #end
 
-#if HSCRIPT_ALLOWED
-import data.scripts.HScript;
-import tea.SScript;
-#end
-
 class RemotePlayerGhost extends Player
 {
 	public var netId:String;
