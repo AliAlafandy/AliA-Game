@@ -79,7 +79,7 @@ class CharacterState extends GameState {
 		chars = defaultChars.copy();
 
 		#if MODS_ALLOWED
-		var charactersDir:String = Paths.getModsDirectory() + "/characters";
+		var charactersDir:String = Mods.getModsDirectory() + "/characters";
 		if (FileSystem.exists(charactersDir)) {
 			for (folder in FileSystem.readDirectory(charactersDir)) {
 				if (FileSystem.isDirectory(charactersDir + "/" + folder)) {
