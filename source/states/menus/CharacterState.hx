@@ -48,7 +48,10 @@ class CharacterState extends GameState {
 
 	override public function create() {
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
-			FlxG.sound.playMusic(Paths.music('menus/select_character'), 1, true);
+			var selectMusic = Paths.music('menus/select_character');
+			if (selectMusic != null) {
+				FlxG.sound.playMusic(selectMusic, 1, true);
+			}
 		}
 
 		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
@@ -161,7 +164,10 @@ class CharacterState extends GameState {
 		super.update(elapsed);
 
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
-			FlxG.sound.playMusic(Paths.music('menus/select_character'), 1, true);
+			var selectMusic = Paths.music('menus/select_character');
+			if (selectMusic != null) {
+				FlxG.sound.playMusic(selectMusic, 1, true);
+			}
 		}
 
 		var oldIndex:Int = index;
