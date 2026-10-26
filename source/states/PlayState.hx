@@ -28,6 +28,10 @@ import mobile.data.MobileInputManager;
 import data.debug.DiscordRPC;
 #end
 
+#if ELLAWY_ALLOWED
+import data.scripts.GameEllawyScript
+#end
+
 class RemotePlayerGhost extends Player
 {
 	public var netId:String;
@@ -87,7 +91,7 @@ class PlayState extends GameState
 	#end
 
 	#if ELLAWY_ALLOWED
-	public var ellawyScripts:Array<data.scripts.GameEllawy.GameEllawyScript> = [];
+	public var ellawyScripts:Array<GameEllawyScript> = [];
 	#end
 
 	public var debugGroup:FlxTypedGroup<FlxText>;
@@ -219,11 +223,6 @@ class PlayState extends GameState
 
 		if (isOnlineMode)
 			setupOnlineMode();
-		
-		#if ELLAWY_ALLOWED
-		initEllawyScript();
-		callOnEllawyScripts('onGame', [elapsed]);
-		#end
 	}
 
 	private function setupOnlineMode():Void
@@ -567,6 +566,37 @@ class PlayState extends GameState
 			}
 		}
 		return returnVal;
+	}
+	
+	public function addTextToDebug(text:String, color:FlxColor):Void
+	{
+		if (debugGroup == null) return;
+
+		var newText:flixel.text.FlxText = debugGroup.recycle(flixel.text.FlxText, function()
+		{
+			var txt = new flixel.text.FlxText(10, 0, 0, "", 12);
+			txt.setFormat(null, 12, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+			return txt;
+		});
+
+		newText.text = text;
+		newText.color = color;
+		newText.alpha = 1;
+		newText.setPosition(10, 8);
+
+		debugGroup.add(newText);
+
+		debugGroup.forEachAlive(function(spr:flixel.text.FlxText)
+		{
+			if (spr != newText)
+				spr.y += newText.height + 2;
+		});
+
+		flixel.util.FlxTimer.wait(6, function()
+		{
+			if (newText != null && newText.alive)
+				newText.kill();
+		});
 	}
 	#end
 
