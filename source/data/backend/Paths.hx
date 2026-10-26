@@ -472,7 +472,7 @@ class Paths
 		var modLibPath:String = '';
 		if (library != null) modLibPath = '$library/';
 		if (path != null) modLibPath += '$path';
-
+	
 		var file:String = modsSounds(modLibPath, key);
 		if(FileSystem.exists(file)) {
 			if(!currentTrackedSounds.exists(file))
@@ -483,13 +483,12 @@ class Paths
 			return currentTrackedSounds.get(file);
 		}
 		#end
-
+	
 		var gottenPath:String = '$key.$SOUND_EXT';
 		if(path != null) gottenPath = '$path/$gottenPath';
 		
 		var assetPath:String = getPath(gottenPath, SOUND, library);
 		
-		#if mobile
 		if (OpenFlAssets.exists(assetPath, SOUND)) {
 			if (!currentTrackedSounds.exists(assetPath)) {
 				currentTrackedSounds.set(assetPath, OpenFlAssets.getSound(assetPath));
@@ -497,12 +496,11 @@ class Paths
 			localTrackedAssets.push(assetPath);
 			return currentTrackedSounds.get(assetPath);
 		}
-		#end
-
+	
 		if (assetPath != null && assetPath.indexOf(':') != -1) {
 			assetPath = assetPath.substring(assetPath.indexOf(':') + 1, assetPath.length);
 		}
-
+	
 		if(assetPath != null && !currentTrackedSounds.exists(assetPath))
 		{
 			var retKey:String = (path != null) ? '$path/$key' : key;
@@ -511,9 +509,15 @@ class Paths
 			{
 				currentTrackedSounds.set(assetPath, OpenFlAssets.getSound(retKey));
 			}
+			else {
+				var alternativeKey:String = 'assets/music/$key.$SOUND_EXT';
+				if (OpenFlAssets.exists(alternativeKey, SOUND)) {
+					currentTrackedSounds.set(assetPath, OpenFlAssets.getSound(alternativeKey));
+				}
+			}
 		}
 		
-		if (assetPath != null) {
+		if (assetPath != null && currentTrackedSounds.exists(assetPath)) {
 			localTrackedAssets.push(assetPath);
 			return currentTrackedSounds.get(assetPath);
 		}
