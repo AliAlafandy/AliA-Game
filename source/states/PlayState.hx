@@ -367,13 +367,14 @@ class PlayState extends GameState
 	{
 		elapsedTime += elapsed;
 		rpcTimer += elapsed;
-		handleInput();
 
 		if (!paused && player != null && testGround != null)
 		{
 			FlxG.collide(player, groundSegments);
 			player.updateGroundState();
 		}
+
+		handleInput();
 
 		#if DISCORD_ALLOWED
 		if (rpcTimer >= 1)
