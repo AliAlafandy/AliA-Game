@@ -29,7 +29,7 @@ import data.debug.DiscordRPC;
 #end
 
 #if ELLAWY_ALLOWED
-import data.scripts.GameEllawyScript
+import data.scripts.GameEllawyScript;
 #end
 
 class RemotePlayerGhost extends Player
