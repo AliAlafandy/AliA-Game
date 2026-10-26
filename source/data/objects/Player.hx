@@ -72,8 +72,6 @@ class Player extends FlxSprite
 
 		loadCharacter();
 
-		// Ellawy is the fast character: stronger acceleration and higher top speed.
-		// Other characters keep the shared default physics values.
 		if (curCharacter.toLowerCase() == 'ellawy')
 		{
 			moveSpeed = 820;
@@ -179,20 +177,16 @@ class Player extends FlxSprite
 			if (animFps <= 0)
 				animFps = 12;
 
-			var assetKey:String = '$curCharacter/$imageName';    
+			var assetKey:String = '$curCharacter/$imageName';
 
 			try
 			{
-				// Use the engine's existing Sparrow-atlas loader so the PNG and
-				// XML are resolved with the same asset-path rules as other game art.
-				// The previous custom path check could leave FlxSprite on its tiny
-				// fallback checker graphic instead of Ellawy's real frames.
 				if (frames == null)
-			    {
-			        var spriteMap:FlxAtlasFrames = Paths.getCharacterSparrowAtlas(assetKey, false);
-			        if (spriteMap != null)
-			            frames = spriteMap;
-			    }
+				{
+					var spriteMap:FlxAtlasFrames = Paths.getCharacterSparrowAtlas(assetKey, false);
+					if (spriteMap != null)
+						frames = spriteMap;
+				}
 
 				if (frames == null || frames.frames == null || frames.frames.length == 0)
 					FlxG.log.warn('Character atlas has no frames: ' + assetKey);
@@ -254,21 +248,20 @@ class Player extends FlxSprite
 			direction = 1;
 
 		if (direction < 0)
+		{
 			moveDirection = -1;
+			flipX = true;
+		}
 		else if (direction > 0)
+		{
 			moveDirection = 1;
-		else
-			moveDirection = 0;
+			flipX = false;
+		}
 
 		if (direction != 0)
 		{
 			var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * FlxG.elapsed / Math.max(moveSpeed, 1));
 			velocity.x = FlxMath.lerp(velocity.x, direction * moveSpeed, accelerationBlend);
-
-			if (direction < 0)
-				facing = FlxDirectionFlags.LEFT;
-			else
-				facing = FlxDirectionFlags.RIGHT;
 		} else {
 			if (velocity.x > 0)
 			{
@@ -282,7 +275,7 @@ class Player extends FlxSprite
 			}
 		}
 
-		if (jumpPressed && grounded)
+		if (jumpPressed && (grounded || isTouching(FlxDirectionFlags.FLOOR)))
 		{
 			velocity.y = -jumpSpeed;
 			grounded = false;
@@ -313,15 +306,12 @@ class Player extends FlxSprite
 
 	public function updateMovementAnimation():Void
 	{
-		// Character atlases use slightly different animation names. Ellawy's
-		// actual JSON defines jumping/walking/running, while some characters
-		// or older definitions may use jump/walk/run.
-		if (!grounded && velocity.y < 0)
+		if (!grounded && !isTouching(FlxDirectionFlags.FLOOR) && velocity.y < 0)
 		{
 			playMovementAnimation('jumping', 'jump');
 			return;
 		}
-		if (!grounded && velocity.y >= 0)
+		if (!grounded && !isTouching(FlxDirectionFlags.FLOOR) && velocity.y >= 0)
 		{
 			if (animation.exists('fall'))
 				playMovementAnimation('fall', 'jumping');
@@ -366,11 +356,11 @@ class Player extends FlxSprite
 		lastMovementAnimation = animationName;
 	}
 
-	public function updateGroundState():Void
-	{
-		grounded = isTouching(FlxDirectionFlags.FLOOR);
-		updateMovementAnimation();
-	}
+    public function updateGroundState():Void
+    {
+        grounded = isTouching(FlxDirectionFlags.FLOOR) || (velocity.y == 0);
+        updateMovementAnimation();
+    }
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
