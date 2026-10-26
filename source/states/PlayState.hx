@@ -421,7 +421,11 @@ class PlayState extends GameState
 
 		var leftPressed:Bool = FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A;
 		var rightPressed:Bool = FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D;
-		var jumpPressed:Bool = FlxG.keys.justPressed.SPACE || FlxG.keys.justPressed.UP || FlxG.keys.justPressed.W;
+		
+		var jumpPressed:Bool = FlxG.keys.justPressed.SPACE || FlxG.keys.justPressed.Z;
+		
+		var upPressed:Bool = FlxG.keys.pressed.UP || FlxG.keys.pressed.W;
+		var downPressed:Bool = FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S;
 
 		#if mobile
 		if (customDPad != null)
@@ -444,7 +448,22 @@ class PlayState extends GameState
 			direction += 1;
 		}
 
-		player.moveCharacter(direction, jumpPressed);
+		if (upPressed && Math.abs(player.velocity.x) <= 10 && (player.grounded || player.isTouching(FlxDirectionFlags.FLOOR) || player.velocity.y == 0))
+		{
+			FlxG.camera.followLerp = 0.05;
+			FlxG.camera.focusOn(new flixel.math.FlxPoint(player.getMidpoint().x, player.getMidpoint().y - 80));
+		}
+		else if (downPressed && Math.abs(player.velocity.x) <= 10 && (player.grounded || player.isTouching(FlxDirectionFlags.FLOOR) || player.velocity.y == 0))
+		{
+			FlxG.camera.followLerp = 0.05;
+			FlxG.camera.focusOn(new flixel.math.FlxPoint(player.getMidpoint().x, player.getMidpoint().y + 80));
+		}
+		else
+		{
+			FlxG.camera.follow(player, LOCKON, 0.05);
+		}
+
+		player.moveCharacter(direction, jumpPressed, upPressed, downPressed);
 
 		#if HSCRIPT_ALLOWED
 		callOnScripts('onhandleInput');
