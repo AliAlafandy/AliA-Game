@@ -196,13 +196,11 @@ class CharacterState extends GameState {
 			selectedCharacter = chars[index];
 			GameState.switchState(new PlayState());
 			FlxG.sound.play(Paths.sound('confirm_sound'));
-			if (FlxG.sound.music != null) FlxG.sound.music.destroy();
 		}
 
 		if (controls.BACK) {
 			FlxG.sound.play(Paths.sound('cancel_sound'));
 			GameState.switchState(new SelectState());
-			if (FlxG.sound.music != null) FlxG.sound.music.destroy();
 		}
 	}
 }
