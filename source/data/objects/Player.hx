@@ -325,27 +325,37 @@ class Player extends FlxSprite
 
 	public function updateMovementAnimation():Void
 	{
-		if (!grounded && velocity.y < 0) {
-			playMovementAnimation('jump', 'idle');
+		// Character atlases use slightly different animation names. Ellawy's
+		// actual JSON defines jumping/walking/running, while some characters
+		// or older definitions may use jump/walk/run.
+		if (!grounded && velocity.y < 0)
+		{
+			playMovementAnimation('jumping', 'jump');
 			return;
 		}
-		if (!grounded && velocity.y >= 0) {
-			playMovementAnimation('fall', 'jump');
+		if (!grounded && velocity.y >= 0)
+		{
+			if (animation.exists('fall'))
+				playMovementAnimation('fall', 'jumping');
+			else
+				playMovementAnimation('jumping', 'jump');
 			return;
 		}
 		if (grounded && Math.abs(velocity.x) > moveSpeed * 0.75)
 		{
-			if (animation.exists('run'))
+			if (animation.exists('running') || animation.exists('run'))
 			{
-				playMovementAnimation('run', 'walk');
+				playMovementAnimation('running', 'run');
 				return;
 			}
 		}
-		if (grounded && Math.abs(velocity.x) > 10) {
-			playMovementAnimation('walk', 'idle');
+		if (grounded && Math.abs(velocity.x) > 10)
+		{
+			playMovementAnimation('walking', 'walk');
 			return;
 		}
-		if (grounded) {
+		if (grounded)
+		{
 			playMovementAnimation('idle', 'waiting');
 		}
 	}
