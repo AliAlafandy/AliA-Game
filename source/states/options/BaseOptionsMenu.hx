@@ -5,7 +5,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import data.backend.ClientPrefs;
 
-class BaseOptionMenu extends GameSubState
+class BaseOptionsMenu extends GameSubState
 {
     public var category:String;
     var rows:Array<Dynamic> = [];
