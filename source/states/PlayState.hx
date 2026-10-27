@@ -234,18 +234,18 @@ class PlayState extends GameState
 			200
 		);
 
-		timer = new FlxText(10, 10, 32, "TIME: ", 32);
-		timer.setFormat('alafandy.ttf', 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
+		timer = new FlxText(10, 10, FlxG.width, "TIME: ", 32);
+		timer.setFormat(null, 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
 		timer.scrollFactor.set(0, 0);
 		debugGroup.add(timer);
 
 		score = new FlxText(timer.x, timer.y + 10, timer.width, "SCORE: ", 32);
-		score.setFormat('alafandy.ttf', 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
+		score.setFormat(null, 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
 		score.scrollFactor.set(0, 0);
 		debugGroup.add(score);
 
 		flash = new FlxText(timer.x, score.y + 10, timer.width, "FLASH: ", 32);
-		flash.setFormat('alafandy.ttf', 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
+		flash.setFormat(null, 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
 		flash.scrollFactor.set(0, 0);
 		debugGroup.add(flash);
 
