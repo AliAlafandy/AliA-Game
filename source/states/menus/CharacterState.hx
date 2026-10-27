@@ -43,13 +43,13 @@ class CharacterState extends GameState {
 
 	public function new():Void {
 		super();
+		FlxG.sound.music.stop();
 		#if mobile
 		manager = new MobileInputManager();
 		#end
 	}
 
 	override public function create() {
-		FlxG.sound.music.stop();
 		var selectMusic = Paths.music('menus/select_character');
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
 			if (selectMusic != null) {
