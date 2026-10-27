@@ -76,6 +76,22 @@ class LevelEditorState extends GameState
 	private var camZoom:Float = 1;
 	private var uiCamera:FlxCamera;
 
+	private var saveButton:FlxSprite;
+	private var propsButton:FlxSprite;
+	private var inputField:openfl.text.TextField;
+
+	public function new(?name:String = "untitled", ?c:Int = 40, ?r:Int = 24)
+	{
+		super();
+		levelName = name;
+		cols = c;
+		rows = r;
+		
+		#if mobile
+		manager = new MobileInputManager();
+		#end
+	}
+
 	private static var paletteColors:Array<FlxColor> = [
 		FlxColor.TRANSPARENT,
 		FlxColor.WHITE,
@@ -177,6 +193,28 @@ class LevelEditorState extends GameState
 		toolText.setFormat(null, 14, FlxColor.YELLOW, LEFT);
 		toolText.cameras = [uiCamera];
 		add(toolText);
+		
+		propsButton = new FlxSprite(FlxG.width - 180, 4);
+		propsButton.makeGraphic(70, 24, FlxColor.BLUE);
+		propsButton.cameras = [uiCamera];
+		add(propsButton);
+		
+		var propsTxt = new FlxText(propsButton.x, propsButton.y, 70, "PROPS", 14);
+		propsTxt.setFormat(null, 14, FlxColor.WHITE, CENTER);
+		propsTxt.cameras = [uiCamera];
+		add(propsTxt);
+
+		#if mobile
+		saveButton = new FlxSprite(FlxG.width - 90, FlxG.height - 50);
+		saveButton.makeGraphic(80, 40, FlxColor.GREEN);
+		saveButton.cameras = [uiCamera];
+		add(saveButton);
+		
+		var saveTxt = new FlxText(saveButton.x, saveButton.y, 80, "SAVE", 16);
+		saveTxt.setFormat(null, 16, FlxColor.BLACK, CENTER);
+		saveTxt.cameras = [uiCamera];
+		add(saveTxt);
+		#end
 
 		refreshToolText();
 	}
@@ -184,6 +222,22 @@ class LevelEditorState extends GameState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+		if (FlxG.mouse.justPressed)
+		{
+			var mousePos = FlxG.mouse.getScreenPosition(uiCamera);
+			if (propsButton != null && 
+				mousePos.x >= propsButton.x && mousePos.x <= propsButton.x + propsButton.width &&
+				mousePos.y >= propsButton.y && mousePos.y <= propsButton.y + propsButton.height) {
+				promptResize();
+			}
+			#if mobile
+			if (saveButton != null && 
+				mousePos.x >= saveButton.x && mousePos.x <= saveButton.x + saveButton.width &&
+				mousePos.y >= saveButton.y && mousePos.y <= saveButton.y + saveButton.height) {
+				saveLevel();
+			}
+			#end
+		}
 
 		handleCamera(elapsed);
 		handleZoom();
@@ -299,6 +353,72 @@ class LevelEditorState extends GameState
 		{
 			sprite.visible = true;
 			sprite.makeGraphic(TILE_SIZE, TILE_SIZE, paletteColors[value % paletteColors.length]);
+		}
+	}
+
+	public function resizeLevel(newName:String, newCols:Int, newRows:Int):Void
+	{
+		levelName = newName;
+		cols = Std.int(Math.max(1, Math.min(newCols, 256)));
+		rows = Std.int(Math.max(1, Math.min(newRows, 256)));
+		
+		if (tileSprites != null) { remove(tileSprites, true); tileSprites.destroy(); }
+		if (gridOverlay != null) { remove(gridOverlay, true); gridOverlay.destroy(); }
+		
+		undoStack = [];
+		redoStack = [];
+		
+		initGrid();
+		buildTileSprites();
+		buildGridOverlay();
+		refreshHud();
+	}
+
+	private function promptResize():Void
+	{
+		if (inputField != null) return;
+		
+		inputField = new openfl.text.TextField();
+		inputField.type = openfl.text.TextFieldType.INPUT;
+		inputField.background = true;
+		inputField.backgroundColor = 0xFFFFFF;
+		inputField.textColor = 0x000000;
+		inputField.width = 320;
+		inputField.height = 30;
+		inputField.x = (FlxG.width - 320) / 2;
+		inputField.y = (FlxG.height - 30) / 2;
+		inputField.text = "Name, Cols, Rows (e.g. MyLevel, 50, 30)";
+		
+		openfl.Lib.current.stage.addChild(inputField);
+		inputField.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, onResizeInput);
+		FlxG.stage.focus = inputField;
+	}
+
+	private function onResizeInput(e:openfl.events.KeyboardEvent):Void
+	{
+		if (e.keyCode == openfl.ui.Keyboard.ENTER) {
+			var parts = inputField.text.split(",");
+			if (parts.length >= 3) {
+				var n = parts[0].trim();
+				var c = Std.parseInt(parts[1].trim());
+				var r = Std.parseInt(parts[2].trim());
+				if (c != null && r != null && n.length > 0) {
+					resizeLevel(n, c, r);
+				}
+			}
+			closeResizePrompt();
+		} else if (e.keyCode == openfl.ui.Keyboard.ESCAPE) {
+			closeResizePrompt();
+		}
+	}
+
+	private function closeResizePrompt():Void
+	{
+		if (inputField != null) {
+			openfl.Lib.current.stage.removeChild(inputField);
+			inputField.removeEventListener(openfl.events.KeyboardEvent.KEY_DOWN, onResizeInput);
+			inputField = null;
+			FlxG.stage.focus = null;
 		}
 	}
 
