@@ -3,7 +3,6 @@ package states.options;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import data.backend.ClientPrefs;
 
 class BaseOptionsMenu extends GameSubState
 {
@@ -33,11 +32,6 @@ class BaseOptionsMenu extends GameSubState
 
     function addString(label:String, field:String, values:Array<String>, description:String):Void
         rows.push({label:label, field:field, kind:"string", values:values, description:description});
-
-    public function buildRows():Void
-    {
-        // Each options substate defines its own rows by overriding this method.
-    }
 
     override function create():Void
     {
@@ -71,7 +65,7 @@ class BaseOptionsMenu extends GameSubState
         if (row.kind == "mute") return FlxG.sound.muted;
         if (category == "Gameplay" && row.field != null)
         {
-            if (row.field == "instakill" || row.field == "practice" || row.field == "botplay" || row.field == "opponentplay")
+            if (row.field == "timeLimit" || row.field == "debugMode" || row.field == "infiniteLife" || row.field == "infinitePower" || row.field == "timeType")
                 return ClientPrefs.data.gameplaySettings.get(row.field);
         }
         return Reflect.getProperty(ClientPrefs.data, row.field);
@@ -91,7 +85,7 @@ class BaseOptionsMenu extends GameSubState
             FlxG.save.data.mute = value;
             return;
         }
-        if (category == "Gameplay" && (row.field == "instakill" || row.field == "practice" || row.field == "botplay" || row.field == "opponentplay"))
+        if (category == "Gameplay" && (row.field == "timelimit" || row.field == "debugMode" || row.field == "infiniteLife" || row.field == "infinitePower" || row.field == "timeType"))
         {
             ClientPrefs.data.gameplaySettings.set(row.field, value);
             return;
