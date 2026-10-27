@@ -1,6 +1,8 @@
 package substates.options;
 
-class GameplaySubState extends SettingsSubState
+import states.options.BaseOptionsMenu;
+
+class GameplaySubState extends BaseOptionsMenu
 {
     public function new() super("Gameplay");
 }
