@@ -5,4 +5,10 @@ import states.options.BaseOptionsMenu;
 class AudioSubState extends BaseOptionsMenu
 {
     public function new() super("Audio");
+
+    override public function buildRows():Void
+    {
+                rows.push({label:"Master volume", field:"volume", kind:"volume", min:0.0, max:1.0, step:0.1, description:"Master game volume."});
+                rows.push({label:"Mute", field:"mute", kind:"mute", description:"Mute all game audio."});
+    }
 }
