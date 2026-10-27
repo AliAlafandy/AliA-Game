@@ -9,7 +9,7 @@ class GameplaySubState extends BaseOptionsMenu
     override public function buildRows():Void
     {
         addBool("Down Scroll", "downScroll", "Place complete bar at the bottom when supported.");
-        addBool("Shaders", "shaders", "Enable shaders where supported.");
+        addBool("Shaders", "shaders", "Enable supported shaders.");
 
         #if desktop
         addBool("Discord RPC", "discordRPC", "Enable discord rpc where supported.");
