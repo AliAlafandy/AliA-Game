@@ -318,7 +318,7 @@ class Paths
 			for(mod in Mods.getGlobalMods())
 				if (FileSystem.exists(mods('$mod/$key')))
 					return true;
-			#if (linux || ios)
+			#if (linux || ios || mac)
 				else if (FileSystem.exists(findFile('$mod/$key')))
 					return true;
 			#end
@@ -328,7 +328,7 @@ class Paths
 			
 			if (FileSystem.exists(mods('$key')))
 				return true;
-			#if (linux || ios)
+			#if (linux || ios || mac)
 			else if (FileSystem.exists(findFile(key)))
 				return true;
 			#end
@@ -398,9 +398,23 @@ class Paths
 			return currentTrackedAssets.get(file);
 		}
 		else if (FileSystem.exists(file))
+		{
 			bitmap = BitmapData.fromFile(file);
+		}
 		else
+		{
+			#if (linux || ios || mac || android)
+			var foundPath = findFile('characters/' + key + '.png');
+			if (foundPath != null && FileSystem.exists(foundPath))
+			{
+				file = foundPath;
+				bitmap = BitmapData.fromFile(file);
+			}
+			#end
+		}
 		#end
+
+		if (bitmap == null)
 		{
 			file = getPath('characters/$key.png', IMAGE);
 			if (currentTrackedAssets.exists(file))
@@ -429,6 +443,11 @@ class Paths
 			if(retVal != null) return retVal;
 		}
 
+		#if mobile
+		trace('CHARACTER IMAGE FAILED TO LOAD: $key');
+		trace('Last attempted file path: $file');
+		#end
+
 		return null;
 	}
 
@@ -439,15 +458,34 @@ class Paths
 		#if MODS_ALLOWED
 		var xmlExists:Bool = false;
 		var xml:String = modsCharactersXml(key);
-		if(FileSystem.exists(xml)) xmlExists = true;
+		
+		if (FileSystem.exists(xml)) {
+			xmlExists = true;
+		} else {
+			#if (linux || ios || mac || android)
+			var foundXml = findFile('characters/' + key + '.xml');
+			if (foundXml != null && FileSystem.exists(foundXml)) {
+				xml = foundXml;
+				xmlExists = true;
+			}
+			#end
+		}
 
-		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath('characters/$key.xml', TEXT)));
+		if (imageLoaded == null) {
+			trace('SPARROW ATLAS FAILED: Image is null for $key');
+			return null; 
+		}
+
+		var xmlContent:String = xmlExists ? File.getContent(xml) : getPath('characters/$key.xml', TEXT);
+		trace('Sparrow Atlas worked for Mods : Image is $key');
+		return FlxAtlasFrames.fromSparrow(imageLoaded, xmlContent);
 		#else
 		var xmlPath:String = getPath('characters/$key.xml', TEXT);
 		if (!OpenFlAssets.exists(xmlPath, TEXT))
 		{
 			xmlPath = 'assets/characters/$key.xml';
 		}
+		trace('Sparrow Atlas worked for Base Game : Image is $key');
 		return FlxAtlasFrames.fromSparrow(imageLoaded, xmlPath);
 		#end
 	}
@@ -610,7 +648,7 @@ class Paths
 			if(FileSystem.exists(fileToCheck)) {
 				return fileToCheck;
 			}
-			#if (linux || ios)
+			#if (linux || ios || mac)
 			else
 				{
 					var newPath:String = findFile(key);
@@ -624,7 +662,7 @@ class Paths
 			var fileToCheck:String = mods(mod + '/' + key);
 			if(FileSystem.exists(fileToCheck))
 				return fileToCheck;
-			#if (linux || ios)
+			#if (linux || ios || mac)
 			else
 			{
 				var newPath:String = findFile(key);
@@ -637,7 +675,7 @@ class Paths
 	}
 	#end
 
-	#if (linux || ios)
+	#if (linux || ios || mac)
 	static function findFile(key:String):String {
 		var targetParts:Array<String> = key.replace('\\', '/').split('/');
 		if (targetParts.length == 0) return null;
