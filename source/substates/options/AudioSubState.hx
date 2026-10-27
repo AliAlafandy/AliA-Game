@@ -1,6 +1,8 @@
 package substates.options;
 
-class AudioSubState extends SettingsSubState
+import states.options.BaseOptionsMenu;
+
+class AudioSubState extends BaseOptionsMenu
 {
     public function new() super("Audio");
 }
