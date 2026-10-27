@@ -1,6 +1,8 @@
 package substates.options;
 
-class ControlsSubState extends SettingsSubState
+import states.options.BaseOptionsMenu;
+
+class ControlsSubState extends BaseOptionsMenu
 {
     public function new() super("Controls");
 }
