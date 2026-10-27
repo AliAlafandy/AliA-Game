@@ -13,6 +13,7 @@ class DataSubState extends BaseOptionsMenu
         // Load Data
         // Delete Data
         addBool("Check Updates", "checkForUpdates", "Check for game updates.");
+
         #if android
         addString("Storage Type", "storageType", ["EXTERNAL_DATA"], "Storage location used by the Android build.");
         #end
