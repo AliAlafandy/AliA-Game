@@ -196,10 +196,13 @@ class LevelEditorState extends GameState
 		var moveX:Float = 0;
 		var moveY:Float = 0;
 
-		if (controls.GAME_LEFT) moveX -= 1;
-		if (controls.GAME_RIGHT) moveX += 1;
-		if (controls.GAME_UP) moveY -= 1;
-		if (controls.GAME_DOWN) moveY += 1;
+		if (!FlxG.keys.pressed.CONTROL)
+		{
+			if (controls.GAME_LEFT) moveX -= 1;
+			if (controls.GAME_RIGHT) moveX += 1;
+			if (controls.GAME_UP) moveY -= 1;
+			if (controls.GAME_DOWN) moveY += 1;
+		}
 
 		if (moveX != 0 || moveY != 0)
 		{
@@ -324,7 +327,7 @@ class LevelEditorState extends GameState
 
 	private function handleSaveLoad():Void
 	{
-		if (FlxG.keys.pressed.ALT && FlxG.keys.justPressed.S)
+		if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.S)
 			saveLevel();
 		else if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.L)
 			loadLevel();
