@@ -41,15 +41,11 @@ import mobile.data.debug.Vibration;
 	public var gameOverVibration:Bool = false;
 
 	public var gameplaySettings:Map<String, Dynamic> = [
-		'scrollspeed' => 1.0,
-		'scrolltype' => 'multiplicative',
-		'songspeed' => 1.0,
-		'healthgain' => 1.0,
-		'healthloss' => 1.0,
-		'instakill' => false,
-		'practice' => false,
-		'botplay' => false,
-		'opponentplay' => false
+		'timeLimit' => true,
+		'debugMode' => false,
+		'infiniteLife' => false,
+		'infinitePower' => false,
+		'timerType' => "0'00''00"
 	];
 	public var safeFrames:Float = 10;
 
