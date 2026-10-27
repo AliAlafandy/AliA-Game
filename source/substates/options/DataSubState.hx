@@ -8,12 +8,13 @@ class DataSubState extends BaseOptionsMenu
 
     override public function buildRows():Void
     {
-                addBool("Check for updates", "checkForUpdates", "Check for game updates.");
-                addBool("Loading screen", "loadingScreen", "Show the loading screen.");
-                addBool("Screensaver", "screensaver", "Enable the screensaver.");
-                addBool("Auto pause", "autoPause", "Pause when the app loses focus.");
-                #if android
-                addString("Storage type", "storageType", ["EXTERNAL_DATA"], "Storage location used by the Android build.");
-                #end
+        // Sign In
+        // Save Data
+        // Load Data
+        // Delete Data
+        addBool("Check Updates", "checkForUpdates", "Check for game updates.");
+        #if android
+        addString("Storage Type", "storageType", ["EXTERNAL_DATA"], "Storage location used by the Android build.");
+        #end
     }
 }
