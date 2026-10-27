@@ -65,6 +65,10 @@ class MenuState extends GameState
 		{
 		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
 		}
+		else if (FlxG.sound.music != null || !FlxG.sound.music.playing)
+		{
+			FlxG.sound.music.resume();
+		}
 		
 		#if MODS_ALLOWED
 		Mods.pushGlobalMods();
@@ -123,6 +127,10 @@ class MenuState extends GameState
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
 		{
 		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
+		}
+		else if (FlxG.sound.music != null || !FlxG.sound.music.playing)
+		{
+			FlxG.sound.music.resume();
 		}
 
 		if (!selectedSomethin)
