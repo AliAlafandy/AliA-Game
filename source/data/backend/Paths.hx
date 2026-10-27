@@ -675,7 +675,7 @@ class Paths
 	}
 	#end
 
-	#if (linux || ios || mac)
+	#if (linux || ios || mac || android)
 	static function findFile(key:String):String {
 		var targetParts:Array<String> = key.replace('\\', '/').split('/');
 		if (targetParts.length == 0) return null;
