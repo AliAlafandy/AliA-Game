@@ -16,7 +16,7 @@ import data.controls.InputFormatter;
 import mobile.backend.Vibration;
 #end
 
-class BaseOptionsMenu extends GameSubState
+class lBaseOptionsMenu extends GameSubState
 {
 	private var curOption:Option = null;
 	private var curSelected:Int = 0;
