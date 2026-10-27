@@ -11,5 +11,13 @@
 	<SubTexture name="Press0005" x="270" y="0" width="270" height="270"/>
 	<SubTexture name="Press0006" x="0" y="0" width="270" height="270"/>
 	<SubTexture name="Press0007" x="0" y="0" width="270" height="270"/>
+	<SubTexture name="Press0008" x="270" y="0" width="270" height="270"/>
+	<SubTexture name="Press0009" x="270" y="0" width="270" height="270"/>
+	<SubTexture name="Press0010" x="0" y="0" width="270" height="270"/>
+	<SubTexture name="Press0011" x="0" y="0" width="270" height="270"/>
+	<SubTexture name="Press0012" x="270" y="0" width="270" height="270"/>
+	<SubTexture name="Press0013" x="270" y="0" width="270" height="270"/>
+	<SubTexture name="Press0014" x="0" y="0" width="270" height="270"/>
+	<SubTexture name="Press0015" x="0" y="0" width="270" height="270"/>
 	<SubTexture name="Select0000" x="540" y="0" width="270" height="270"/>
 </TextureAtlas>
