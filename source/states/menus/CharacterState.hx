@@ -151,7 +151,7 @@ class CharacterState extends GameState {
 			var box = gridGroup.members[i];
 
 			if (i == index) {
-				if (box.animation.exists('select')) box.animation.play('select');
+				if (box.animation.exists('idle')) box.animation.play('idle');
 			} else {
 				if (box.animation.exists('idle')) box.animation.play('idle');
 			}
@@ -200,10 +200,12 @@ class CharacterState extends GameState {
 			}
 
 			GameState.switchState(new PlayState());
+			FlxG.sound.music.stop();
 			FlxG.sound.play(Paths.sound('confirm_sound'));
 		}
 
 		if (controls.BACK) {
+			FlxG.sound.music.stop();
 			FlxG.sound.play(Paths.sound('cancel_sound'));
 			GameState.switchState(new SelectState());
 		}
