@@ -100,7 +100,7 @@ class BaseOptionsMenu extends GameSubState
             FlxG.drawFramerate = value;
         }
         #if mobile
-        if (row.field == "vibration") mobile.backend.Vibration.enabled = value;
+        if (row.field == "vibration") mobile.data.debug.Vibration.enabled = value;
         #end
     }
 
