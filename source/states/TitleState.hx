@@ -78,7 +78,7 @@ class TitleState extends GameState
 
     public function startVideo(name:String)
     {
-		#if VIDEO_ALLOWED
+		#if VIDEOS_ALLOWED
         var filepath:String = Paths.video(name);
 
         #if sys
