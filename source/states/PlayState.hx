@@ -431,6 +431,7 @@ class PlayState extends GameState
 		var rightPressed:Bool = FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D;
 		
 		var jumpPressed:Bool = FlxG.keys.justPressed.SPACE || FlxG.keys.justPressed.Z;
+		var powerPressed:Bool = FlxG.keys.justPressed.X;
 		
 		var upPressed:Bool = FlxG.keys.pressed.UP || FlxG.keys.pressed.W;
 		var downPressed:Bool = FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S;
@@ -443,6 +444,7 @@ class PlayState extends GameState
 			upPressed = upPressed || customDPad.buttonUp.justPressed || customDPad.buttonUp.pressed;
 			downPressed = downPressed || customDPad.buttonDown.justPressed || customDPad.buttonDown.pressed;
 			jumpPressed = jumpPressed || customDPad.jumpButton.justPressed || customDPad.jumpButton.pressed;
+			powerPressed = powerPressed || customDPad.powerButton.justPressed || customDPad.powerButton.pressed;
 		}
 		#end
 
