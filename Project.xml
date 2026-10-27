@@ -16,10 +16,10 @@
 
 	<!-- Customization -->
 	<define name="MODS_ALLOWED" if="desktop || mobile"/>
-	<define name="ELLAWY_ALLOWED" if="desktop || mobile"/> -->
+	<define name="ELLAWY_ALLOWED" if="desktop || mobile"/>
 	<!--<define name="ACHIEVEMENTS_ALLOWED"/>-->
 	<define name="DISCORD_ALLOWED" if="desktop"/>
-	<define name="VIDEOS_ALLOWED"/>
+	<define name="VIDEOS_ALLOWED"/> <!--unless="32bits"-->
 	<define name="HSCRIPT_ALLOWED"/>
 
 	<!-- Window Settings -->
