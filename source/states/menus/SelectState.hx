@@ -89,9 +89,9 @@ class SelectState extends GameState
 		}
 
         if (controls.ACCEPT) {
-			FlxG.sound.music.stop();
 			new FlxTimer().start(1, function(tmr:FlxTimer)
             {
+				FlxG.sound.music.stop();
                 GameState.switchState(new CharacterState());
             });
 			FlxG.sound.play(Paths.sound('confirm_sound'));
