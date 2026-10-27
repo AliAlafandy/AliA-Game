@@ -143,7 +143,7 @@ class MenuState extends GameState
 
 			if (controls.ACCEPT)
 			{
-				// FlxG.sound.music.stop();
+				FlxG.sound.music.stop();
 				FlxG.sound.play(Paths.sound('confirm_sound'));
 				selectedSomethin = true;
 
@@ -196,29 +196,29 @@ class MenuState extends GameState
 
 	function changeItem(huh:Int = 0)
 	{
-		FlxG.sound.play(Paths.sound('scroll_sound'));
-
-		curSelected += huh;
-
-		if (curSelected >= menuItems.length)
-			curSelected = 0;
-		if (curSelected < 0)
-			curSelected = menuItems.length - 1;
-
-		for (i in 0...menuItems.members.length)
-		{
-			var item = menuItems.members[i];
-
-			if (i == curSelected)
-			{
-				item.alpha = 1.0;
-				item.setGraphicSize(Std.int(item.width * 0.9));
-			} else {
-				item.alpha = 0.6;
-				item.setGraphicSize(Std.int(item.width * 0.75));
-			}
-			
-			item.updateHitbox();
-		}
+	    FlxG.sound.play(Paths.sound('scroll_sound'));
+	
+	    curSelected += huh;
+	
+	    if (curSelected >= menuItems.length)
+	        curSelected = 0;
+	    if (curSelected < 0)
+	        curSelected = menuItems.length - 1;
+	
+	    for (i in 0...menuItems.members.length)
+	    {
+	        var item = menuItems.members[i];
+	
+	        if (i == curSelected)
+	        {
+	            item.alpha = 1.0;
+	            item.scale.set(0.9, 0.9);
+	        } else {
+	            item.alpha = 0.6;
+	            item.scale.set(0.75, 0.75);
+	        }
+	        
+	        item.updateHitbox();
+	    }
 	}
 }
