@@ -20,7 +20,7 @@ import states.menus.SelectState;
 import states.online.OnlineState;
 import states.options.OptionsState;
 
-// import states.editors.EditorState;
+import states.editors.EditorState;
 
 #if MODS_ALLOWED
 import states.menus.ModsState;
@@ -187,7 +187,7 @@ class MenuState extends GameState
 
 			if (FlxG.keys.justPressed.E #if mobile || customDPad.powerButton.justPressed #end)
 			{
-				// GameState.switchState(new EditorState());
+				GameState.switchState(new EditorState());
 			}
 		}
 
