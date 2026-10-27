@@ -214,14 +214,17 @@ class PlayState extends GameState
 
 		timer = new FlxText(10, 10, 32, "TIME: ", 32);
 		timer.setFormat('alafandy.ttf', 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
+		timer.scrollFactor.set(0, 0);
 		debugGroup.add(timer);
 
 		score = new FlxText(timer.x, timer.y + 10, timer.width, "SCORE: ", 32);
 		score.setFormat('alafandy.ttf', 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
+		score.scrollFactor.set(0, 0);
 		debugGroup.add(score);
 
 		flash = new FlxText(timer.x, score.y + 10, timer.width, "FLASH: ", 32);
 		flash.setFormat('alafandy.ttf', 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
+		flash.scrollFactor.set(0, 0);
 		debugGroup.add(flash);
 
 		FlxG.sound.music.resume();
@@ -255,6 +258,7 @@ class PlayState extends GameState
 
 		chatOverlay = new FlxText(10, 70, FlxG.width - 20, "", 14);
 		chatOverlay.setFormat(null, 14, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+		chatOverlay.scrollFactor.set(0, 0);
 		add(chatOverlay);
 
 		for (remote in MultiPlayer.instance.getPlayers())
@@ -630,6 +634,7 @@ class PlayState extends GameState
 		{
 			var txt = new flixel.text.FlxText(10, 0, 0, "", 12);
 			txt.setFormat(null, 12, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+			txt.scrollFactor.set(0, 0);
 			return txt;
 		});
 
