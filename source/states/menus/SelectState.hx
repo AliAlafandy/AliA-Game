@@ -86,11 +86,13 @@ class SelectState extends GameState
 
         if (controls.ACCEPT) {
             GameState.switchState(new CharacterState());
+			FlxG.sound.music.stop();
 			FlxG.sound.play(Paths.sound('confirm_sound'));
         }
 
         if (controls.BACK) {
 			FlxG.sound.play(Paths.sound('cancel_sound'));
+			FlxG.sound.music.stop();
             GameState.switchState(new MenuState());
         }
     }
