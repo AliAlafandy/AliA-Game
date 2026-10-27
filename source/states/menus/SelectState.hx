@@ -45,6 +45,10 @@ class SelectState extends GameState
 		{
 		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
 		}
+		else if (FlxG.sound.music != null || !FlxG.sound.music.playing)
+		{
+			FlxG.sound.music.resume();
+		}
 
         #if mobile
 		if (ClientPrefs.data.debugSecret) {
@@ -62,6 +66,10 @@ class SelectState extends GameState
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
 		{
 		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
+		}
+		else if (FlxG.sound.music != null || !FlxG.sound.music.playing)
+		{
+			FlxG.sound.music.resume();
 		}
 
 		if (controls.UI_UP_P)
@@ -91,14 +99,14 @@ class SelectState extends GameState
         if (controls.ACCEPT) {
 			new FlxTimer().start(1, function(tmr:FlxTimer)
             {
-				FlxG.sound.music.stop();
+				FlxG.sound.music.pause();
                 GameState.switchState(new CharacterState());
             });
 			FlxG.sound.play(Paths.sound('confirm_sound'));
         }
 
         if (controls.BACK) {
-			FlxG.sound.music.stop();
+			FlxG.sound.music.pause();
 			FlxG.sound.play(Paths.sound('cancel_sound'));
             GameState.switchState(new MenuState());
         }
