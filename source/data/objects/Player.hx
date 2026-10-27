@@ -349,6 +349,10 @@ class Player extends FlxSprite
 				playMovementAnimation('down', 'idle');
 				return;
 			}
+			if (downPressed && hasJumped) {
+				playMovementAnimation('jumping', 'idle');
+				return
+			}
 		}
 	
 		if (!isOnGround)
@@ -439,15 +443,12 @@ class Player extends FlxSprite
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-		if (velocity.y > maxFallSpeed)
-			velocity.y = maxFallSpeed;
 
+		if (velocity.y > maxFallSpeed) velocity.y = maxFallSpeed;
 		if (Math.abs(velocity.x) <= 10 && (grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0))
 		{
 			idleTimer += elapsed;
-		}
-		else
-		{
+		} else {
 			idleTimer = 0;
 		}
 	}
@@ -483,16 +484,12 @@ class Player extends FlxSprite
 			var dir = diffX > 0 ? 1 : -1;
 			var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * elapsed / Math.max(moveSpeed, 1));
 			velocity.x = FlxMath.lerp(velocity.x, dir * (moveSpeed * 0.9), accelerationBlend);
-		}
-		else
-		{
+		} else {
 			if (velocity.x > 0)
 			{
 				velocity.x -= moveFriction * elapsed;
 				if (velocity.x < 0) velocity.x = 0;
-			}
-			else if (velocity.x < 0)
-			{
+			} else if (velocity.x < 0) {
 				velocity.x += moveFriction * elapsed;
 				if (velocity.x > 0) velocity.x = 0;
 			}
@@ -502,13 +499,9 @@ class Player extends FlxSprite
 		{
 			if (hasJumped) playMovementAnimation('jumping', 'jump');
 			else playMovementAnimation('fall', 'idle');
-		}
-		else if (Math.abs(velocity.x) > 10)
-		{
+		} else if (Math.abs(velocity.x) > 10) {
 			playMovementAnimation('walking', 'walk');
-		}
-		else
-		{
+		} else {
 			playMovementAnimation('idle', 'waiting');
 		}
 	}
