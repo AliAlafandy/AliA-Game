@@ -579,7 +579,6 @@ class PlayState extends GameState
             addTextToDebug('ERROR ON LOADING ($file): ${e}', FlxColor.RED);
         }
     }
-	#end
 
 	public function callOnEllawyScripts(funcToCall:String, args:Array<Dynamic> = null):Dynamic
 	{
