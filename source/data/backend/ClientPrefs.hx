@@ -45,7 +45,7 @@ import mobile.data.debug.Vibration;
 		'debugMode' => false,
 		'infiniteLife' => false,
 		'infinitePower' => false,
-		'timerType' => "0'00''00"
+		'timeType' => "0'00''00"
 	];
 	public var safeFrames:Float = 10;
 
