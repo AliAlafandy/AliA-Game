@@ -20,7 +20,7 @@ import states.menus.SelectState;
 import states.online.OnlineState;
 import states.options.OptionsState;
 
-import states.editors.EditorState;
+// import states.editors.EditorState;
 
 #if MODS_ALLOWED
 import states.menus.ModsState;
