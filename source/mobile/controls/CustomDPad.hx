@@ -243,7 +243,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 
 			add(pausePad);
 			add(pauseButton);
-		} else if (Action == "MENU") {
+		} else if (Action == "E-MENU") {
 			add(jumpBG);
 			add(jumpPad);
 			add(jumpButton);
@@ -251,6 +251,13 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			add(powerBG);
 			add(powerPad);
 			add(powerButton);
+
+			add(backPad);
+			add(backButton);
+		} else if (Action == "MENU") {
+			add(jumpBG);
+			add(jumpPad);
+			add(jumpButton);
 
 			add(backPad);
 			add(backButton);
