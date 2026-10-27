@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
+import flixel.math.FlxMath;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.mouse.FlxMouseButton;
 
@@ -205,7 +206,7 @@ class LevelEditorState extends GameState
 			FlxG.camera.scroll.y += moveY * CAMERA_SPEED * elapsed / camZoom;
 		}
 
-		if (FlxG.mouse.pressed && FlxG.mouse.justPressedMiddle == false && FlxG.mouse.pressedMiddle)
+		if (FlxG.mouse.pressedMiddle)
 		{
 			FlxG.camera.scroll.x -= FlxG.mouse.deltaScreenX / camZoom;
 			FlxG.camera.scroll.y -= FlxG.mouse.deltaScreenY / camZoom;
@@ -332,14 +333,14 @@ class LevelEditorState extends GameState
 		if (!FileSystem.exists(directory))
 			FileSystem.createDirectory(directory);
 
-		File.saveContent('$directory/$levelName.json', haxe.Json.stringify(data));
+		File.saveContent('$directory/$levelName.json', haxe.Json.stringify(data, null, '\t'));
 		#end
 	}
 
 	private function loadLevel():Void
 	{
 		#if sys
-		var path = 'levels/$levelName.bin';
+		var path = 'levels/$levelName.json';
 		if (!FileSystem.exists(path))
 			return;
 
@@ -350,8 +351,21 @@ class LevelEditorState extends GameState
 		rows = data.rows;
 		tileGrid = data.tiles;
 
-		tileSprites.clear();
+		// Rebuild sprite/grid buffers when the loaded level dimensions change.
+		if (tileSprites != null)
+		{
+			remove(tileSprites, true);
+			tileSprites.destroy();
+		}
+		if (gridOverlay != null)
+		{
+			remove(gridOverlay, true);
+			gridOverlay.destroy();
+		}
+		cols = Std.int(Math.max(1, Math.min(cols, 256)));
+		rows = Std.int(Math.max(1, Math.min(rows, 256)));
 		buildTileSprites();
+		buildGridOverlay();
 
 		for (y in 0...rows)
 			for (x in 0...cols)
@@ -361,8 +375,9 @@ class LevelEditorState extends GameState
 
 	private function screenToGrid(screenX:Float, screenY:Float):FlxPoint
 	{
-		var worldX = FlxG.camera.scroll.x + (screenX / camZoom);
-		var worldY = FlxG.camera.scroll.y + (screenY / camZoom);
+		// FlxMouse.x/y are already in world coordinates, including camera scroll/zoom.
+		var worldX:Float = screenX;
+		var worldY:Float = screenY;
 
 		var gx = Math.floor(worldX / TILE_SIZE);
 		var gy = Math.floor(worldY / TILE_SIZE);
