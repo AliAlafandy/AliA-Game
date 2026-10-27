@@ -21,6 +21,8 @@ class BaseOptionsMenu extends GameSubState
         buildRows();
     }
 
+    public function buildRows():Void {}
+
     function addBool(label:String, field:String, description:String):Void
         rows.push({label:label, field:field, kind:"bool", description:description});
 
@@ -118,7 +120,7 @@ class BaseOptionsMenu extends GameSubState
             case "string":
                 var idx:Int = row.values.indexOf(Std.string(value));
                 if (idx < 0) idx = 0;
-                idx = (idx + direction + row.values.length) % row.values.length;
+                idx = Std.int((idx + direction + row.values.length) % row.values.length);
                 writeValue(row, row.values[idx]);
         }
         ClientPrefs.saveSettings();
@@ -133,7 +135,7 @@ class BaseOptionsMenu extends GameSubState
             var value = readValue(row);
             var shown:String = Std.string(value);
             if (row.kind == "bool" || row.kind == "mute") shown = value == true ? "ON" : "OFF";
-            if (row.kind == "volume") shown = Std.int(value * 100) + "%";
+            if (row.kind == "volume") shown = Std.int((value:Float) * 100) + "%";
             labels[i].text = (i == selected ? "> " : "  ") + row.label + ": " + shown;
             labels[i].color = i == selected ? FlxColor.YELLOW : FlxColor.WHITE;
         }
@@ -152,7 +154,6 @@ class BaseOptionsMenu extends GameSubState
         if (controls.BACK)
         {
             ClientPrefs.saveSettings();
-            controls.isInSubstate = false;
             close();
             FlxG.sound.play(Paths.sound("cancelMenu"));
         }
@@ -161,7 +162,6 @@ class BaseOptionsMenu extends GameSubState
     override function destroy():Void
     {
         ClientPrefs.saveSettings();
-        controls.isInSubstate = false;
         super.destroy();
     }
 }
