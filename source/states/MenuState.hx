@@ -20,6 +20,8 @@ import states.menus.SelectState;
 import states.online.OnlineState;
 import states.options.OptionsState;
 
+import states.editors.EditorState;
+
 #if MODS_ALLOWED
 import states.menus.ModsState;
 #end
@@ -182,6 +184,11 @@ class MenuState extends GameState
 					});
 				}
 			}
+
+			if (FlxG.keys.justPressed.E || #if mobile customDPad.powerButton.justPressed #end)
+			{
+				GameState.switchState(new EditorState());
+			}
 		}
 
 		super.update(elapsed);
@@ -205,10 +212,10 @@ class MenuState extends GameState
 			if (i == curSelected)
 			{
 				item.alpha = 1.0;
-				item.scale.set(0.9, 0.9);
+				item.setGraphicSize(Std.int(item.width * 0.9));
 			} else {
 				item.alpha = 0.6;
-				item.scale.set(0.75, 0.75);
+				item.setGraphicSize(Std.int(item.width * 0.75));
 			}
 			
 			item.updateHitbox();
