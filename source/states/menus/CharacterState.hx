@@ -115,12 +115,12 @@ class CharacterState extends GameState {
 			var box:FlxSprite = new FlxSprite(posX, posY);
 			var atlas:FlxAtlasFrames = Paths.getSparrowAtlas('menus/Selects/char_place');
 			// box.loadGraphic(Paths.image('menus/Selects/char_place_old'));
+
 			box.frames = atlas;
 			box.animation.addByPrefix('idle', 'Idle0000', 24, true);
-			box.animation.addByPrefix('select', 'Select0000', 24, true);
 			box.animation.addByPrefix('press', 'Press0000', 24, false);
 			box.animation.play('idle');
-			
+
 			box.setGraphicSize(Std.int(BOX_SIZE), Std.int(BOX_SIZE));
 			box.updateHitbox();
 			box.ID = i;
@@ -133,7 +133,7 @@ class CharacterState extends GameState {
 			try {
 				icon.loadGraphic(Paths.image(iconPath));
 			} catch (e:Dynamic) {
-				icon.makeGraphic(32, 32, FlxColor.TRANSPARENT);
+				icon.loadGraphic(Paths.image('characters/unknown/icon'));
 			}
 			icon.setGraphicSize(Std.int(BOX_SIZE * 0.7), Std.int(BOX_SIZE * 0.7));
 			icon.updateHitbox();
@@ -143,6 +143,16 @@ class CharacterState extends GameState {
 			);
 			icon.ID = i;
 			iconGroup.add(icon);
+
+			var selector:FlxSprite = new FlxSprite(box.x, box.y);
+			selector = atlas;
+			selector.animation.addByPrefix('select', 'Select0000', 24, true);
+			selector.animation.play('select');
+			selector.visible = false;
+			selector.setGraphicSize(Std.int(BOX_SIZE), Std.int(BOX_SIZE));
+			selector.updateHitbox();
+			selector.ID = i;
+			gridGroup.add(selector);
 		}
 	}
 
@@ -152,8 +162,10 @@ class CharacterState extends GameState {
 
 			if (i == index) {
 				if (box.animation.exists('idle')) box.animation.play('idle');
+				selector.visible = true;
 			} else {
 				if (box.animation.exists('idle')) box.animation.play('idle');
+				selector.visible = false;
 			}
 		}
 
