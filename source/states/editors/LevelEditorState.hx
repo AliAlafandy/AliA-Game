@@ -147,9 +147,9 @@ class LevelEditorState extends GameState
 		cursorSprite = new FlxSprite();
 		cursorSprite.makeGraphic(TILE_SIZE, TILE_SIZE, FlxColor.TRANSPARENT, true);
 		cursorSprite.pixels.fillRect(new openfl.geom.Rectangle(0, 0, TILE_SIZE, 2), FlxColor.YELLOW);
-		cursor.pixels.fillRect(new openfl.geom.Rectangle(0, TILE_SIZE - 2, TILE_SIZE, 2), FlxColor.YELLOW);
-		cursor.pixels.fillRect(new openfl.geom.Rectangle(0, 0, 2, TILE_SIZE), FlxColor.YELLOW);
-		cursor.pixels.fillRect(new openfl.geom.Rectangle(TILE_SIZE - 2, 0, 2, TILE_SIZE), FlxColor.YELLOW);
+		cursorSprite.pixels.fillRect(new openfl.geom.Rectangle(0, TILE_SIZE - 2, TILE_SIZE, 2), FlxColor.YELLOW);
+		cursorSprite.pixels.fillRect(new openfl.geom.Rectangle(0, 0, 2, TILE_SIZE), FlxColor.YELLOW);
+		cursorSprite.pixels.fillRect(new openfl.geom.Rectangle(TILE_SIZE - 2, 0, 2, TILE_SIZE), FlxColor.YELLOW);
 		cursorSprite.dirty = true;
 		add(cursorSprite);
 	}
