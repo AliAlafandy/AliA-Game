@@ -143,9 +143,8 @@ class MenuState extends GameState
 
 			if (controls.ACCEPT)
 			{
-				FlxG.sound.music.stop();
+				// FlxG.sound.music.stop();
 				FlxG.sound.play(Paths.sound('confirm_sound'));
-
 				selectedSomethin = true;
 
 				FlxFlicker.flicker(menuItems.members[curSelected], 1, 0.06, false, false, function(flick:FlxFlicker)
