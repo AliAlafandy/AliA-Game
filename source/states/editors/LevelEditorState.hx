@@ -96,6 +96,11 @@ class LevelEditorState extends GameState
 		buildGridOverlay();
 		buildCursor();
 		buildHud();
+
+		#if mobile
+        addCustomDPad('NONE', 'BACK');
+        addCustomDPadCam();
+        #end
 	}
 
 	private function initGrid():Void
