@@ -41,14 +41,14 @@ class OptionsState extends GameState
         bg = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/Options/background'));
 		add(bg);
 
-		for (i in 0...options.length)
+		/*for (i in 0...options.length)
 		{
 			var optionText:FlxText = new FlxText(0, 0, FlxG.width, options[i], 24);
 			optionText.setFormat(null, 24, FlxColor.WHITE, CENTER);
 			optionText.screenCenter();
 			optionText.y += (100 * (i - (options.length / 2))) + 50;
 			add(optionText);
-		}
+		}*/
 
         text = new FlxText(0, 0, FlxG.width, '', 24);
         text.setFormat(null, 24, FlxColor.WHITE, CENTER);
