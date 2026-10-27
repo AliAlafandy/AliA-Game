@@ -80,6 +80,10 @@ class LevelEditorState extends GameState
 	private var propsButton:FlxSprite;
 	private var inputField:openfl.text.TextField;
 
+	#if mobile
+    public var manager:MobileInputManager;
+    #end
+
 	public function new(?name:String = "untitled", ?c:Int = 40, ?r:Int = 24)
 	{
 		super();
