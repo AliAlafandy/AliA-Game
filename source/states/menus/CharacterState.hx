@@ -136,7 +136,7 @@ class CharacterState extends GameState {
 			} catch (e:Dynamic) {
 				icon.loadGraphic(Paths.image('characters/unknown/icon'));
 			}
-			icon.setGraphicSize(Std.int(BOX_SIZE * 0.7), Std.int(BOX_SIZE * 0.7));
+			icon.setGraphicSize(Std.int(BOX_SIZE), Std.int(BOX_SIZE)); // * 0.7
 			icon.updateHitbox();
 			icon.setPosition(
 				posX + (BOX_SIZE - icon.width) / 2,
