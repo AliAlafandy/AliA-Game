@@ -532,16 +532,33 @@ class PlayState extends GameState
 	}
 
 	#if ELLAWY_ALLOWED
-	public function initEllawyScript(file:String)
+	public function initEllawyScript(file:String):Void
     {
         try
         {
             var sourceCode = sys.io.File.getContent(file);
             var script = new data.scripts.GameEllawyScript(file, sourceCode);
+			
             script.set("PlayState", PlayState);
             script.set("FlxG", flixel.FlxG);
             script.set("Paths", Paths);
 			script.set("Mods", Mods);
+            
+            script.set("print", Reflect.makeVarArgs(function(args:Array<Dynamic>) {
+                addTextToDebug("[PRINT] " + args.map(Std.string).join(" "), FlxColor.GREEN);
+            }));
+            
+            script.set("trace", Reflect.makeVarArgs(function(args:Array<Dynamic>) {
+                addTextToDebug("[TRACE] " + args.map(Std.string).join(" "), FlxColor.GREEN);
+            }));
+            
+            script.set("warn", Reflect.makeVarArgs(function(args:Array<Dynamic>) {
+                addTextToDebug("[WARN] " + args.map(Std.string).join(" "), FlxColor.YELLOW);
+            }));
+            
+            script.set("error", Reflect.makeVarArgs(function(args:Array<Dynamic>) {
+                addTextToDebug("[ERROR] " + args.map(Std.string).join(" "), FlxColor.RED);
+            }));
             
             ellawyScripts.push(script);
             script.call("onGame", []);
