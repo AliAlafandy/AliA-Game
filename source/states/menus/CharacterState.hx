@@ -205,7 +205,6 @@ class CharacterState extends GameState {
 		}
 
 		if (controls.ACCEPT) {
-			FlxG.sound.music.stop();
 			selectedCharacter = chars[index];
 			var activeBox = gridGroup.members[index];
 			if (activeBox != null && activeBox.animation.exists('press')) {
@@ -213,6 +212,7 @@ class CharacterState extends GameState {
 			}
 			new FlxTimer().start(1, function(tmr:FlxTimer)
             {
+				FlxG.sound.music.stop();
                 GameState.switchState(new PlayState());
             });
 			FlxG.sound.play(Paths.sound('confirm_sound'));
