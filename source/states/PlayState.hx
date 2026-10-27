@@ -217,11 +217,11 @@ class PlayState extends GameState
 		debugGroup.add(timer);
 
 		score = new FlxText(timer.x, timer.y + timer.width, "SCORE: ", 32);
-		score.setFormat = timer.setFormat;
+		score.setFormat('alafandy.ttf', 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
 		debugGroup.add(score);
 
 		flash = new FlxText(timer.x, score.y + 10, timer.width, "FLASH: ", 32);
-		flash.setFormat = timer.setFormat;
+		flash.setFormat('alafandy.ttf', 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
 		debugGroup.add(flash);
 
 		FlxG.sound.music.resume();
