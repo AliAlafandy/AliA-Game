@@ -1,6 +1,8 @@
 package substates.options;
 
-class GraphicsSubState extends SettingsSubState
+import states.options.BaseOptionsMenu;
+
+class GraphicsSubState extends BaseOptionsMenu
 {
     public function new() super("Graphics");
 }
