@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="flash.png">
+	<!-- Created with Adobe Animate version 20.0.0.17400 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="spin0000" x="297" y="0" width="82" height="116" frameX="-279" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0001" x="297" y="0" width="82" height="116" frameX="-279" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0002" x="214" y="181" width="66" height="116" frameX="-285" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0003" x="214" y="181" width="66" height="116" frameX="-285" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0004" x="426" y="119" width="40" height="118" frameX="-301" frameY="-264" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0005" x="426" y="119" width="40" height="118" frameX="-301" frameY="-264" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0006" x="426" y="0" width="41" height="119" frameX="-300" frameY="-264" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0007" x="426" y="0" width="41" height="119" frameX="-300" frameY="-264" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0008" x="280" y="181" width="66" height="116" frameX="-289" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0009" x="280" y="181" width="66" height="116" frameX="-289" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0010" x="0" y="181" width="82" height="116" frameX="-279" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0011" x="0" y="181" width="82" height="116" frameX="-279" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0012" x="82" y="181" width="66" height="116" frameX="-289" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0013" x="82" y="181" width="66" height="116" frameX="-289" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0014" x="379" y="0" width="47" height="118" frameX="-294" frameY="-264" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0015" x="379" y="0" width="47" height="118" frameX="-294" frameY="-264" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0016" x="379" y="118" width="47" height="118" frameX="-302" frameY="-264" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0017" x="379" y="118" width="47" height="118" frameX="-302" frameY="-264" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0018" x="148" y="181" width="66" height="116" frameX="-285" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="spin0019" x="148" y="181" width="66" height="116" frameX="-285" frameY="-265" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0000" x="0" y="297" width="72" height="72" frameX="-284" frameY="-285" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0001" x="0" y="297" width="72" height="72" frameX="-284" frameY="-285" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0002" x="159" y="0" width="138" height="152" frameX="-251" frameY="-249" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0003" x="159" y="0" width="138" height="152" frameX="-251" frameY="-249" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0004" x="0" y="0" width="159" height="181" frameX="-240" frameY="-230" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0005" x="0" y="0" width="159" height="181" frameX="-240" frameY="-230" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0006" x="426" y="237" width="4" height="4" frameX="0" frameY="0" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0007" x="426" y="237" width="4" height="4" frameX="0" frameY="0" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0008" x="426" y="237" width="4" height="4" frameX="0" frameY="0" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0009" x="426" y="237" width="4" height="4" frameX="0" frameY="0" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0010" x="426" y="237" width="4" height="4" frameX="0" frameY="0" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0011" x="426" y="237" width="4" height="4" frameX="0" frameY="0" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0012" x="426" y="237" width="4" height="4" frameX="0" frameY="0" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0013" x="426" y="237" width="4" height="4" frameX="0" frameY="0" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="splash0014" x="426" y="237" width="4" height="4" frameX="0" frameY="0" frameWidth="640" frameHeight="640"/>
+</TextureAtlas>
