@@ -19,7 +19,8 @@ class BaseOptionsMenu extends GameSubState
         super();
         #if mobile
 		// controls.isInSubstate = true;
-		addCustomDPad("EXITE", "MENU");
+		addCustomDPad('EXITE', 'MENU');
+		addCustomDPadCam();
 		#end
         buildRows();
     }
