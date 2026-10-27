@@ -86,6 +86,10 @@ class PlayState extends GameState
 	private var grassTop:FlxSprite;
 	private var backgroundLayers:FlxTypedGroup<FlxSprite>;
 
+	public var timer:FlxText;
+	public var score:FlxText;
+	public var flash:FlxText;
+
 	#if mobile
 	public var manager:MobileInputManager;
 	#end
@@ -207,6 +211,18 @@ class PlayState extends GameState
 			200, 
 			200
 		);
+
+		timer = new FlxText(10, 10, 16, "TIME: ", 32);
+		timer.setFormat('alafandy.ttf', 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
+		debugGroup.add(timer);
+
+		score = new FlxText(timer.x, timer.y + timer.width, "SCORE: ", 32);
+		score.setFormat = timer.setFormat;
+		debugGroup.add(score);
+
+		flash = new FlxText(timer.x, score.y + 10, timer.width, "FLASH: ", 32);
+		flash.setFormat = timer.setFormat;
+		debugGroup.add(flash);
 
 		FlxG.sound.music.resume();
 
