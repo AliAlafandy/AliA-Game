@@ -30,6 +30,7 @@ class CharacterState extends GameState {
 	var gridGroup:FlxTypedGroup<FlxSprite>;
 	var iconGroup:FlxTypedGroup<FlxSprite>;
 	var nameTxt:FlxText;
+	var selectors:Array<FlxSprite> = [];
 
 	static inline var SLOTS:Int = 5;
 	static inline var BOX_SIZE:Float = 125;
@@ -145,7 +146,7 @@ class CharacterState extends GameState {
 			iconGroup.add(icon);
 
 			var selector:FlxSprite = new FlxSprite(box.x, box.y);
-			selector = atlas;
+			selector.frames = atlas;
 			selector.animation.addByPrefix('select', 'Select0000', 24, true);
 			selector.animation.play('select');
 			selector.visible = false;
@@ -153,19 +154,21 @@ class CharacterState extends GameState {
 			selector.updateHitbox();
 			selector.ID = i;
 			gridGroup.add(selector);
+			selectors.push(selector);
 		}
 	}
 
 	private function updateSelection():Void {
 		for (i in 0...gridGroup.members.length) {
 			var box = gridGroup.members[i];
+			var selector = selectors[i];
 
 			if (i == index) {
 				if (box.animation.exists('idle')) box.animation.play('idle');
-				selector.visible = true;
+				if (selector != null) selector.visible = true;
 			} else {
 				if (box.animation.exists('idle')) box.animation.play('idle');
-				selector.visible = false;
+				if (selector != null) selector.visible = false;
 			}
 		}
 
