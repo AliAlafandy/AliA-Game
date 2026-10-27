@@ -23,16 +23,16 @@ class BaseOptionsMenu extends GameSubState
 
     public function buildRows():Void {}
 
-    function addBool(label:String, field:String, description:String):Void
+    public function addBool(label:String, field:String, description:String):Void
         rows.push({label:label, field:field, kind:"bool", description:description});
 
-    function addInt(label:String, field:String, min:Int, max:Int, step:Int, description:String):Void
+    public function addInt(label:String, field:String, min:Int, max:Int, step:Int, description:String):Void
         rows.push({label:label, field:field, kind:"int", min:min, max:max, step:step, description:description});
 
-    function addFloat(label:String, field:String, min:Float, max:Float, step:Float, description:String):Void
+    public function addFloat(label:String, field:String, min:Float, max:Float, step:Float, description:String):Void
         rows.push({label:label, field:field, kind:"float", min:min, max:max, step:step, description:description});
 
-    function addString(label:String, field:String, values:Array<String>, description:String):Void
+    public function addString(label:String, field:String, values:Array<String>, description:String):Void
         rows.push({label:label, field:field, kind:"string", values:values, description:description});
 
     override function create():Void
@@ -87,7 +87,7 @@ class BaseOptionsMenu extends GameSubState
             FlxG.save.data.mute = value;
             return;
         }
-        if (category == "Gameplay" && (row.field == "timelimit" || row.field == "debugMode" || row.field == "infiniteLife" || row.field == "infinitePower" || row.field == "timeType"))
+        if (category == "Gameplay" && (row.field == "timeLimit" || row.field == "debugMode" || row.field == "infiniteLife" || row.field == "infinitePower" || row.field == "timeType"))
         {
             ClientPrefs.data.gameplaySettings.set(row.field, value);
             return;
