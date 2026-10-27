@@ -68,7 +68,7 @@ class CharacterState extends GameState {
 
 		createGrid();
 
-		nameTxt = new FlxText(0, FlxG.height - 60, FlxG.width, "", 22);
+		nameTxt = new FlxText(0, 60, FlxG.width, "Select Character", 22);
 		nameTxt.setFormat(null, 22, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(nameTxt);
 
@@ -162,17 +162,14 @@ class CharacterState extends GameState {
 		for (i in 0...gridGroup.members.length) {
 			var box = gridGroup.members[i];
 			var selector = selectors[i];
+			if (box.animation.exists('idle')) box.animation.play('idle');
 
 			if (i == index) {
-				if (box.animation.exists('idle')) box.animation.play('idle');
 				if (selector != null) selector.visible = true;
 			} else {
-				if (box.animation.exists('idle')) box.animation.play('idle');
 				if (selector != null) selector.visible = false;
 			}
 		}
-
-		nameTxt.text = 'Selected: < ${chars[index]} >\nPress ENTER to Play';
 	}
 
 	override public function update(elapsed:Float) {
