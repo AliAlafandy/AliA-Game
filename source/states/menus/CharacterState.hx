@@ -212,12 +212,10 @@ class CharacterState extends GameState {
 			}
 
 			new FlxTimer().start(1, function(tmr:FlxTimer)
-            		{
-                		GameState.switchState(new PlayState());
-						FlxG.sound.music.stop();
-            		});
-
-			// FlxG.sound.music.stop();
+            {
+                GameState.switchState(new PlayState());
+            });
+			FlxG.sound.music.stop();
 			FlxG.sound.play(Paths.sound('confirm_sound'));
 		}
 
