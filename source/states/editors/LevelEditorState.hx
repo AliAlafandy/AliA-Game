@@ -143,6 +143,7 @@ class LevelEditorState extends GameState
 	private function buildTileSprites():Void
 	{
 		tileSprites = new FlxTypedGroup<FlxSprite>();
+		tileSprites.cameras = [FlxG.camera];
 		add(tileSprites);
 
 		for (y in 0...rows)
@@ -160,6 +161,7 @@ class LevelEditorState extends GameState
 	private function buildGridOverlay():Void
 	{
 		gridOverlay = new FlxSprite(0, 0);
+		gridOverlay.cameras = [FlxG.camera];
 		gridOverlay.makeGraphic(cols * TILE_SIZE, rows * TILE_SIZE, FlxColor.TRANSPARENT, true);
 
 		for (x in 0...cols + 1)
@@ -175,6 +177,7 @@ class LevelEditorState extends GameState
 	private function buildCursor():Void
 	{
 		cursorSprite = new FlxSprite();
+		cursorSprite.cameras = [FlxG.camera];
 		cursorSprite.makeGraphic(TILE_SIZE, TILE_SIZE, FlxColor.TRANSPARENT, true);
 		cursorSprite.pixels.fillRect(new openfl.geom.Rectangle(0, 0, TILE_SIZE, 2), FlxColor.YELLOW);
 		cursorSprite.pixels.fillRect(new openfl.geom.Rectangle(0, TILE_SIZE - 2, TILE_SIZE, 2), FlxColor.YELLOW);
