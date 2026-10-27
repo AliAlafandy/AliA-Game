@@ -112,10 +112,10 @@ class FPSCounter extends TextField
 	public dynamic function updateText():Void
 	{
 		text =
-			'FPS: $currentFPS (min $minFPS / max $maxFPS / avg ${Math.round(avgFPS)})' +
-			'\nFrame: ${FlxStringUtil.formatBytes(0) != null ? Math.round(frameTimeMs * 100) / 100 : frameTimeMs}ms' +
+			'FPS: $currentFPS' + // (min $minFPS / max $maxFPS / avg ${Math.round(avgFPS)})
+			// '\nFrame: ${FlxStringUtil.formatBytes(0) != null ? Math.round(frameTimeMs * 100) / 100 : frameTimeMs}ms' +
 			'\nMemory: ${FlxStringUtil.formatBytes(memoryMegas)} (peak ${FlxStringUtil.formatBytes(peakMemoryMegas)})' +
-			os +
+			// os +
 			engineVersion;
 
 		textColor = 0xFFFFFFFF;
