@@ -119,7 +119,7 @@ class CharacterState extends GameState {
 
 			box.frames = atlas;
 			box.animation.addByPrefix('idle', 'Idle0000', 24, true);
-			box.animation.addByPrefix('press', 'Press0000', 24, false);
+			box.animation.addByPrefix('press', 'Press', 24, false);
 			box.animation.play('idle');
 
 			box.setGraphicSize(Std.int(BOX_SIZE), Std.int(BOX_SIZE));
