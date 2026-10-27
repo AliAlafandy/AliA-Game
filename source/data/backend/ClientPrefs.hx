@@ -39,6 +39,7 @@ import mobile.data.debug.Vibration;
 	public var hitboxType:String = "Gradient";
 
 	public var vsync:Bool = false;
+	public var downScroll:Bool = false;
 	public var gameOverVibration:Bool = false;
 
 	public var gameplaySettings:Map<String, Dynamic> = [
