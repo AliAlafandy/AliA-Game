@@ -135,7 +135,7 @@ class BaseOptionsMenu extends GameSubState
             var value = readValue(row);
             var shown:String = Std.string(value);
             if (row.kind == "bool" || row.kind == "mute") shown = value == true ? "ON" : "OFF";
-            if (row.kind == "volume") shown = Std.int((value:Float) * 100) + "%";
+            if (row.kind == "volume") shown = Std.int(Std.parseFloat(Std.string(value)) * 100) + "%";
             labels[i].text = (i == selected ? "> " : "  ") + row.label + ": " + shown;
             labels[i].color = i == selected ? FlxColor.YELLOW : FlxColor.WHITE;
         }
