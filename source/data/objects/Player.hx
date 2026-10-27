@@ -319,21 +319,18 @@ class Player extends FlxSprite
 	{
 		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
 	
-		if (isOnGround)
-		{
+		if (isOnGround) {
 			isJumping = false;
 			hasJumped = false;
 		}
 	
 		if (isOnGround && Math.abs(velocity.x) <= 10)
 		{
-			if (upPressed)
-			{
+			if (upPressed) {
 				playMovementAnimation('up', 'idle');
 				return;
 			}
-			if (downPressed)
-			{
+			if (downPressed) {
 				playMovementAnimation('down', 'idle');
 				return;
 			}
@@ -341,27 +338,21 @@ class Player extends FlxSprite
 	
 		if (!isOnGround)
 		{
-			if (hasJumped)
-			{
+			if (hasJumped) {
 				playMovementAnimation('jumping', 'jump');
 				return;
-			}
-			else if (velocity.y >= 0)
-			{
-				playMovementAnimation('fall', 'jumping');
+			} else if (velocity.y >= 0 && hasJumped) {
+				playMovementAnimation('jumping', 'idle');
 				return;
-			}
-			else
-			{
-				playMovementAnimation('jumping', 'jump');
+			} else if (velocity.y >= 0) {
+				playMovementAnimation('fall', 'idle');
 				return;
 			}
 		}
 	
 		if (isOnGround && Math.abs(velocity.x) > moveSpeed * 0.75)
 		{
-			if (animation.exists('running') || animation.exists('run'))
-			{
+			if (animation.exists('running') || animation.exists('run')) {
 				playMovementAnimation('running', 'run');
 				return;
 			}
