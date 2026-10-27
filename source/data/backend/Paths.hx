@@ -387,6 +387,7 @@ class Paths
 
 	static public function characterImage(key:String, ?allowGPU:Bool = true):FlxGraphic
 	{
+		trace('[Paths] characterImage called for: $key');
 		var bitmap:BitmapData = null;
 		var file:String = null;
 
@@ -395,11 +396,13 @@ class Paths
 		if (currentTrackedAssets.exists(file))
 		{
 			localTrackedAssets.push(file);
+			trace('[Paths] Loaded from cache (Mods): $file');
 			return currentTrackedAssets.get(file);
 		}
 		else if (FileSystem.exists(file))
 		{
 			bitmap = BitmapData.fromFile(file);
+			trace('[Paths] Loaded from file system (Mods): $file');
 		}
 		else
 		{
@@ -409,6 +412,7 @@ class Paths
 			{
 				file = foundPath;
 				bitmap = BitmapData.fromFile(file);
+				trace('[Paths] Loaded via findFile (Mods): $file');
 			}
 			#end
 		}
@@ -420,19 +424,34 @@ class Paths
 			if (currentTrackedAssets.exists(file))
 			{
 				localTrackedAssets.push(file);
+				trace('[Paths] Loaded from cache (Base): $file');
 				return currentTrackedAssets.get(file);
 			}
 			else if (OpenFlAssets.exists(file, IMAGE))
 			{
 				bitmap = OpenFlAssets.getBitmapData(file);
+				trace('[Paths] Loaded from OpenFlAssets (Base): $file');
 			}
 			else 
 			{
-				var fallbackPath:String = 'assets/characters/$key.png';
-				if (OpenFlAssets.exists(fallbackPath, IMAGE))
+				var lowerKey:String = key.toLowerCase();
+				var lowerFile:String = getPath('characters/$lowerKey.png', IMAGE);
+				
+				if (OpenFlAssets.exists(lowerFile, IMAGE))
 				{
-					file = fallbackPath;
-					bitmap = OpenFlAssets.getBitmapData(file);
+					file = lowerFile;
+					bitmap = OpenFlAssets.getBitmapData(lowerFile);
+					trace('[Paths] Loaded via Lowercase Fallback: $file');
+				}
+				else 
+				{
+					var fallbackPath:String = 'assets/characters/$lowerKey.png';
+					if (OpenFlAssets.exists(fallbackPath, IMAGE))
+					{
+						file = fallbackPath;
+						bitmap = OpenFlAssets.getBitmapData(fallbackPath);
+						trace('[Paths] Loaded via Absolute Lowercase Fallback: $file');
+					}
 				}
 			}
 		}
@@ -440,25 +459,24 @@ class Paths
 		if (bitmap != null)
 		{
 			var retVal = cacheBitmap(file, bitmap, allowGPU);
-			if(retVal != null) return retVal;
+			if(retVal != null) {
+				trace('[Paths] characterImage SUCCESS for: $key');
+				return retVal;
+			}
 		}
 
-		#if mobile
-		trace('CHARACTER IMAGE FAILED TO LOAD: $key');
-		trace('Last attempted file path: $file');
-		#end
-
+		trace('[Paths] CHARACTER IMAGE FAILED TO LOAD: $key');
+		trace('[Paths] Last attempted file path: $file');
 		return null;
 	}
 
 	inline static public function getCharacterSparrowAtlas(key:String, ?allowGPU:Bool = true):FlxAtlasFrames
 	{
+		trace('[Paths] getCharacterSparrowAtlas called for: $key');
 		var imageLoaded:FlxGraphic = characterImage(key, allowGPU);
 		
 		if (imageLoaded == null) {
-			#if mobile
-			trace('SPARROW ATLAS FAILED: Image is null for $key');
-			#end
+			trace('[Paths] SPARROW ATLAS FAILED: Image is null for $key');
 			return null; 
 		}
 
@@ -470,6 +488,7 @@ class Paths
 		if (FileSystem.exists(xml)) {
 			xmlExists = true;
 			xmlContent = File.getContent(xml);
+			trace('[Paths] XML found in Mods: $xml');
 		} else {
 			#if (linux || ios || mac || android)
 			var foundXml = findFile('characters/' + key + '.xml');
@@ -477,21 +496,25 @@ class Paths
 				xml = foundXml;
 				xmlExists = true;
 				xmlContent = File.getContent(xml);
+				trace('[Paths] XML found via findFile (Mods): $xml');
 			}
 			#end
 		}
 
 		if (!xmlExists) {
 			xmlContent = getPath('characters/$key.xml', TEXT);
+			#if (linux || ios || mac || android)
+			if (!OpenFlAssets.exists(xmlContent, TEXT)) {
+				var lowerXml = getPath('characters/${key.toLowerCase()}.xml', TEXT);
+				if (OpenFlAssets.exists(lowerXml, TEXT)) {
+					xmlContent = lowerXml;
+					trace('[Paths] XML loaded via Lowercase Fallback: $xmlContent');
+				}
+			}
+			#end
 		}
-		#if mobile
-		if (xmlExists) {
-			trace('✅ Character Atlas loaded from MODS: $key');
-		} else {
-			trace('✅ Character Atlas loaded from BASE GAME: $key');
-		}
-		#end
 		
+		trace('[Paths] Character Atlas SUCCESSFULLY created for: $key (XML Source: ${xmlExists ? "MODS" : "BASE GAME"})');
 		return FlxAtlasFrames.fromSparrow(imageLoaded, xmlContent);
 		
 		#else
@@ -499,6 +522,7 @@ class Paths
 		if (!OpenFlAssets.exists(xmlPath, TEXT)) {
 			xmlPath = 'assets/characters/$key.xml';
 		}
+		trace('[Paths] Character Atlas SUCCESSFULLY created for: $key (No Mods)');
 		return FlxAtlasFrames.fromSparrow(imageLoaded, xmlPath);
 		#end
 	}
