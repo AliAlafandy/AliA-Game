@@ -187,7 +187,7 @@ class MenuState extends GameState
 
 			if (FlxG.keys.justPressed.E #if mobile || customDPad.powerButton.justPressed #end)
 			{
-				GameState.switchState(new EditorState());
+				// GameState.switchState(new EditorState());
 			}
 		}
 
