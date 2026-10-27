@@ -39,7 +39,7 @@ import mobile.data.debug.Vibration;
 	public var hitboxType:String = "Gradient";
 
 	public var vsync:Bool = false;
-	public var downScroll:Bool = false;
+	public var downscroll:Bool = false;
 	public var gameOverVibration:Bool = false;
 
 	public var gameplaySettings:Map<String, Dynamic> = [
@@ -50,8 +50,6 @@ import mobile.data.debug.Vibration;
 		'timeType' => "0'00''00"
 	];
 	public var safeFrames:Float = 10;
-
-	public var downscroll:Bool = false;
 	public var showFPS:Bool = false;
 	public var flashing:Bool = true;
 	public var shaders:Bool = true;
