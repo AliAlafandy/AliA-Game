@@ -143,7 +143,7 @@ class MenuState extends GameState
 
 			if (controls.ACCEPT)
 			{
-				FlxG.sound.music.stop();
+				// FlxG.sound.music.stop();
 				FlxG.sound.play(Paths.sound('confirm_sound'));
 				selectedSomethin = true;
 
