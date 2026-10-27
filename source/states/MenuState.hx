@@ -113,7 +113,7 @@ class MenuState extends GameState
 		super.create();
 
 		#if mobile
-		addCustomDPad('EXITE', 'MENU');
+		addCustomDPad('EXITE', 'E-MENU');
 		addCustomDPadCam();
 		#end
 	}
