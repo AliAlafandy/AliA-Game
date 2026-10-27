@@ -80,14 +80,16 @@ class TitleState extends GameState
     {
 		#if VIDEOS_ALLOWED
         var filepath:String = Paths.video(name);
-
+        var fileExists:Bool = false;
         #if sys
-        if(!FileSystem.exists(filepath))
-        #else
-        if(!OpenFlAssets.exists(filepath))
+        fileExists = sys.FileSystem.exists(filepath);
         #end
-        {
-            FlxG.log.warn('Couldnt find video file: ' + name);
+        if (!fileExists) {
+            fileExists = OpenFlAssets.exists(filepath);
+        }
+
+        if (!fileExists) {
+            FlxG.log.warn('Couldnt find video file: ' + filepath);
             return;
         }
 
