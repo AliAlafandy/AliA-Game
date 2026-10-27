@@ -113,7 +113,7 @@ class lOptionsState extends GameState
         if (controls.ACCEPT)
         {
 			FlxG.sound.play(Paths.sound('confirm_sound'));
-            openSelectedSubstate(options[curSelected]);
+            openSelectedSubstate(options[selected]);
         }
 
         if (controls.BACK)
