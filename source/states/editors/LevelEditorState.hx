@@ -534,7 +534,7 @@ class LevelEditorState extends GameState
 	}
 
 	private function updateCursorPosition():Void
-	{s
+	{
 		var mousePoint = FlxG.mouse.getWorldPosition(null);
 		if (mousePoint == null)
 		{
