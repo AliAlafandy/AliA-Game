@@ -157,12 +157,12 @@ class LevelEditorState extends GameState
 	private function buildHud():Void
 	{
 		hud = new FlxText(4, 4, 400, '', 14);
-		hud.scrollFactor.set();
+		hud.scrollFactor.set(0, 0);
 		hud.setFormat(null, 14, FlxColor.WHITE, LEFT);
 		add(hud);
 
 		toolText = new FlxText(4, FlxG.height - 28, 600, '', 14);
-		toolText.scrollFactor.set();
+		toolText.scrollFactor.set(0, 0);
 		toolText.setFormat(null, 14, FlxColor.YELLOW, LEFT);
 		add(toolText);
 
@@ -319,7 +319,7 @@ class LevelEditorState extends GameState
 
 	private function handleSaveLoad():Void
 	{
-		if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.S)
+		if (FlxG.keys.pressed.ALT && FlxG.keys.justPressed.S)
 			saveLevel();
 		else if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.L)
 			loadLevel();
