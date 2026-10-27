@@ -71,7 +71,6 @@ class OptionsState extends GameState
 
 		ClientPrefs.saveSettings();
 		ClientPrefs.loadPrefs();
-		controls.isInSubstate = false;
 
 		#if mobile
 		removeCustomDPad();
