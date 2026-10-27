@@ -8,7 +8,7 @@ class GameplaySubState extends BaseOptionsMenu
 
     override public function buildRows():Void
     {
-        addBool("Down Scroll", "downScroll", "Place complete bar at the bottom when supported.");
+        addBool("Down Scroll", "downscroll", "Place complete bar at the bottom when supported.");
         addBool("Shaders", "shaders", "Enable supported shaders.");
 
         #if mobile
