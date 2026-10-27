@@ -17,7 +17,10 @@ class BaseOptionsMenu extends GameSubState
     {
         this.category = category;
         super();
-        #if mobile controls.isInSubstate = true; #end
+        #if mobile
+		// controls.isInSubstate = true;
+		addCustomDPad("EXITE", "MENU");
+		#end
         buildRows();
     }
 
@@ -154,7 +157,10 @@ class BaseOptionsMenu extends GameSubState
         if (controls.BACK)
         {
             ClientPrefs.saveSettings();
-            #if mobile controls.isInSubstate = false; #end
+            #if mobile
+			// controls.isInSubstate = false;
+			removeCustomDPad();
+			#end
             close();
             FlxG.sound.play(Paths.sound("cancelMenu"));
         }
@@ -163,7 +169,10 @@ class BaseOptionsMenu extends GameSubState
     override function destroy():Void
     {
         ClientPrefs.saveSettings();
-		#if mobile controls.isInSubstate = false; #end
+		#if mobile
+		// controls.isInSubstate = false;
+		removeCustomDPad();
+		#end
         super.destroy();
     }
 }
