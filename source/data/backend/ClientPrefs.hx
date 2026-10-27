@@ -18,6 +18,7 @@ import mobile.data.debug.Vibration;
 	public var vibration:Bool = true;
 
 	public var antialiasing:Bool = false;
+	public var debugSecret:Bool = false;
 
 	#if android
 	public var storageType:String = 'EXTERNAL_DATA';
