@@ -211,7 +211,11 @@ class CharacterState extends GameState {
 				activeBox.animation.play('press');
 			}
 
-			GameState.switchState(new PlayState());
+			new FlxTimer().start(1, function(tmr:FlxTimer)
+            		{
+                		GameState.switchState(new PlayState());
+            		});
+
 			FlxG.sound.music.stop();
 			FlxG.sound.play(Paths.sound('confirm_sound'));
 		}
