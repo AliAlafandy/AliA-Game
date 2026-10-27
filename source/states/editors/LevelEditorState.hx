@@ -66,7 +66,7 @@ class LevelEditorState extends GameState
 	private var tileGrid:Array<Array<Int>>;
 	private var tileSprites:FlxTypedGroup<FlxSprite>;
 	private var gridOverlay:FlxSprite;
-	private var cursor:FlxSprite;
+	private var cursorSprite:FlxSprite;
 	private var currentTool:Int = 1;
 	private var undoStack:Array<EditorCommand> = [];
 	private var redoStack:Array<EditorCommand> = [];
@@ -144,14 +144,14 @@ class LevelEditorState extends GameState
 
 	private function buildCursor():Void
 	{
-		cursor = new FlxSprite();
-		cursor.makeGraphic(TILE_SIZE, TILE_SIZE, FlxColor.TRANSPARENT, true);
-		cursor.pixels.fillRect(new openfl.geom.Rectangle(0, 0, TILE_SIZE, 2), FlxColor.YELLOW);
+		cursorSprite = new FlxSprite();
+		cursorSprite.makeGraphic(TILE_SIZE, TILE_SIZE, FlxColor.TRANSPARENT, true);
+		cursorSprite.pixels.fillRect(new openfl.geom.Rectangle(0, 0, TILE_SIZE, 2), FlxColor.YELLOW);
 		cursor.pixels.fillRect(new openfl.geom.Rectangle(0, TILE_SIZE - 2, TILE_SIZE, 2), FlxColor.YELLOW);
 		cursor.pixels.fillRect(new openfl.geom.Rectangle(0, 0, 2, TILE_SIZE), FlxColor.YELLOW);
 		cursor.pixels.fillRect(new openfl.geom.Rectangle(TILE_SIZE - 2, 0, 2, TILE_SIZE), FlxColor.YELLOW);
-		cursor.dirty = true;
-		add(cursor);
+		cursorSprite.dirty = true;
+		add(cursorSprite);
 	}
 
 	private function buildHud():Void
@@ -226,8 +226,15 @@ class LevelEditorState extends GameState
 	{
 		for (i in 0...PALETTE_SIZE)
 		{
-			if (FlxG.keys.justPressed.fromString(Std.string(i)))
-				currentTool = i;
+			switch (i)
+			{
+				case 0: if (FlxG.keys.justPressed.ZERO) currentTool = i;
+				case 1: if (FlxG.keys.justPressed.ONE) currentTool = i;
+				case 2: if (FlxG.keys.justPressed.TWO) currentTool = i;
+				case 3: if (FlxG.keys.justPressed.THREE) currentTool = i;
+				case 4: if (FlxG.keys.justPressed.FOUR) currentTool = i;
+				case 5: if (FlxG.keys.justPressed.FIVE) currentTool = i;
+			}
 		}
 
 		refreshToolText();
@@ -239,10 +246,10 @@ class LevelEditorState extends GameState
 		if (gridPos == null)
 			return;
 
-		if (FlxG.mouse.pressedLeft)
-			placeTile(gridPos.x, gridPos.y, currentTool);
+		if (FlxG.mouse.pressed)
+			placeTile(Std.int(gridPos.x), Std.int(gridPos.y), currentTool);
 		else if (FlxG.mouse.pressedRight)
-			placeTile(gridPos.x, gridPos.y, 0);
+			placeTile(Std.int(gridPos.x), Std.int(gridPos.y), 0);
 	}
 
 	private function placeTile(x:Int, y:Int, value:Int):Void
@@ -393,13 +400,13 @@ class LevelEditorState extends GameState
 		var gridPos = screenToGrid(FlxG.mouse.x, FlxG.mouse.y);
 		if (gridPos == null)
 		{
-			cursor.visible = false;
+			cursorSprite.visible = false;
 			return;
 		}
 
-		cursor.visible = true;
-		cursor.x = gridPos.x * TILE_SIZE;
-		cursor.y = gridPos.y * TILE_SIZE;
+		cursorSprite.visible = true;
+		cursorSprite.x = gridPos.x * TILE_SIZE;
+		cursorSprite.y = gridPos.y * TILE_SIZE;
 	}
 
 	private function refreshHud():Void
