@@ -15,6 +15,7 @@ class Mods
 	static public var currentModDirectory:String = '';
 	public static var ignoreModFolders:Array<String> = [
 		'characters',
+		'display',
 		'fonts',
 		'levels',
 		'music',
