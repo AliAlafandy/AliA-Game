@@ -351,7 +351,7 @@ class Player extends FlxSprite
 			}
 			if (downPressed && hasJumped) {
 				playMovementAnimation('jumping', 'idle');
-				return
+				return;
 			}
 		}
 	
