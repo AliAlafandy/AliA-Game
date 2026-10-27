@@ -4,5 +4,12 @@
 	<!-- http://www.adobe.com/products/animate.html -->
 	<SubTexture name="Idle0000" x="0" y="0" width="270" height="270"/>
 	<SubTexture name="Press0000" x="270" y="0" width="270" height="270"/>
+	<SubTexture name="Press0001" x="270" y="0" width="270" height="270"/>
+	<SubTexture name="Press0002" x="0" y="0" width="270" height="270"/>
+	<SubTexture name="Press0003" x="0" y="0" width="270" height="270"/>
+	<SubTexture name="Press0004" x="270" y="0" width="270" height="270"/>
+	<SubTexture name="Press0005" x="270" y="0" width="270" height="270"/>
+	<SubTexture name="Press0006" x="0" y="0" width="270" height="270"/>
+	<SubTexture name="Press0007" x="0" y="0" width="270" height="270"/>
 	<SubTexture name="Select0000" x="540" y="0" width="270" height="270"/>
 </TextureAtlas>
