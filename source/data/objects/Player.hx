@@ -44,6 +44,7 @@ class Player extends FlxSprite
 	public var animationsArray:Array<AnimArray> = [];
 
 	public var isPartner:Bool = false;
+	public var followTarget:Player = null;
 	public var debugMode:Bool = false;
 
 	public var moveSpeed:Float = 260;
@@ -448,6 +449,67 @@ class Player extends FlxSprite
 		else
 		{
 			idleTimer = 0;
+		}
+	}
+
+	public function updatePartnerAI(elapsed:Float):Void
+	{
+		if (followTarget == null) return;
+
+		var distX = followTarget.x - x;
+		var distY = followTarget.y - y;
+
+		var targetOffsetX = 50 * (followTarget.flipX ? -1 : 1);
+		var idealX = followTarget.x + targetOffsetX;
+		var idealY = followTarget.y;
+
+		var diffX = idealX - x;
+		var diffY = idealY - y;
+
+		flipX = followTarget.flipX;
+
+		var isOnGround = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
+
+		if (followTarget.hasJumped && isOnGround && Math.abs(distX) < 200 && Math.abs(distY) < 150)
+		{
+			velocity.y = -jumpSpeed * 0.95;
+			grounded = false;
+			isJumping = true;
+			hasJumped = true;
+		}
+
+		if (Math.abs(diffX) > 30 || Math.abs(diffY) > 30)
+		{
+			var dir = diffX > 0 ? 1 : -1;
+			var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * elapsed / Math.max(moveSpeed, 1));
+			velocity.x = FlxMath.lerp(velocity.x, dir * (moveSpeed * 0.9), accelerationBlend);
+		}
+		else
+		{
+			if (velocity.x > 0)
+			{
+				velocity.x -= moveFriction * elapsed;
+				if (velocity.x < 0) velocity.x = 0;
+			}
+			else if (velocity.x < 0)
+			{
+				velocity.x += moveFriction * elapsed;
+				if (velocity.x > 0) velocity.x = 0;
+			}
+		}
+
+		if (!isOnGround)
+		{
+			if (hasJumped) playMovementAnimation('jumping', 'jump');
+			else playMovementAnimation('fall', 'idle');
+		}
+		else if (Math.abs(velocity.x) > 10)
+		{
+			playMovementAnimation('walking', 'walk');
+		}
+		else
+		{
+			playMovementAnimation('idle', 'waiting');
 		}
 	}
 }
