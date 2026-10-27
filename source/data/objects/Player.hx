@@ -45,7 +45,7 @@ class Player extends FlxSprite
 
 	public var isPartner:Bool = false;
 	public var followTarget:Player = null;
-	public var debugMode:Bool = false;
+	public var debugMode:Bool = ClientPrefs.data.gameplaySettings.get(debugMode);
 
 	public var moveSpeed:Float = 260;
 	public var maxMoveSpeed:Float = 260;
