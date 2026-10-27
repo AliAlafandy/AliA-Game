@@ -1,16 +1,11 @@
-package substates.options;
+package states.options;
 
 import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import data.backend.ClientPrefs;
 
-/**
- * Small shared settings menu. It edits ClientPrefs.data in-place and only
- * saves on exit; it deliberately does NOT call loadPrefs(), which would
- * overwrite the user's unsaved changes from disk.
- */
-class SettingsSubState extends GameSubState
+class BaseOptionMenu extends GameSubState
 {
     public var category:String;
     var rows:Array<Dynamic> = [];
