@@ -167,7 +167,7 @@ class Paths
 		return getPath('scripts/$key.ellawy', TEXT, library);
 	}
 
-	static public function video(key:String)
+	static public function video(key:String):String
 	{
 		#if MODS_ALLOWED
 		var file:String = modsVideo(key);
@@ -183,7 +183,7 @@ class Paths
 		}
 		#end
 
-		return 'assets/videos/$key.$VIDEO_EXT';
+		return getSharedPath('videos/$key.$VIDEO_EXT');
 	}
 
 	static public function sound(key:String, ?library:String):Sound
