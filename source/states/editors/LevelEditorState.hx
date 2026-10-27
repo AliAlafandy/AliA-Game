@@ -315,7 +315,10 @@ class LevelEditorState extends GameState
 
 	private function handlePlacement():Void
 	{
-		var gridPos = screenToGrid(FlxG.mouse.x, FlxG.mouse.y);
+		var mousePoint = FlxG.mouse.getWorldPosition(null);
+		if (mousePoint == null) return;
+
+		var gridPos = screenToGrid(mousePoint.x, mousePoint.y);
 		if (gridPos == null)
 			return;
 
@@ -521,22 +524,25 @@ class LevelEditorState extends GameState
 
 	private function screenToGrid(screenX:Float, screenY:Float):FlxPoint
 	{
-		// FlxMouse.x/y are already in world coordinates, including camera scroll/zoom.
-		var worldX:Float = screenX;
-		var worldY:Float = screenY;
-
-		var gx = Math.floor(worldX / TILE_SIZE);
-		var gy = Math.floor(worldY / TILE_SIZE);
-
-		if (gx < 0 || gy < 0 || gx >= cols || gy >= rows)
-			return null;
-
-		return FlxPoint.get(gx, gy);
+	    var gx = Math.floor(screenX / TILE_SIZE);
+	    var gy = Math.floor(screenY / TILE_SIZE);
+	
+	    if (gx < 0 || gy < 0 || gx >= cols || gy >= rows)
+	        return null;
+	
+	    return FlxPoint.get(gx, gy);
 	}
 
 	private function updateCursorPosition():Void
-	{
-		var gridPos = screenToGrid(FlxG.mouse.x, FlxG.mouse.y);
+	{s
+		var mousePoint = FlxG.mouse.getWorldPosition(null);
+		if (mousePoint == null)
+		{
+			cursorSprite.visible = false;
+			return;
+		}
+		
+		var gridPos = screenToGrid(mousePoint.x, mousePoint.y);
 		if (gridPos == null)
 		{
 			cursorSprite.visible = false;
@@ -544,8 +550,8 @@ class LevelEditorState extends GameState
 		}
 
 		cursorSprite.visible = true;
-		cursorSprite.x = gridPos.x * TILE_SIZE;
-		cursorSprite.y = gridPos.y * TILE_SIZE;
+		cursorSprite.x = Math.floor(gridPos.x * TILE_SIZE);
+		cursorSprite.y = Math.floor(gridPos.y * TILE_SIZE);
 	}
 
 	private function refreshHud():Void
