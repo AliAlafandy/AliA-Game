@@ -47,7 +47,11 @@ class SelectState extends GameState
 		}
 
         #if mobile
-		addCustomDPad('EXITE', 'E-MENU');
+		if (ClientPrefs.debugSecret) {
+			addCustomDPad('EXITE', 'E-MENU');
+		} else {
+			addCustomDPad('EXITE', 'MENU');
+		}
 		addCustomDPadCam();
 		#end
     }
