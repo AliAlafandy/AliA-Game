@@ -223,6 +223,10 @@ class PlayState extends GameState
 
 		if (isOnlineMode)
 			setupOnlineMode();
+
+		#if ELLAWY_ALLOWED
+		callOnEllawyScripts('onCreate', []);
+		#end
 	}
 
 	private function setupOnlineMode():Void
@@ -536,7 +540,13 @@ class PlayState extends GameState
     {
         try
         {
-            var sourceCode = sys.io.File.getContent(file);
+            var sourceCode = Paths.getTextFromFile(file);
+            
+            if (sourceCode == null) {
+                addTextToDebug('ERROR: Could not read file ($file)', FlxColor.RED);
+                return;
+            }
+
             var script = new data.scripts.GameEllawyScript(file, sourceCode);
 			
             script.set("PlayState", PlayState);
@@ -562,12 +572,14 @@ class PlayState extends GameState
             
             ellawyScripts.push(script);
             script.call("onGame", []);
+			script.call("onTest", []);
         }
         catch (e:Dynamic)
         {
             addTextToDebug('ERROR ON LOADING ($file): ${e}', FlxColor.RED);
         }
     }
+	#end
 
 	public function callOnEllawyScripts(funcToCall:String, args:Array<Dynamic> = null):Dynamic
 	{
