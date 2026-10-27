@@ -74,6 +74,7 @@ class LevelEditorState extends GameState
 	private var hud:FlxText;
 	private var toolText:FlxText;
 	private var camZoom:Float = 1;
+	private var uiCamera:FlxCamera;
 
 	private static var paletteColors:Array<FlxColor> = [
 		FlxColor.TRANSPARENT,
@@ -90,6 +91,10 @@ class LevelEditorState extends GameState
 
 		FlxG.camera.bgColor = 0xFF161616;
 		FlxG.mouse.visible = true;
+
+		uiCamera = new FlxCamera();
+		uiCamera.bgColor = 0;
+		FlxG.cameras.add(uiCamera);
 
 		initGrid();
 		buildTileSprites();
@@ -164,11 +169,13 @@ class LevelEditorState extends GameState
 		hud = new FlxText(4, 4, 400, '', 14);
 		hud.scrollFactor.set(0, 0);
 		hud.setFormat(null, 14, FlxColor.WHITE, LEFT);
+		hud.cameras = [uiCamera];
 		add(hud);
 
 		toolText = new FlxText(4, FlxG.height - 28, 600, '', 14);
 		toolText.scrollFactor.set(0, 0);
 		toolText.setFormat(null, 14, FlxColor.YELLOW, LEFT);
+		toolText.cameras = [uiCamera];
 		add(toolText);
 
 		refreshToolText();
