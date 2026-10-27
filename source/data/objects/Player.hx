@@ -92,40 +92,43 @@ class Player extends FlxSprite
 
 	private function loadCharacter():Void
 	{
-		var jsonKey:String = 'characters/$curCharacter/$curCharacter';
-		var path:String = Paths.getPath('$jsonKey.json', TEXT, null, true);
+		var jsonKey:String = 'characters/$curCharacter/$curCharacter.json';
 		var loaded:Bool = false;
 
 		try
 		{
-			#if MODS_ALLOWED
-			if (FileSystem.exists(path))
+			var jsonText:String = Paths.getTextFromFile(jsonKey, false);
+			
+			if (jsonText != null)
 			{
-				var jsonText:String = File.getContent(path);
 				var parsed:Dynamic = Json.parse(jsonText);
-
 				loadCharacterFile(parsed);
 				loaded = true;
+				trace('[Player] Loaded character JSON: $jsonKey');
 			}
-			#else
-			if (Assets.exists(path))
+			else
 			{
-				var jsonText:String = Assets.getText(path);
-				var parsed:Dynamic = Json.parse(jsonText);
-
-				loadCharacterFile(parsed);
-				loaded = true;
+				var lowerKey:String = curCharacter.toLowerCase();
+				var lowerJsonKey:String = 'characters/$lowerKey/$lowerKey.json';
+				
+				jsonText = Paths.getTextFromFile(lowerJsonKey, false);
+				if (jsonText != null)
+				{
+					var parsed:Dynamic = Json.parse(jsonText);
+					loadCharacterFile(parsed);
+					loaded = true;
+					trace('[Player] Loaded character JSON (Lowercase Fallback): $lowerJsonKey');
+				}
 			}
-			#end
 		}
 		catch (e:Dynamic)
 		{
-			FlxG.log.warn('Could not load character "$curCharacter": $e');
+			trace('[Player] Could not parse character "$curCharacter": $e');
 		}
 
 		if (!loaded)
 		{
-			FlxG.log.warn('Character JSON not found: $path');
+			trace('[Player] Character JSON not found for: $curCharacter');
 		}
 
 		setupPhysics();
@@ -149,7 +152,10 @@ class Player extends FlxSprite
 	public function loadCharacterFile(json:CharacterFile):Void
 	{
 		if (json == null)
+		{
+			trace('[Player] loadCharacterFile received null JSON');
 			return;
+		}
 
 		scale.set(1, 1);
 		updateHitbox();
@@ -190,17 +196,25 @@ class Player extends FlxSprite
 		    animScales.set(animName, animScale);
 		
 		    var assetKey:String = '$curCharacter/$imageName';
+		    trace('[Player] Requesting Atlas for assetKey: "$assetKey"');
 		
 		    try
 		    {
 		        if (frames == null)
 		        {
 		            var spriteMap:FlxAtlasFrames = Paths.getCharacterSparrowAtlas(assetKey, false);
-		            if (spriteMap != null)
+		            if (spriteMap != null) {
 		                frames = spriteMap;
+		                trace('[Player] SUCCESS: Atlas loaded for "$assetKey"');
+		            } else {
+		                trace('[Player] FAILED: Atlas returned null for "$assetKey" (Check Paths.hx logs above this)');
+		            }
 		        }
 		    }
-		    catch (e:Dynamic) {}
+		    catch (e:Dynamic) 
+		    {
+		        trace('[Player] EXCEPTION loading Atlas for "$assetKey": $e');
+		    }
 		
 		    if (animIndices != null && animIndices.length > 0)
 		    {
