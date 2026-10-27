@@ -341,10 +341,7 @@ class Player extends FlxSprite
 			if (hasJumped) {
 				playMovementAnimation('jumping', 'jump');
 				return;
-			} else if (velocity.y >= 0 && hasJumped) {
-				playMovementAnimation('jumping', 'idle');
-				return;
-			} else if (velocity.y >= 0) {
+			} else {
 				playMovementAnimation('fall', 'idle');
 				return;
 			}
@@ -392,6 +389,7 @@ class Player extends FlxSprite
 		if (grounded)
 		{
 			isJumping = false;
+			hasJumped = false;
 		}
 	}
 
