@@ -34,45 +34,9 @@ class BaseOptionsMenu extends GameSubState
     function addString(label:String, field:String, values:Array<String>, description:String):Void
         rows.push({label:label, field:field, kind:"string", values:values, description:description});
 
-    function buildRows():Void
+    public function buildRows():Void
     {
-        switch (category)
-        {
-            case "Data":
-                addBool("Check for updates", "checkForUpdates", "Check for game updates.");
-                addBool("Loading screen", "loadingScreen", "Show the loading screen.");
-                addBool("Screensaver", "screensaver", "Enable the screensaver.");
-                addBool("Auto pause", "autoPause", "Pause when the app loses focus.");
-                #if android
-                addString("Storage type", "storageType", ["EXTERNAL_DATA"], "Storage location used by the Android build.");
-                #end
-            case "Controls":
-                addString("Controls color", "controlsColor", ["Yellow", "Blue", "Red", "Green", "Purple", "White"], "Color theme for mobile controls.");
-                addInt("Controls size", "controlsSize", 1, 4, 1, "Scale of mobile controls.");
-                addFloat("Controls alpha", "controlsAlpha", 0.1, 1.0, 0.1, "Opacity of mobile controls.");
-                addBool("Vibration", "vibration", "Enable supported device vibration.");
-                addString("Hitbox style", "hitboxType", ["Gradient", "Normal", "No Gradient"], "Mobile touch hitbox style.");
-                addString("Extra buttons", "extraButtons", ["NONE", "A", "B", "A_B", "A_B_C"], "Extra mobile buttons.");
-            case "Graphics":
-                addBool("Show FPS", "showFPS", "Show the FPS counter.");
-                addInt("Framerate", "framerate", 30, 240, 30, "Target update and draw frame rate.");
-                addBool("Antialiasing", "antialiasing", "Smooth non-pixel graphics.");
-                addBool("Flashing lights", "flashing", "Allow flashing visual effects.");
-                addBool("Shaders", "shaders", "Enable supported shaders.");
-                addBool("VSync", "vsync", "Enable vertical synchronization where supported.");
-                addBool("Wide screen", "wideScreen", "Enable wide-screen layout where supported.");
-                addString("Theme", "themes", ["Normal", "Dark", "Light"], "Menu theme.");
-            case "Audio":
-                rows.push({label:"Master volume", field:"volume", kind:"volume", min:0.0, max:1.0, step:0.1, description:"Master game volume."});
-                rows.push({label:"Mute", field:"mute", kind:"mute", description:"Mute all game audio."});
-            case "Gameplay":
-                addBool("Down scroll", "downscroll", "Place gameplay notes at the bottom when supported.");
-                addFloat("Safe frames", "safeFrames", 0.0, 20.0, 0.5, "Input timing window.");
-                addBool("Instakill on miss", "instakill", "Fail immediately after a miss.");
-                addBool("Practice mode", "practice", "Enable practice gameplay.");
-                addBool("Botplay", "botplay", "Enable automatic play where supported.");
-                addBool("Opponent play", "opponentplay", "Enable opponent-controlled gameplay where supported.");
-        }
+        // Each options substate defines its own rows by overriding this method.
     }
 
     override function create():Void
