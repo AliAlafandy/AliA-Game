@@ -540,7 +540,17 @@ class PlayState extends GameState
     {
         try
         {
-            var sourceCode = Paths.getTextFromFile(file);
+            var sourceCode:String = null;
+            
+            #if sys
+            if (sys.FileSystem.exists(file)) {
+                sourceCode = sys.io.File.getContent(file);
+            } else {
+                sourceCode = Paths.getTextFromFile(file);
+            }
+            #else
+            sourceCode = Paths.getTextFromFile(file);
+            #end
             
             if (sourceCode == null) {
                 addTextToDebug('ERROR: Could not read file ($file)', FlxColor.RED);
