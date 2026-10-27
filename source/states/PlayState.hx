@@ -60,6 +60,7 @@ class RemotePlayerGhost extends Player
 class PlayState extends GameState
 {
 	public var player:Player;
+	public var partner:Player;
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public static var curStage:String = 'ATown';
 
@@ -189,17 +190,38 @@ class PlayState extends GameState
 			characterName = Player.DEFAULT_CHARACTER;
 		}
 
-		// Ellawy is the default character; other registered characters remain
-		// selectable. Enlarge the sprite for a readable platform-game camera.
-		player = new Player(500, 130, characterName, false);
-		// Player.hx is suposed handle scale now ?
-		//player.scale.set(0.4, 0.4);
+		var mainChar:String = characterName;
+		var partnerChar:String = "";
+
+		if (characterName == "Ellawy+")
+		{
+			mainChar = "Ellawy";
+			partnerChar = "Hamedo";
+		}
+
+		player = new Player(500, 130, mainChar, false);
 		player.updateHitbox();
 		player.y = groundY - player.height;
 		player.velocity.set(0, 0);
 		player.grounded = true;
 		player.touching = FlxDirectionFlags.FLOOR;
 		add(player);
+
+		if (partnerChar != "")
+		{
+			partner = new Player(450, 130, partnerChar, true);
+			partner.followTarget = player;
+			partner.updateHitbox();
+			partner.y = groundY - partner.height;
+			partner.velocity.set(0, 0);
+			partner.grounded = true;
+			partner.touching = FlxDirectionFlags.FLOOR;
+			
+			partner.moveSpeed *= 0.85;
+			partner.maxMoveSpeed *= 0.85;
+			
+			add(partner);
+		}
 
 		FlxG.camera.follow(player, LOCKON, 0.05);
 
@@ -351,6 +373,13 @@ class PlayState extends GameState
 		{
 			FlxG.collide(player, groundSegments);
 			player.updateGroundState();
+			
+			if (partner != null)
+			{
+				FlxG.collide(partner, groundSegments);
+				partner.updateGroundState();
+				partner.updatePartnerAI(elapsed);
+			}
 		}
 
 		handleInput();
@@ -714,6 +743,12 @@ class PlayState extends GameState
 		#end
 
 		player = null;
+
+		if (partner != null)
+		{
+			partner.destroy();
+			partner = null;
+		}
 
 		super.destroy();
 	}
