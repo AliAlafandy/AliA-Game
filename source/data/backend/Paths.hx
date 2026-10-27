@@ -455,37 +455,50 @@ class Paths
 	{
 		var imageLoaded:FlxGraphic = characterImage(key, allowGPU);
 		
+		if (imageLoaded == null) {
+			#if mobile
+			trace('SPARROW ATLAS FAILED: Image is null for $key');
+			#end
+			return null; 
+		}
+
 		#if MODS_ALLOWED
 		var xmlExists:Bool = false;
 		var xml:String = modsCharactersXml(key);
+		var xmlContent:String = "";
 		
 		if (FileSystem.exists(xml)) {
 			xmlExists = true;
+			xmlContent = File.getContent(xml);
 		} else {
 			#if (linux || ios || mac || android)
 			var foundXml = findFile('characters/' + key + '.xml');
 			if (foundXml != null && FileSystem.exists(foundXml)) {
 				xml = foundXml;
 				xmlExists = true;
+				xmlContent = File.getContent(xml);
 			}
 			#end
 		}
 
-		if (imageLoaded == null) {
-			trace('SPARROW ATLAS FAILED: Image is null for $key');
-			return null; 
+		if (!xmlExists) {
+			xmlContent = getPath('characters/$key.xml', TEXT);
 		}
-
-		var xmlContent:String = xmlExists ? File.getContent(xml) : getPath('characters/$key.xml', TEXT);
-		trace('Sparrow Atlas worked for Mods : Image is $key');
+		#if mobile
+		if (xmlExists) {
+			trace('✅ Character Atlas loaded from MODS: $key');
+		} else {
+			trace('✅ Character Atlas loaded from BASE GAME: $key');
+		}
+		#end
+		
 		return FlxAtlasFrames.fromSparrow(imageLoaded, xmlContent);
+		
 		#else
 		var xmlPath:String = getPath('characters/$key.xml', TEXT);
-		if (!OpenFlAssets.exists(xmlPath, TEXT))
-		{
+		if (!OpenFlAssets.exists(xmlPath, TEXT)) {
 			xmlPath = 'assets/characters/$key.xml';
 		}
-		trace('Sparrow Atlas worked for Base Game : Image is $key');
 		return FlxAtlasFrames.fromSparrow(imageLoaded, xmlPath);
 		#end
 	}
