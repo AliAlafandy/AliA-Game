@@ -92,7 +92,7 @@ class SelectState extends GameState
 
         if (controls.BACK) {
 			FlxG.sound.play(Paths.sound('cancel_sound'));
-			FlxG.sound.music.stop();
+			// FlxG.sound.music.stop();
             GameState.switchState(new MenuState());
         }
     }
