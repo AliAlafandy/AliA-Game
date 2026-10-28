@@ -65,14 +65,18 @@ class BaseOptionsMenu extends GameSubState
 			values:values
 		});
 
-    public function addDynamic(label:String, field:String, description:String, ?values:Array<Dynamic>, ?min:Float, ?max:Float, ?step:Float):Void
+    public function addDynamic(label:String, field:String, description:String, ?value:Dynamic, ?min:Float, ?max:Float, ?step:Float):Void
     {
+        var choices:Array<Dynamic> = Std.isOfType(value, Array) ? cast value : null;
+        var hasRange:Bool = min != null && max != null && step != null;
         rows.push({
             label: label,
             field: field,
-			description: description,
+            description: description,
             kind: "dynamic",
-            values: values,
+            values: choices,
+            initialValue: value,
+            mode: (choices != null || hasRange || value != null) ? "change" : "action",
             min: min == null ? 0 : min,
             max: max == null ? 1 : max,
             step: step == null ? 0.1 : step
@@ -177,15 +181,16 @@ class BaseOptionsMenu extends GameSubState
             case "bool", "mute":
                 writeValue(row, value != true);
             case "int", "float", "volume":
-                var numeric:Float = value == null ? row.min : Std.parseFloat(Std.string(value));
-                if (Math.isNaN(numeric)) numeric = row.min;
-                numeric += row.step * direction;
-                if (numeric < row.min) numeric = row.max;
-                if (numeric > row.max) numeric = row.min;
-                if (row.kind == "int")
-                    writeValue(row, Std.int(numeric));
-                else
-                    writeValue(row, numeric);
+                var minimum:Float = row.min == null ? 0 : row.min;
+                var maximum:Float = row.max == null ? 1 : row.max;
+                var increment:Float = row.step == null ? 0.1 : row.step;
+                var numeric:Float = value == null ? minimum : Std.parseFloat(Std.string(value));
+                if (Math.isNaN(numeric)) numeric = minimum;
+                numeric += increment * direction;
+                if (numeric < minimum) numeric = minimum;
+                if (numeric > maximum) numeric = maximum;
+                if (kind == "int") writeValue(row, Std.int(numeric));
+                else writeValue(row, numeric);
             case "string":
                 if (row.values == null || row.values.length == 0) return;
                 var idx:Int = -1;
@@ -246,10 +251,41 @@ class BaseOptionsMenu extends GameSubState
         super.update(elapsed);
         if (controls.UI_UP_P) { selected = (selected - 1 + rows.length) % rows.length; refresh(); }
         if (controls.UI_DOWN_P) { selected = (selected + 1) % rows.length; refresh(); }
-        if (rows.length > 0 && (controls.UI_LEFT_P || controls.UI_RIGHT_P))
-            changeValue(rows[selected], controls.UI_LEFT_P ? -1 : 1);
-        if (rows.length > 0 && controls.ACCEPT && (rows[selected].kind == "bool" || rows[selected].kind == "mute"))
-            changeValue(rows[selected], 1);
+        if (rows.length > 0)
+        {
+            var row = rows[selected];
+            var kind:String = row.kind;
+            if (kind == "dynamic")
+            {
+                if (row.values != null && row.values.length > 0) kind = "string";
+                else if (row.mode == "action") kind = "action";
+                else
+                {
+                    var currentValue:Dynamic = readValue(row);
+                    if (Std.isOfType(currentValue, Bool)) kind = "bool";
+                    else if (Std.isOfType(currentValue, Int)) kind = "int";
+                    else if (Std.isOfType(currentValue, Float)) kind = "float";
+                    else kind = "action";
+                }
+            }
+
+            // Boolean options use ENTER, never LEFT/RIGHT.
+            if ((controls.UI_LEFT_P || controls.UI_RIGHT_P) && kind != "bool" && kind != "mute" && kind != "action")
+                changeValue(row, controls.UI_LEFT_P ? -1 : 1);
+
+            if (controls.ACCEPT)
+            {
+                if (kind == "bool" || kind == "mute")
+                    changeValue(row, 1);
+                else if (kind == "action")
+                {
+                    if (row.field == "signInAction")
+                        FlxG.switchState(new states.online.AccountState());
+                    else if (Reflect.hasField(row, "onAccept") && row.onAccept != null)
+                        row.onAccept();
+                }
+            }
+        }
         if (controls.BACK)
         {
 			// FlxTransitionableState.skipNextTransOut = true;
