@@ -4,13 +4,35 @@ import states.options.BaseOptionsMenu;
 
 class ControlsSubState extends BaseOptionsMenu
 {
-    public function new() super("Controls");
+    public function new()
+    {
+        heading = "Controls";
+        super();
+    }
 
     override public function buildRows():Void
     {
-        addString("Controls Color", "controlsColor", ["Yellow", "Blue"], "Color theme for mobile controls.");
-        // addInt("Controls Size", "controlsSize", 1, 4, 1, "Scale of mobile controls.");
-        addFloat("Controls Alpha", "controlsAlpha", 0.1, 1.0, 0.1, "Opacity of mobile controls.");
+        addString(
+            "Controls Color",
+            "controlsColor",
+            "Color theme for mobile controls.",
+            ["Yellow", "Blue"]
+        );
+
+        /*addInt(
+        	"Controls Size",
+            "controlsSize",
+			"Scale of mobile controls.",
+            1, 4, 1
+        );*/
+
+        addFloat(
+            "Controls Alpha",
+            "controlsAlpha",
+            "Opacity of mobile controls.",
+            0.1, 1.0, 0.1
+    	);
+
         // Edit Controls
     }
 }
