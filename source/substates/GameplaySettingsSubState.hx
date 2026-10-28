@@ -1,4 +1,4 @@
-package substates.options;
+package substates;
 
 import states.options.BaseOptionsMenu;
 
