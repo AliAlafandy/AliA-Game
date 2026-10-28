@@ -39,6 +39,25 @@ class BaseOptionsMenu extends GameSubState
     public function addString(label:String, field:String, values:Array<String>, description:String):Void
         rows.push({label:label, field:field, kind:"string", values:values, description:description});
 
+    /**
+     * Adds an option whose value type is determined at runtime.
+     * Supply values to make it cycle through a custom list; otherwise bools
+     * toggle and numeric values use the supplied min/max/step metadata.
+     */
+    public function addDynamic(label:String, field:String, description:String, ?values:Array<Dynamic>, ?min:Float, ?max:Float, ?step:Float):Void
+    {
+        rows.push({
+            label: label,
+            field: field,
+            kind: "dynamic",
+            values: values,
+            min: min == null ? 0 : min,
+            max: max == null ? 1 : max,
+            step: step == null ? 0.1 : step,
+            description: description
+        });
+    }
+
     override function create():Void
     {
         super.create();
@@ -116,7 +135,22 @@ class BaseOptionsMenu extends GameSubState
             return;
         }
         var value:Dynamic = readValue(row);
-        switch (row.kind)
+        var kind:String = row.kind;
+        if (kind == "dynamic")
+        {
+            if (row.values != null && row.values.length > 0)
+                kind = "string";
+            else if (Std.isOfType(value, Bool))
+                kind = "bool";
+            else if (Std.isOfType(value, Int))
+                kind = "int";
+            else if (Std.isOfType(value, Float))
+                kind = "float";
+            else
+                return;
+        }
+
+        switch (kind)
         {
             case "bool", "mute":
                 writeValue(row, value != true);
@@ -132,7 +166,9 @@ class BaseOptionsMenu extends GameSubState
                     writeValue(row, numeric);
             case "string":
                 if (row.values == null || row.values.length == 0) return;
-                var idx:Int = row.values.indexOf(Std.string(value));
+                var idx:Int = -1;
+                for (i in 0...row.values.length)
+                    if (Std.string(row.values[i]) == Std.string(value)) { idx = i; break; }
                 if (idx < 0) idx = 0;
                 idx = Std.int((idx + direction + row.values.length) % row.values.length);
                 writeValue(row, row.values[idx]);
@@ -149,7 +185,20 @@ class BaseOptionsMenu extends GameSubState
             var value:Dynamic = readValue(row);
             var shown:String = Std.string(value);
             
-            switch (row.kind)
+            var displayKind:String = row.kind;
+            if (displayKind == "dynamic")
+            {
+                if (row.values != null && row.values.length > 0)
+                    displayKind = "string";
+                else if (Std.isOfType(value, Bool))
+                    displayKind = "bool";
+                else if (Std.isOfType(value, Int))
+                    displayKind = "int";
+                else if (Std.isOfType(value, Float))
+                    displayKind = "float";
+            }
+
+            switch (displayKind)
             {
                 case "bool", "mute":
                     shown = (value == true) ? "ON" : "OFF";
