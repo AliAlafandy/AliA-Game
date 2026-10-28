@@ -107,7 +107,7 @@ class BaseOptionsMenu extends GameSubState
     {
         if (row.kind == "volume") return FlxG.sound.volume;
         if (row.kind == "mute") return FlxG.sound.muted;
-        if (category == "Gameplay" && row.field != null)
+        if (category == "GameplaySettings" && row.field != null)
         {
             if (row.field == "timeLimit" || row.field == "debugMode" || row.field == "infiniteLife" || row.field == "infinitePower" || row.field == "timeType")
                 return ClientPrefs.data.gameplaySettings.get(row.field);
@@ -129,7 +129,7 @@ class BaseOptionsMenu extends GameSubState
             FlxG.save.data.mute = value;
             return;
         }
-        if (category == "Gameplay" && (row.field == "timeLimit" || row.field == "debugMode" || row.field == "infiniteLife" || row.field == "infinitePower" || row.field == "timeType"))
+        if (category == "GameplaySettings" && (row.field == "timeLimit" || row.field == "debugMode" || row.field == "infiniteLife" || row.field == "infinitePower" || row.field == "timeType"))
         {
             ClientPrefs.data.gameplaySettings.set(row.field, value);
             return;
