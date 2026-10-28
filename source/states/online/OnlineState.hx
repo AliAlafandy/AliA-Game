@@ -41,6 +41,9 @@ class TextInputField
 		this.placeholder = placeholder;
 		display = new FlxText(x, y, width, "", 16);
 		display.setFormat(null, 16, FlxColor.WHITE, CENTER);
+		display.borderStyle = OUTLINE;
+		display.borderColor = FlxColor.BLACK;
+		display.borderSize = 2;
 		refresh();
 	}
 
@@ -95,6 +98,11 @@ class TextInputField
 	private function refresh():Void
 	{
 		var shown = value.length > 0 ? value : placeholder;
+		if (placeholder == "Password" && value.length > 0) {
+			shown = "";
+			for (i in 0...value.length) shown += "*";
+		}
+		
 		display.text = (active ? "> " : "  ") + shown + (active ? "_" : "");
 		display.color = value.length > 0 ? FlxColor.WHITE : FlxColor.GRAY;
 	}
