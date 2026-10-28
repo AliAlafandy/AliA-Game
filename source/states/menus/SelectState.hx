@@ -7,6 +7,7 @@ class SelectState extends GameState
 	private var selected:Int = 0;
 
 	private final saves:Array<String> = [
+		'No Save',
         'NEW GAME 1',
         'NEW GAME 2',
         'NEW GAME 3',
@@ -14,7 +15,8 @@ class SelectState extends GameState
         'NEW GAME 5',
         'NEW GAME 6',
         'NEW GAME 7',
-        'NEW GAME 8'
+        'NEW GAME 8',
+		'Delete'
     ];
 
 	private var t:FlxText;
@@ -107,6 +109,13 @@ class SelectState extends GameState
 			FlxG.sound.play(Paths.sound('cancel_sound'));
             GameState.switchState(new MenuState());
         }
+
+		if (ClientPrefs.data.debugSecret) {
+			if (FlxG.keys.justPressed.E #if mobile || customDPad.powerButton.justPressed #end)
+			{
+				openSubState(new GameplaySettingsState());
+			}
+		}
     }
 
 	private function refresh():Void
