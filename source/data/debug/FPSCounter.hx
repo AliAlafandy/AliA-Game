@@ -114,15 +114,13 @@ class FPSCounter extends TextField
 		text =
 			'FPS: $currentFPS' + // (min $minFPS / max $maxFPS / avg ${Math.round(avgFPS)})
 			// '\nFrame: ${FlxStringUtil.formatBytes(0) != null ? Math.round(frameTimeMs * 100) / 100 : frameTimeMs}ms' +
-			'\nMemory: ${FlxStringUtil.formatBytes(memoryMegas)} (peak ${FlxStringUtil.formatBytes(peakMemoryMegas)})' +
+			'\nMemory: ${FlxStringUtil.formatBytes(memoryMegas)}' + // (peak ${FlxStringUtil.formatBytes(peakMemoryMegas)})
 			// os +
 			engineVersion;
 
 		textColor = 0xFFFFFFFF;
 		if (currentFPS < FlxG.drawFramerate * 0.5)
 			textColor = 0xFFFF0000;
-		else if (currentFPS < FlxG.drawFramerate * 0.8)
-			textColor = 0xFFFFFF00;
 	}
 
 	public function resetStats():Void
