@@ -180,6 +180,8 @@ class BaseOptionsMenu extends GameSubState
             changeValue(rows[selected], 1);
         if (controls.BACK)
         {
+			FlxTransitionableState.skipNextTransOut = true;
+			FlxG.resetState();
             ClientPrefs.saveSettings();
             #if mobile
 			// controls.isInSubstate = false;
