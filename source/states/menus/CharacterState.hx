@@ -107,6 +107,7 @@ class CharacterState extends GameState
 	{
 		gridGroup.clear();
 		iconGroup.clear();
+
 		selectors = [];
 		characterBoxes = [];
 
@@ -170,20 +171,14 @@ class CharacterState extends GameState
 
 	private function updateSelection():Void
 	{
-		// Only update actual character boxes. gridGroup also contains selector
-		// overlays, so indexing gridGroup.members by character index is incorrect.
 		for (i in 0...characterBoxes.length)
 		{
 			var box:FlxSprite = characterBoxes[i];
 			var selector:FlxSprite = selectors[i];
 
-			if (i == index)
-			{
-				// Keep the selected box's current animation (including "press").
+			if (i == index) {
 				if (selector != null) selector.visible = true;
-			}
-			else
-			{
+			} else {
 				if (box != null && box.animation.exists("idle"))
 					box.animation.play("idle");
 				if (selector != null) selector.visible = false;
