@@ -110,6 +110,11 @@ class BaseOptionsMenu extends GameSubState
 
     function changeValue(row:Dynamic, direction:Int):Void
     {
+		if (row.field == "signInAction") {
+            FlxG.switchState(new states.online.AccountState());
+            trace("Sign In action triggered!");
+            return;
+        }
         var value:Dynamic = readValue(row);
         switch (row.kind)
         {
