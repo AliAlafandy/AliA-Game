@@ -234,17 +234,18 @@ class PlayState extends GameState
 			200
 		);
 
+		var spaceY:Float = 20;
 		timer = new FlxText(10, 10, FlxG.width, "TIME: ", 32);
 		timer.setFormat(null, 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
 		timer.scrollFactor.set(0, 0);
 		debugGroup.add(timer);
 
-		score = new FlxText(timer.x, timer.y + 10, timer.width, "SCORE: ", 32);
+		score = new FlxText(timer.x, timer.y + spaceY, timer.width, "SCORE: ", 32);
 		score.setFormat(null, 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
 		score.scrollFactor.set(0, 0);
 		debugGroup.add(score);
 
-		flash = new FlxText(timer.x, score.y + 10, timer.width, "FLASH: ", 32);
+		flash = new FlxText(timer.x, score.y + spaceY, timer.width, "FLASH: ", 32);
 		flash.setFormat(null, 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
 		flash.scrollFactor.set(0, 0);
 		debugGroup.add(flash);
