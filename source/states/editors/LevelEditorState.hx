@@ -527,6 +527,7 @@ class LevelEditorState extends GameState
 		dialog.browse(FileDialogType.OPEN, "bin"); 
 	}
 
+	/*
 	private function loadLevelFromPath(path:String):Void
 	{
 		#if sys
@@ -615,6 +616,97 @@ class LevelEditorState extends GameState
 				output.addByte(tileGrid[y][x] & 0xFF);
 
 		File.saveBytes('$directory/$levelName.bin', output.getBytes());
+		#end
+	}*/
+
+	// og is above
+	private function loadLevelFromPath(path:String):Void
+	{
+		#if sys
+		if (!sys.FileSystem.exists(path))
+			return;
+
+		try {
+			var binValue = bin.BIN.read(path);
+			var obj = binValue.asObject();
+			if (obj == null) {
+				trace("Invalid level BIN: root is not an object.");
+				return;
+			}
+
+			levelName = obj.get("name").asString("untitled");
+			var loadedCols = obj.get("cols").asInt(DEFAULT_COLS);
+			var loadedRows = obj.get("rows").asInt(DEFAULT_ROWS);
+			var tilesArray = obj.get("tiles").asArray();
+
+			if (tilesArray == null) {
+				trace("Invalid level BIN: missing tiles array.");
+				return;
+			}
+
+			cols = Std.int(Math.max(1, Math.min(loadedCols, 256)));
+			rows = Std.int(Math.max(1, Math.min(loadedRows, 256)));
+
+			tileGrid = [];
+			for (y in 0...rows) {
+				var row:Array<Int> = [];
+				var rowBin = tilesArray.get(y).asArray();
+				if (rowBin != null) {
+					for (x in 0...cols) {
+						row.push(rowBin.get(x).asInt(0));
+					}
+				} else {
+					for (x in 0...cols) row.push(0);
+				}
+				tileGrid.push(row);
+			}
+
+			if (tileSprites != null) { remove(tileSprites, true); tileSprites.destroy(); }
+			if (gridOverlay != null) { remove(gridOverlay, true); gridOverlay.destroy(); }
+			
+			buildTileSprites();
+			buildGridOverlay();
+
+			for (y in 0...rows)
+				for (x in 0...cols)
+					applyTileVisual(x, y, tileGrid[y][x]);
+					
+			refreshHud();
+		} catch (e:Dynamic) {
+			trace("Failed to load BIN level: " + e);
+		}
+		#end
+	}
+
+	private function saveLevel():Void
+	{
+		#if sys
+		var directory = 'levels';
+		if (!FileSystem.exists(directory))
+			FileSystem.createDirectory(directory);
+
+		var tilesBin = new bin.BINArray();
+		for (y in 0...rows) {
+			var rowBin = new bin.BINArray();
+			for (x in 0...cols) {
+				rowBin.push(bin.BINValue.int(tileGrid[y][x]));
+			}
+			tilesBin.push(bin.BINValue.array(rowBin));
+		}
+
+		var levelObj = new bin.BINObject();
+		levelObj.set("name", bin.BINValue.string(levelName));
+		levelObj.set("cols", bin.BINValue.int(cols));
+		levelObj.set("rows", bin.BINValue.int(rows));
+		levelObj.set("tileSize", bin.BINValue.int(TILE_SIZE));
+		levelObj.set("tiles", bin.BINValue.array(tilesBin));
+
+		try {
+			bin.BIN.save('$directory/$levelName.bin', bin.BINValue.object(levelObj));
+			trace("Successfully saved level to: $directory/$levelName.bin");
+		} catch (e:Dynamic) {
+			trace("Failed to save BIN level: " + e);
+		}
 		#end
 	}
 
