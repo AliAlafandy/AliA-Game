@@ -12,7 +12,7 @@ class DataSubState extends BaseOptionsMenu
 
     public function new()
 	{
-		heading = 'Data';
+		heading = "Data";
 		super();
 	}
 
