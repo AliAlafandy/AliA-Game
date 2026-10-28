@@ -27,27 +27,6 @@ import data.scripts.GameEllawyScript;
 
 import bin.BIN;
 
-class RemotePlayerGhost extends Player
-{
-	public var netId:String;
-	public var nameTag:FlxText;
-
-	public function new(netId:String, name:String)
-	{
-		super(0, 0, 'Ellawy', false);
-		this.netId = netId;
-		nameTag = new FlxText(0, 0, 120, name, 12);
-		nameTag.setFormat(null, 12, FlxColor.CYAN, CENTER, OUTLINE, FlxColor.BLACK);
-	}
-
-	override public function update(elapsed:Float):Void
-	{
-		super.update(elapsed);
-		if (nameTag != null)
-			nameTag.setPosition(x + (width / 2) - (nameTag.width / 2), y - 20);
-	}
-}
-
 class TestState extends GameState
 {
 	public var player:Player;
