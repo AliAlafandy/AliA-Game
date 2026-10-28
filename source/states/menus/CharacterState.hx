@@ -183,12 +183,12 @@ class CharacterState extends GameState
 	{
 		super.update(elapsed);
 
-		var selectMusic = Paths.music('menus/select_character');
-		// if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
-			// if (selectMusic != null) {
+		/*var selectMusic = Paths.music('menus/select_character');
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
+			if (selectMusic != null) {
 				FlxG.sound.playMusic(selectMusic, 1, true);
-			// }
-		// }
+			}
+		}*/
 
 		var oldIndex:Int = index;
 
