@@ -330,7 +330,7 @@ class Player extends FlxSprite
 		}
 	}
 
-	public function updateMovementAnimation(jumpPressed:Bool, upPressed:Bool, downPressed:Bool):Void
+	public function updateMovementAnimation(upPressed:Bool, downPressed:Bool):Void
 	{
 		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
 	
@@ -349,15 +349,15 @@ class Player extends FlxSprite
 				playMovementAnimation('down', 'idle');
 				return;
 			}
-			if (downPressed && jumpPressed) {
-				playMovementAnimation('jumping', 'jump');
+			/*if (downPressed && jumpPressed) {
+				playMovementAnimation('spinning', 'jump');
 				return;
-			}
+			}*/
 		}
 	
 		if (isJumping && !isOnGround || hasJumped && !isOnGround)
 		{
-			playMovementAnimation('jumping', 'jump');
+			playMovementAnimation('spinning', 'jump');
 			return;
 		} else if (!isOnGround) {
 			playMovementAnimation('fall', 'idle');
@@ -495,7 +495,7 @@ class Player extends FlxSprite
 
 		if (isJumping && !isOnGround || hasJumped && !isOnGround)
 		{
-			playMovementAnimation('jumping', 'jump');
+			playMovementAnimation('spinning', 'jump');
 		} else if (!isOnGround) {
 			playMovementAnimation('fall', 'idle');
 		} else if (Math.abs(velocity.x) > 10) {
