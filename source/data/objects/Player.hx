@@ -8,7 +8,6 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
 
 import openfl.utils.Assets;
-
 import haxe.Json;
 
 #if MODS_ALLOWED
@@ -63,20 +62,22 @@ class Player extends FlxSprite
 	public var isJumping:Bool = false;
 	public var hasJumped:Bool = false;
 	
+	public var isSpindashing:Bool = false;
+	public var spindashCharge:Int = 0;
+	private var spindashMaxCharge:Int = 8;
+	
 	private var idleTimer:Float = 0;
 	private static inline var IDLE_TIMEOUT:Float = 300.0;
 
 	public function new(x:Float, y:Float, character:String = 'Ellawy', ?isPartner:Bool = false)
 	{
 		super(x, y);
-
 		this.isPartner = isPartner;
 
 		if (character == null || character.length == 0)
 			character = DEFAULT_CHARACTER;
 
 		curCharacter = character;
-
 		loadCharacter();
 
 		if (curCharacter.toLowerCase() == 'ellawy')
@@ -99,7 +100,6 @@ class Player extends FlxSprite
 		try
 		{
 			var jsonText:String = Paths.getTextFromFile(jsonKey, false);
-			
 			if (jsonText != null)
 			{
 				var parsed:Dynamic = Json.parse(jsonText);
@@ -111,7 +111,6 @@ class Player extends FlxSprite
 			{
 				var lowerKey:String = curCharacter.toLowerCase();
 				var lowerJsonKey:String = 'characters/$lowerKey/$lowerKey.json';
-				
 				jsonText = Paths.getTextFromFile(lowerJsonKey, false);
 				if (jsonText != null)
 				{
@@ -160,16 +159,12 @@ class Player extends FlxSprite
 
 		scale.set(1, 1);
 		updateHitbox();
-
 		animationsArray = json.anim;
-
-		if (animationsArray == null)
-			animationsArray = [];
+		if (animationsArray == null) animationsArray = [];
 
 		for (anim in animationsArray)
 		{
-		    if (anim == null)
-		        continue;
+		    if (anim == null) continue;
 		
 		    var animName:String = anim.name;
 		    var imageName:String = anim.image;
@@ -179,23 +174,13 @@ class Player extends FlxSprite
 		    var animIndices:Array<Int> = anim.indices;
 		    var animScale:Float = anim.scale;
 		
-		    if (animName == null || animName.length == 0)
-		        continue;
-		
-		    if (imageName == null || imageName.length == 0)
-		        imageName = curCharacter;
-		
-		    if (animPrefix == null || animPrefix.length == 0)
-		        animPrefix = animName;
-		
-		    if (animFps <= 0)
-		        animFps = 12;
-		
-		    if (animScale <= 0)
-		        animScale = 1;
+		    if (animName == null || animName.length == 0) continue;
+		    if (imageName == null || imageName.length == 0) imageName = curCharacter;
+		    if (animPrefix == null || animPrefix.length == 0) animPrefix = animName;
+		    if (animFps <= 0) animFps = 12;
+		    if (animScale <= 0) animScale = 1;
 		
 		    animScales.set(animName, animScale);
-		
 		    var assetKey:String = '$curCharacter/$imageName';
 		    trace('[Player] Requesting Atlas for assetKey: "$assetKey"');
 		
@@ -208,7 +193,7 @@ class Player extends FlxSprite
 		                frames = spriteMap;
 		                trace('[Player] SUCCESS: Atlas loaded for "$assetKey"');
 		            } else {
-		                trace('[Player] FAILED: Atlas returned null for "$assetKey" (Check Paths.hx logs above this)');
+		                trace('[Player] FAILED: Atlas returned null for "$assetKey"');
 		            }
 		        }
 		    }
@@ -218,18 +203,14 @@ class Player extends FlxSprite
 		    }
 		
 		    if (animIndices != null && animIndices.length > 0)
-		    {
 		        animation.addByIndices(animName, animPrefix, animIndices, "", animFps, animLoop);
-		    } else {
+		    else
 		        animation.addByPrefix(animName, animPrefix, animFps, animLoop);
-		    }
 		
 		    if (anim.offsets != null && anim.offsets.length >= 2)
-		    {
 		        addOffset(animName, anim.offsets[0], anim.offsets[1]);
-		    } else {
+		    else
 		        addOffset(animName, 0, 0);
-		    }
 		}
 	}
 
@@ -248,52 +229,55 @@ class Player extends FlxSprite
 		if (!canMove)
 		{
 			stopHorizontalMovement();
-			updateMovementAnimation(false, false, false);
+			updateMovementAnimation(upPressed, downPressed, jumpPressed);
 			return;
 		}
 
 		if (direction != 0 || jumpPressed || upPressed || downPressed)
-		{
 			idleTimer = 0;
-		}
 
-		if (direction < -1)
-			direction = -1;
+		if (direction < -1) direction = -1;
+		if (direction > 1) direction = 1;
 
-		if (direction > 1)
-			direction = 1;
+		if (direction < 0) { moveDirection = -1; flipX = true; }
+		else if (direction > 0) { moveDirection = 1; flipX = false; }
 
-		if (direction < 0)
+		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR);
+		if (isOnGround && Math.abs(velocity.x) <= 20)
 		{
-			moveDirection = -1;
-			flipX = true;
-		}
-		else if (direction > 0)
-		{
-			moveDirection = 1;
-			flipX = false;
-		}
-
-		if (direction != 0)
-		{
-			var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * FlxG.elapsed / Math.max(moveSpeed, 1));
-			velocity.x = FlxMath.lerp(velocity.x, direction * moveSpeed, accelerationBlend);
-		} else {
-			if (velocity.x > 0)
+			if (downPressed && !jumpPressed)
 			{
-				velocity.x -= moveFriction * FlxG.elapsed;
-				if (velocity.x < 0)
-					velocity.x = 0;
-			} else if (velocity.x < 0) {
-				velocity.x += moveFriction * FlxG.elapsed;
-				if (velocity.x > 0)
-					velocity.x = 0;
+				isSpindashing = true;
+				velocity.x = 0;
+			}
+			else if (isSpindashing && jumpPressed)
+			{
+				if (spindashCharge < spindashMaxCharge)
+				{
+					spindashCharge++;
+				}
+			}
+			else if (!downPressed && isSpindashing)
+			{
+				isSpindashing = false;
+				var launchSpeed = 900 + (spindashCharge * 100);
+				var launchDir = moveDirection != 0 ? moveDirection : (flipX ? -1 : 1);
+				velocity.x = launchDir * launchSpeed;
+				spindashCharge = 0;
+			}
+			else
+			{
+				isSpindashing = false;
+				spindashCharge = 0;
 			}
 		}
+		else
+		{
+			isSpindashing = false;
+			spindashCharge = 0;
+		}
 
-		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
-
-		if (jumpPressed && isOnGround)
+		if (jumpPressed && isOnGround && !isSpindashing)
 		{
 			velocity.y = -jumpSpeed;
 			grounded = false;
@@ -301,44 +285,62 @@ class Player extends FlxSprite
 			hasJumped = true;
 		}
 
-		if (isOnGround)
+		if (!isSpindashing)
 		{
-			isJumping = false;
-			hasJumped = false;
+			if (direction != 0)
+			{
+				var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * FlxG.elapsed / Math.max(moveSpeed, 1));
+				velocity.x = FlxMath.lerp(velocity.x, direction * moveSpeed, accelerationBlend);
+			} else {
+				if (velocity.x > 0) {
+					velocity.x -= moveFriction * FlxG.elapsed;
+					if (velocity.x < 0) velocity.x = 0;
+				} else if (velocity.x < 0) {
+					velocity.x += moveFriction * FlxG.elapsed;
+					if (velocity.x > 0) velocity.x = 0;
+				}
+			}
 		}
 
-		updateMovementAnimation(jumpPressed, upPressed, downPressed);
+		updateMovementAnimation(upPressed, downPressed, jumpPressed);
 	}
 
 	private function stopHorizontalMovement():Void
 	{
-		if (Math.abs(velocity.x) < 10)
-		{
-			velocity.x = 0;
-			return;
-		}
+		if (Math.abs(velocity.x) < 10) { velocity.x = 0; return; }
 
-		if (velocity.x > 0)
-		{
+		if (velocity.x > 0) {
 			velocity.x -= moveFriction * FlxG.elapsed;
-			if (velocity.x < 0)
-				velocity.x = 0;
+			if (velocity.x < 0) velocity.x = 0;
 		} else {
 			velocity.x += moveFriction * FlxG.elapsed;
-			if (velocity.x > 0)
-				velocity.x = 0;
+			if (velocity.x > 0) velocity.x = 0;
 		}
 	}
 
 	public function updateMovementAnimation(upPressed:Bool, downPressed:Bool, jumpPressed:Bool):Void
 	{
-		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
+		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR);
 	
-		if (isOnGround) {
-			isJumping = false;
-			hasJumped = false;
+		if (isSpindashing || (isOnGround && Math.abs(velocity.x) > moveSpeed))
+		{
+			playMovementAnimation('spinning', 'down');
+			return;
 		}
-	
+
+		if (!isOnGround)
+		{
+			if (isJumping || hasJumped)
+			{
+				playMovementAnimation('spinning', 'jump');
+			}
+			else
+			{
+				playMovementAnimation('fall', 'idle');
+			}
+			return;
+		}
+		
 		if (isOnGround && Math.abs(velocity.x) <= 10)
 		{
 			if (upPressed) {
@@ -349,19 +351,6 @@ class Player extends FlxSprite
 				playMovementAnimation('down', 'idle');
 				return;
 			}
-			if (downPressed && jumpPressed) {
-				playMovementAnimation('spinning', 'jump');
-				return;
-			}
-		}
-	
-		if (isJumping && !isOnGround || hasJumped && !isOnGround)
-		{
-			playMovementAnimation('spinning', 'jump');
-			return;
-		} else if (!isOnGround) {
-			playMovementAnimation('fall', 'idle');
-			return;
 		}
 	
 		if (isOnGround && Math.abs(velocity.x) > moveSpeed * 0.75)
@@ -371,11 +360,13 @@ class Player extends FlxSprite
 				return;
 			}
 		}
+		
 		if (isOnGround && Math.abs(velocity.x) > 10)
 		{
 			playMovementAnimation('walking', 'walk');
 			return;
 		}
+		
 		if (isOnGround)
 		{
 			playMovementAnimation('idle', 'waiting');
@@ -385,16 +376,10 @@ class Player extends FlxSprite
 	private function playMovementAnimation(preferred:String, fallback:String):Void
 	{
 		var animationName:String = preferred;
+		if (!animation.exists(animationName)) animationName = fallback;
+		if (!animation.exists(animationName)) return;
 
-		if (!animation.exists(animationName))
-			animationName = fallback;
-
-		if (!animation.exists(animationName))
-			return;
-
-		if (lastMovementAnimation == animationName) {
-			return;
-		}
+		if (lastMovementAnimation == animationName) return;
 
 		playAnim(animationName);
 		lastMovementAnimation = animationName;
@@ -402,7 +387,8 @@ class Player extends FlxSprite
 
 	public function updateGroundState():Void
 	{
-		grounded = isTouching(FlxDirectionFlags.FLOOR) || touching.has(FlxDirectionFlags.FLOOR) || (velocity.y == 0);
+		grounded = isTouching(FlxDirectionFlags.FLOOR) || touching.has(FlxDirectionFlags.FLOOR);
+		
 		if (grounded)
 		{
 			isJumping = false;
@@ -412,25 +398,20 @@ class Player extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-	    if (!animation.exists(AnimName))
-	        return;
+	    if (!animation.exists(AnimName)) return;
 	
 	    animation.play(AnimName, Force, Reversed, Frame);
 	
 	    if (animScales.exists(AnimName))
 	    {
-	        var daScale:Float = animScales.get(AnimName);
-	        scale.set(daScale, daScale);
+	        scale.set(animScales.get(AnimName), animScales.get(AnimName));
 	        updateHitbox();
 	    }
 	
 	    if (animOffsets.exists(AnimName))
-	    {
-	        var daOffset = animOffsets.get(AnimName);
-	        offset.set(daOffset[0], daOffset[1]);
-	    } else {
+	        offset.set(animOffsets.get(AnimName)[0], animOffsets.get(AnimName)[1]);
+	    else
 	        offset.set(0, 0);
-	    }
 	}
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0):Void
@@ -443,12 +424,10 @@ class Player extends FlxSprite
 		super.update(elapsed);
 
 		if (velocity.y > maxFallSpeed) velocity.y = maxFallSpeed;
-		if (Math.abs(velocity.x) <= 10 && (grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0))
-		{
+		if (Math.abs(velocity.x) <= 10 && (grounded || isTouching(FlxDirectionFlags.FLOOR)))
 			idleTimer += elapsed;
-		} else {
+		else
 			idleTimer = 0;
-		}
 	}
 
 	public function updatePartnerAI(elapsed:Float):Void
@@ -457,17 +436,14 @@ class Player extends FlxSprite
 
 		var distX = followTarget.x - x;
 		var distY = followTarget.y - y;
-
 		var targetOffsetX = 50 * (followTarget.flipX ? -1 : 1);
 		var idealX = followTarget.x + targetOffsetX;
 		var idealY = followTarget.y;
-
 		var diffX = idealX - x;
 		var diffY = idealY - y;
 
 		flipX = followTarget.flipX;
-
-		var isOnGround = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
+		var isOnGround = grounded || isTouching(FlxDirectionFlags.FLOOR);
 
 		if (followTarget.hasJumped && isOnGround && Math.abs(distX) < 200 && Math.abs(distY) < 150)
 		{
@@ -483,8 +459,7 @@ class Player extends FlxSprite
 			var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * elapsed / Math.max(moveSpeed, 1));
 			velocity.x = FlxMath.lerp(velocity.x, dir * (moveSpeed * 0.9), accelerationBlend);
 		} else {
-			if (velocity.x > 0)
-			{
+			if (velocity.x > 0) {
 				velocity.x -= moveFriction * elapsed;
 				if (velocity.x < 0) velocity.x = 0;
 			} else if (velocity.x < 0) {
@@ -493,11 +468,11 @@ class Player extends FlxSprite
 			}
 		}
 
-		if (isJumping && !isOnGround || hasJumped && !isOnGround)
-		{
-			playMovementAnimation('spinning', 'jump');
+		if (isOnGround && Math.abs(velocity.x) > moveSpeed) {
+			playMovementAnimation('spinning', 'down');
 		} else if (!isOnGround) {
-			playMovementAnimation('fall', 'idle');
+			if (isJumping || hasJumped) playMovementAnimation('spinning', 'jump');
+			else playMovementAnimation('fall', 'idle');
 		} else if (Math.abs(velocity.x) > 10) {
 			playMovementAnimation('walking', 'walk');
 		} else {
