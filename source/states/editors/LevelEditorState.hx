@@ -524,7 +524,7 @@ class LevelEditorState extends GameState
 				loadLevelFromPath(path);
 			}
 		});
-		dialog.browse(FileDialogType.OPEN, ["json"]);
+		dialog.browse(FileDialogType.OPEN, "*.json"); 
 	}
 
 	private function loadLevelFromPath(path:String):Void
@@ -622,6 +622,7 @@ class LevelEditorState extends GameState
 
 	private function refreshToolText():Void
 	{
-		toolText.text = 'TOOL: $currentTool   CLICK LOAD/SAVE   CTRL+Z Undo   CTRL+Y Redo   BACK Exit';
+	    var saveLoadHint:String = #if mobile "CLICK LOAD/SAVE" #else "CTRL+S Save   CTRL+L Load" #end;
+	    toolText.text = 'TOOL: $currentTool   $saveLoadHint   CTRL+Z Undo   CTRL+Y Redo   BACK Exit';
 	}
 }
