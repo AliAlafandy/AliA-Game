@@ -6,8 +6,8 @@ class AudioSubState extends BaseOptionsMenu
 {
     public function new()
     {
-		heading = "Audio";
-    	super();
+		heading.text = "Audio";
+    	super("Audio");
     }
 
     override public function buildRows():Void
