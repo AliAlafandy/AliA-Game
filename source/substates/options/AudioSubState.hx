@@ -6,7 +6,7 @@ class AudioSubState extends BaseOptionsMenu
 {
     public function new()
     {
-		heading.text = "Audio";
+		title = "Audio";
     	super("Audio");
     }
 
