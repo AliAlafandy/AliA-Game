@@ -276,7 +276,10 @@ class BaseOptionsMenu extends GameSubState
 
             // Boolean options use ENTER, never LEFT/RIGHT.
             if ((controls.UI_LEFT_P || controls.UI_RIGHT_P) && kind != "bool" && kind != "mute" && kind != "action")
+			{
                 changeValue(row, controls.UI_LEFT_P ? -1 : 1);
+				FlxG.sound.play(Paths.sound('scroll_sound'));
+			}
 
             if (controls.ACCEPT)
             {
@@ -289,6 +292,7 @@ class BaseOptionsMenu extends GameSubState
                     else if (Reflect.hasField(row, "onAccept") && row.onAccept != null)
                         row.onAccept();
                 }
+				FlxG.sound.play(Paths.sound('scroll_sound'));
             }
         }
         if (controls.BACK)
