@@ -18,13 +18,13 @@ class BaseOptionsMenu extends GameSubState
     public function new(category:String)
     {
         this.category = category;
+		if(title == null) title = "Options";
+        super();
 		#if mobile
 		// controls.isInSubstate = true;
 		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
 		#end
-		if(title == null) title = "Options";
-        super();
         buildRows();
     }
 
