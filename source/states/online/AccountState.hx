@@ -10,6 +10,7 @@ import openfl.events.Event;
 import openfl.events.TextEvent;
 
 import states.GameState;
+import states.online.OnlineState;
 import states.options.OptionsState;
 
 class AccountState extends GameState
@@ -240,75 +241,5 @@ class AccountState extends GameState
             onError(error);
         };
         req.request(haxe.Json.stringify(payload));
-    }
-}
-
-class TextInputField
-{
-    public var value:String = "";
-    public var maxLength:Int = 24;
-    public var active:Bool = false;
-    public var display:FlxText;
-    public var placeholder:String;
-
-    public function new(x:Float, y:Float, width:Int, placeholder:String)
-    {
-        this.placeholder = placeholder;
-        display = new FlxText(x, y, width, "", 16);
-        display.setFormat(null, 16, FlxColor.WHITE, CENTER);
-        display.borderStyle = OUTLINE;
-        display.borderColor = FlxColor.BLACK;
-        display.borderSize = 2;
-        refresh();
-    }
-
-    public function focus():Void
-    {
-        active = true;
-        refresh();
-    }
-
-    public function unfocus():Void
-    {
-        active = false;
-        refresh();
-    }
-
-    public function handleChar(char:String):Void
-    {
-        if (!active)
-            return;
-
-        if (value.length < maxLength && char.charCodeAt(0) >= 32)
-        {
-            value += char;
-            refresh();
-        }
-    }
-
-    public function handleBackspace():Void
-    {
-        if (!active || value.length == 0)
-            return;
-
-        value = value.substr(0, value.length - 1);
-        refresh();
-    }
-
-    public function clear():Void
-    {
-        value = "";
-        refresh();
-    }
-
-    private function refresh():Void
-    {
-        var shown = value.length > 0 ? value : placeholder;
-        if (placeholder == "Password" && value.length > 0) {
-            shown = "";
-            for (i in 0...value.length) shown += "*";
-        }
-        display.text = (active ? "> " : "  ") + shown + (active ? "_" : "");
-        display.color = value.length > 0 ? FlxColor.WHITE : FlxColor.GRAY;
     }
 }
