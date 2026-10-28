@@ -124,7 +124,7 @@ class OptionsState extends GameState
             output += prefix + options[i] + prefix2 + '\n';
         }
 
-        output += '\nUP / DOWN - Select\nENTER - Open\nESC - Back';
+        // output += '\nUP / DOWN - Select\nENTER - Open\nESC - Back';
 
         text.text = output;
         text.screenCenter();
