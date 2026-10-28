@@ -18,8 +18,8 @@ import states.online.Network;
 import states.online.MultiPlayer;
 import states.online.MultiPlayer.RemotePlayer;
 import states.online.MultiPlayer.ConnectionState;
-import states.online.mods.ModInstaller;
-import states.online.mods.ModInstaller.InstallResult;
+import states.online.mods.states.online.mods.ModInstaller;
+import states.online.mods.states.online.mods.ModInstaller.InstallResult;
 
 enum abstract OnlineTab(Int)
 {
@@ -394,7 +394,7 @@ class OnlineState extends GameState
 	#if sys
 	private function handleInstall(zipPath:String, modData:Dynamic, btn:FlxButton):Void
 	{
-		var meta:ModInstaller.ModMeta = {
+		var meta:states.online.mods.ModInstaller.ModMeta = {
 			id: modData.id != null ? modData.id : modData.download_url.split("/").pop().split(".").shift(),
 			name: modData.name,
 			version: "1.0.0",
@@ -402,7 +402,7 @@ class OnlineState extends GameState
 			description: modData.description != null ? modData.description : ""
 		};
 
-		var result = ModInstaller.install(zipPath, false, meta);
+		var result = states.online.mods.ModInstaller.install(zipPath, false, meta);
 
 		switch (result)
 		{
@@ -414,7 +414,7 @@ class OnlineState extends GameState
 				ModLoader.loadAllMods();
 				btn.onUp.callback = function()
 				{
-					var overwrite = ModInstaller.install(zipPath, true, meta);
+					var overwrite = states.online.mods.ModInstaller.install(zipPath, true, meta);
 					switch (overwrite)
 					{
 						case Success(_):
