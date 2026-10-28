@@ -6,7 +6,7 @@ class GraphicsSubState extends BaseOptionsMenu
 {
     public function new()
     {
-        heading.text = "Graphics";
+        title = "Graphics";
         super("Graphics");
     }
 
