@@ -114,7 +114,7 @@ class SelectState extends GameState
 		if (ClientPrefs.data.debugSecret) {
 			if (FlxG.keys.justPressed.E #if mobile || customDPad.powerButton.justPressed #end)
 			{
-				openSubState(new GameplaySettingsState());
+				openSubState(new GameplaySettingsSubState());
 			}
 		}
     }
