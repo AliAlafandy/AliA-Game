@@ -330,7 +330,7 @@ class Player extends FlxSprite
 		}
 	}
 
-	public function updateMovementAnimation(upPressed:Bool, downPressed:Bool):Void
+	public function updateMovementAnimation(jumpPressed:Bool, upPressed:Bool, downPressed:Bool):Void
 	{
 		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
 	
