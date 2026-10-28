@@ -16,6 +16,7 @@ class BaseOptionsMenu extends GameSubState
     public function new(category:String)
     {
         this.category = category;
+		if(heading == null) heading = 'Options';
         super();
         #if mobile
 		// controls.isInSubstate = true;
@@ -87,14 +88,14 @@ class BaseOptionsMenu extends GameSubState
         shade.alpha = 0.78;
         add(shade);
 
-        heading = new FlxText(0, 24, FlxG.width, category.toUpperCase() + " SETTINGS", 32);
+        heading = new FlxText(0, 24, FlxG.width, heading, 32);
         heading.setFormat(null, 32, FlxColor.WHITE, CENTER);
         add(heading);
 
         for (i in 0...rows.length)
         {
-            var label = new FlxText(70, 100 + i * 42, FlxG.width - 140, "", 22);
-            label.setFormat(null, 22, FlxColor.WHITE, LEFT);
+            var label = new FlxText(70, 130 + i * 42, FlxG.width - 140, "", 22);
+            label.setFormat(null, 22, FlxColor.WHITE, CENTER);
             label.scrollFactor.set();
             labels.push(label);
             add(label);
@@ -239,7 +240,7 @@ class BaseOptionsMenu extends GameSubState
             labels[i].text = (i == selected ? "> " : "  ") + row.label + ": " + shown;
             labels[i].color = i == selected ? FlxColor.YELLOW : FlxColor.WHITE;
         }
-        if (rows.length > 0) help.text = rows[selected].description + "\nLEFT/RIGHT: change   ENTER: toggle   ESC/BACK: return";
+        if (rows.length > 0) help.text = rows[selected].description; // + "\nLEFT/RIGHT: change   ENTER: toggle   ESC/BACK: return"
     }
 
     override function update(elapsed:Float):Void
