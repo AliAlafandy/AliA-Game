@@ -28,22 +28,44 @@ class BaseOptionsMenu extends GameSubState
     public function buildRows():Void {}
 
     public function addBool(label:String, field:String, description:String):Void
-        rows.push({label:label, field:field, kind:"bool", description:description});
+        rows.push({
+			label:label,
+			field:field,
+			kind:"bool",
+			description:description
+		});
 
     public function addInt(label:String, field:String, min:Int, max:Int, step:Int, description:String):Void
-        rows.push({label:label, field:field, kind:"int", min:min, max:max, step:step, description:description});
+        rows.push({
+			label:label,
+			field:field,
+			kind:"int",
+			min:min,
+			max:max,
+			step:step,
+			description:description
+		});
 
     public function addFloat(label:String, field:String, min:Float, max:Float, step:Float, description:String):Void
-        rows.push({label:label, field:field, kind:"float", min:min, max:max, step:step, description:description});
+        rows.push({
+			label:label,
+			field:field,
+			kind:"float",
+			min:min,
+			max:max,
+			step:step,
+			description:description
+		});
 
     public function addString(label:String, field:String, values:Array<String>, description:String):Void
-        rows.push({label:label, field:field, kind:"string", values:values, description:description});
+        rows.push({
+			label:label,
+			field:field,
+			kind:"string",
+			values:values,
+			description:description
+		});
 
-    /**
-     * Adds an option whose value type is determined at runtime.
-     * Supply values to make it cycle through a custom list; otherwise bools
-     * toggle and numeric values use the supplied min/max/step metadata.
-     */
     public function addDynamic(label:String, field:String, description:String, ?values:Array<Dynamic>, ?min:Float, ?max:Float, ?step:Float):Void
     {
         rows.push({
@@ -134,6 +156,7 @@ class BaseOptionsMenu extends GameSubState
             trace("Sign In action triggered!");
             return;
         }
+
         var value:Dynamic = readValue(row);
         var kind:String = row.kind;
         if (kind == "dynamic")
@@ -173,11 +196,12 @@ class BaseOptionsMenu extends GameSubState
                 idx = Std.int((idx + direction + row.values.length) % row.values.length);
                 writeValue(row, row.values[idx]);
         }
+
         ClientPrefs.saveSettings();
         refresh();
     }
 
-        function refresh():Void
+    function refresh():Void
     {
         for (i in 0...rows.length)
         {
