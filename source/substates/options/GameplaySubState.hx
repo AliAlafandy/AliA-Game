@@ -6,8 +6,8 @@ class GameplaySubState extends BaseOptionsMenu
 {
     public function new()
     {
-        heading = "GamePlay";
-        super();
+        heading.text = "GamePlay";
+        super("Gameplay");
     }
 
     override public function buildRows():Void
