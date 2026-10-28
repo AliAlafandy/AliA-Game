@@ -106,9 +106,7 @@ class Player extends FlxSprite
 				loadCharacterFile(parsed);
 				loaded = true;
 				trace('[Player] Loaded character JSON: $jsonKey');
-			}
-			else
-			{
+			} else {
 				var lowerKey:String = curCharacter.toLowerCase();
 				var lowerJsonKey:String = 'characters/$lowerKey/$lowerKey.json';
 				jsonText = Paths.getTextFromFile(lowerJsonKey, false);
@@ -120,9 +118,7 @@ class Player extends FlxSprite
 					trace('[Player] Loaded character JSON (Lowercase Fallback): $lowerJsonKey');
 				}
 			}
-		}
-		catch (e:Dynamic)
-		{
+		} catch (e:Dynamic) {
 			trace('[Player] Could not parse character "$curCharacter": $e');
 		}
 
@@ -137,9 +133,7 @@ class Player extends FlxSprite
 		{
 			playAnim('idle');
 			lastMovementAnimation = 'idle';
-		}
-		else if (animationsArray != null && animationsArray.length > 0)
-		{
+		} else if (animationsArray != null && animationsArray.length > 0) {
 			var firstAnimation:String = animationsArray[0].name;
 			if (animation.exists(firstAnimation))
 			{
@@ -245,34 +239,26 @@ class Player extends FlxSprite
 		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR);
 		if (isOnGround && Math.abs(velocity.x) <= 20)
 		{
-			if (downPressed && !jumpPressed)
+			if (downPressed && jumpPressed)
 			{
 				isSpindashing = true;
 				velocity.x = 0;
-			}
-			else if (isSpindashing && jumpPressed)
-			{
+			} else if (isSpindashing && jumpPressed) {
 				if (spindashCharge < spindashMaxCharge)
 				{
 					spindashCharge++;
 				}
-			}
-			else if (!downPressed && isSpindashing)
-			{
+			} else if (!downPressed && isSpindashing) {
 				isSpindashing = false;
 				var launchSpeed = 900 + (spindashCharge * 100);
 				var launchDir = moveDirection != 0 ? moveDirection : (flipX ? -1 : 1);
 				velocity.x = launchDir * launchSpeed;
 				spindashCharge = 0;
-			}
-			else
-			{
+			} else {
 				isSpindashing = false;
 				spindashCharge = 0;
 			}
-		}
-		else
-		{
+		} else {
 			isSpindashing = false;
 			spindashCharge = 0;
 		}
@@ -324,7 +310,7 @@ class Player extends FlxSprite
 	
 		if (isSpindashing || (isOnGround && Math.abs(velocity.x) > moveSpeed))
 		{
-			playMovementAnimation('spinning', 'down');
+			playMovementAnimation('spinning', 'idle');
 			return;
 		}
 
@@ -333,9 +319,7 @@ class Player extends FlxSprite
 			if (isJumping || hasJumped)
 			{
 				playMovementAnimation('spinning', 'jump');
-			}
-			else
-			{
+			} else {
 				playMovementAnimation('fall', 'idle');
 			}
 			return;
@@ -469,7 +453,7 @@ class Player extends FlxSprite
 		}
 
 		if (isOnGround && Math.abs(velocity.x) > moveSpeed) {
-			playMovementAnimation('spinning', 'down');
+			playMovementAnimation('spinning', 'idle');
 		} else if (!isOnGround) {
 			if (isJumping || hasJumped) playMovementAnimation('spinning', 'jump');
 			else playMovementAnimation('fall', 'idle');
