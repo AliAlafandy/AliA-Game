@@ -5,7 +5,6 @@ import states.options.BaseOptionsMenu;
 class DataSubState extends BaseOptionsMenu
 {
     #if android
-    var storageTypes:Array<String> = ["EXTERNAL_DATA", "EXTERNAL_OBB", "EXTERNAL_MEDIA", "EXTERNAL"];
 	var externalPaths:Array<String> = StorageUtil.checkExternalPaths(true);
 	final lastStorageType:String = ClientPrefs.data.storageType;
     #end
@@ -40,8 +39,8 @@ class DataSubState extends BaseOptionsMenu
         addString(
 			"Storage Type",
 			"storageType",
-			storageTypes,
-			"Storage location used by the Android build."
+			"Storage location used by the Android build.",
+			["EXTERNAL_DATA", "EXTERNAL_OBB", "EXTERNAL_MEDIA", "EXTERNAL"]
 		);
         #end
     }
