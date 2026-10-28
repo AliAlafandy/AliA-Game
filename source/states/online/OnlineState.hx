@@ -340,7 +340,7 @@ class OnlineState extends GameState
 			if (isAlreadyInstalled) {
 				btn.text = "Installed";
 			} else {
-				btn.onUp.callback = function() downloadMod(mod.download_url, btn);
+				btn.onUp.callback = function() downloadMod(mod, btn);
 			}
 
 			listGroup.add(btn);
@@ -353,29 +353,29 @@ class OnlineState extends GameState
 		listGroup.y = 0;
 	}
 
-	private function downloadMod(url:String, btn:FlxButton):Void
+	private function downloadMod(mod:Dynamic, btn:FlxButton):Void
 	{
 		#if sys
 		btn.onUp.callback = null;
 		btn.text = "0%";
 
 		var dir = getModsDirectory();
-		var fileName = url.split("/").pop();
+		var fileName = mod.download_url.split("/").pop();
 		var savePath = dir + "/" + fileName;
 
-		Network.downloadFile(url, savePath,
+		Network.downloadFile(mod.download_url, savePath,
 			function(loaded, total)
 			{
 				btn.text = total > 0 ? Std.int(loaded / total * 100) + "%" : "...";
 			},
 			function(path)
 			{
-				handleInstall(path, btn);
+				handleInstall(path, mod, btn);
 			},
 			function(reason)
 			{
 				btn.text = "Failed";
-				btn.onUp.callback = function() downloadMod(url, btn);
+				btn.onUp.callback = function() downloadMod(mod, btn);
 			}
 		);
 		#else
@@ -384,21 +384,29 @@ class OnlineState extends GameState
 	}
 
 	#if sys
-	private function handleInstall(zipPath:String, btn:FlxButton):Void
+	private function handleInstall(zipPath:String, modData:Dynamic, btn:FlxButton):Void
 	{
-		var result = ModInstaller.install(zipPath);
+		var meta:ModInstaller.ModMeta = {
+			id: modData.id != null ? modData.id : modData.download_url.split("/").pop().split(".").shift(),
+			name: modData.name,
+			version: "1.0.0",
+			author: modData.uploader != null ? modData.uploader : "Unknown",
+			description: modData.description != null ? modData.description : ""
+		};
+
+		var result = ModInstaller.install(zipPath, false, meta);
 
 		switch (result)
 		{
-			case Success(meta):
+			case Success(m):
 				ModLoader.loadAllMods();
 				btn.text = "Installed";
 
-			case AlreadyInstalled(meta):
+			case AlreadyInstalled(m):
 				ModLoader.loadAllMods();
 				btn.onUp.callback = function()
 				{
-					var overwrite = ModInstaller.install(zipPath, true);
+					var overwrite = ModInstaller.install(zipPath, true, meta);
 					switch (overwrite)
 					{
 						case Success(_):
