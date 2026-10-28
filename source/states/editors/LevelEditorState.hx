@@ -524,7 +524,7 @@ class LevelEditorState extends GameState
 				loadLevelFromPath(path);
 			}
 		});
-		dialog.browse(FileDialogType.OPEN, ".json"); 
+		dialog.browse(FileDialogType.OPEN, ".bin"); 
 	}
 
 	private function loadLevelFromPath(path:String):Void
@@ -533,13 +533,43 @@ class LevelEditorState extends GameState
 		if (!sys.FileSystem.exists(path))
 			return;
 
-		var content = sys.io.File.getContent(path);
-		var data:LevelData = haxe.Json.parse(content);
+		var bytes = sys.io.File.getBytes(path);
+		var input = new haxe.io.BytesInput(bytes);
+		var magic = input.readString(4);
+		if (magic != "ALVL")
+		{
+			trace("Invalid level BIN: bad magic header.");
+			return;
+		}
 
-		levelName = data.name;
-		cols = data.cols;
-		rows = data.rows;
-		tileGrid = data.tiles;
+		var version = input.readByte();
+		if (version != 1)
+		{
+			trace("Unsupported level BIN version: " + version);
+			return;
+		}
+
+		var loadedCols = input.readInt32();
+		var loadedRows = input.readInt32();
+		var loadedTileSize = input.readInt32();
+		var nameLength = input.readInt32();
+		if (loadedCols < 1 || loadedCols > 256 || loadedRows < 1 || loadedRows > 256
+			|| loadedTileSize < 1 || loadedTileSize > 256 || nameLength < 0 || nameLength > 1024)
+		{
+			trace("Invalid level BIN dimensions or name length.");
+			return;
+		}
+		levelName = input.readString(nameLength);
+		cols = loadedCols;
+		rows = loadedRows;
+		tileGrid = [];
+		for (y in 0...rows)
+		{
+			var row:Array<Int> = [];
+			for (x in 0...cols)
+				row.push(input.readByte());
+			tileGrid.push(row);
+		}
 
 		if (tileSprites != null)
 		{
@@ -567,19 +597,24 @@ class LevelEditorState extends GameState
 	private function saveLevel():Void
 	{
 		#if sys
-		var data:LevelData = {
-			name: levelName,
-			cols: cols,
-			rows: rows,
-			tileSize: TILE_SIZE,
-			tiles: tileGrid
-		};
-
 		var directory = 'levels';
 		if (!FileSystem.exists(directory))
 			FileSystem.createDirectory(directory);
 
-		File.saveContent('$directory/$levelName.json', haxe.Json.stringify(data, null, '\t'));
+		var output = new haxe.io.BytesBuffer();
+		output.addString("ALVL"); // AliA-Game Level binary format
+		output.addByte(1); // format version
+		output.addInt32(cols);
+		output.addInt32(rows);
+		output.addInt32(TILE_SIZE);
+		var nameBytes = haxe.io.Bytes.ofString(levelName);
+		output.addInt32(nameBytes.length);
+		output.add(nameBytes);
+		for (y in 0...rows)
+			for (x in 0...cols)
+				output.addByte(tileGrid[y][x] & 0xFF);
+
+		File.saveBytes('$directory/$levelName.bin', output.getBytes());
 		#end
 	}
 
