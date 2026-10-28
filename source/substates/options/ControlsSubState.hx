@@ -6,7 +6,7 @@ class ControlsSubState extends BaseOptionsMenu
 {
     public function new()
     {
-        heading.text = "Controls";
+        title = "Controls";
         super("Controls");
     }
 
