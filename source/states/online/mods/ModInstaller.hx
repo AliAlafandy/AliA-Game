@@ -33,7 +33,7 @@ class ModInstaller {
     static inline var MODS_DIR_NAME:String = "mods";
     static inline var META_FILENAME:String = "mod.json";
 
-    public static function install(zipPath:String, ?overwrite:Bool = false):InstallResult {
+    public static function install(zipPath:String, ?overwrite:Bool = false, ?providedMeta:ModMeta = null):InstallResult {
         if (!FileSystem.exists(zipPath)) {
             return Failed("ZIP file not found: " + zipPath);
         }
@@ -62,20 +62,27 @@ class ModInstaller {
         } catch (e:Dynamic) {}
 
         var modDirWithMeta = findModDirectoryWithMeta(tempDir);
-        if (modDirWithMeta == null) {
-            removeDirectory(tempDir);
-            return MissingMeta;
-        }
+        var actualModDir = modDirWithMeta != null ? modDirWithMeta : tempDir;
 
         var meta:ModMeta = null;
         try {
-            var content = File.getContent(modDirWithMeta + "/" + META_FILENAME);
-            meta = Json.parse(content);
-            if (meta.id == null || meta.name == null || meta.version == null) {
-                removeDirectory(tempDir);
-                return MissingMeta;
+            if (FileSystem.exists(actualModDir + "/" + META_FILENAME)) {
+                var content = File.getContent(actualModDir + "/" + META_FILENAME);
+                meta = Json.parse(content);
             }
-        } catch (e:Dynamic) {
+        } catch (e:Dynamic) {}
+
+        if (meta == null && providedMeta != null) {
+            meta = providedMeta;
+            try {
+                File.saveContent(actualModDir + "/" + META_FILENAME, Json.stringify(meta));
+            } catch (e:Dynamic) {
+                removeDirectory(tempDir);
+                return Failed("Could not write mod.json: " + Std.string(e));
+            }
+        }
+
+        if (meta == null || meta.id == null || meta.name == null || meta.version == null) {
             removeDirectory(tempDir);
             return MissingMeta;
         }
@@ -92,11 +99,11 @@ class ModInstaller {
                 removeDirectory(targetDir);
             }
 
-            if (modDirWithMeta == tempDir) {
+            if (actualModDir == tempDir) {
                 FileSystem.rename(tempDir, targetDir);
             } else {
                 FileSystem.createDirectory(targetDir);
-                moveDirectoryContents(modDirWithMeta, targetDir);
+                moveDirectoryContents(actualModDir, targetDir);
                 removeDirectory(tempDir);
             }
         } catch (e:Dynamic) {
