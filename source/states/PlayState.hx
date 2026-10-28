@@ -267,7 +267,24 @@ class PlayState extends GameState
 			setupOnlineMode();
 
 		#if ELLAWY_ALLOWED
-		callOnEllawyScripts('onCreate', []);
+		var scriptResult = callOnEllawyScripts('onCreate', []);
+		if (scriptResult != null && Reflect.hasField(scriptResult, "charLoad")) 
+		{
+			var charPath:String = Reflect.field(scriptResult, "charLoad");
+			var charName:String = charPath.split("/").pop(); 
+			remove(player, true);
+			player.destroy();
+			player = new Player(500, 130, charName, false);
+			player.updateHitbox();
+			player.y = groundY - player.height;
+			player.velocity.set(0, 0);
+			player.grounded = true;
+			player.touching = FlxDirectionFlags.FLOOR;
+			add(player);
+			
+			FlxG.camera.follow(player, LOCKON, 0.05);
+			addTextToDebug("Loaded custom character via Ellawy: " + charName, FlxColor.GREEN);
+		}
 		#end
 	}
 
