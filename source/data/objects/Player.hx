@@ -330,7 +330,7 @@ class Player extends FlxSprite
 		}
 	}
 
-	public function updateMovementAnimation(upPressed:Bool, downPressed:Bool):Void
+	public function updateMovementAnimation(upPressed:Bool, downPressed:Bool, jumpPressed:Bool):Void
 	{
 		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
 	
@@ -349,7 +349,7 @@ class Player extends FlxSprite
 				playMovementAnimation('down', 'idle');
 				return;
 			}
-			if (downPressed && isJumping) {
+			if (downPressed && jumpPressed) {
 				playMovementAnimation('spinning', 'jump');
 				return;
 			}
