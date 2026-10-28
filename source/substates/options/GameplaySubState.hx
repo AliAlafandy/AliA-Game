@@ -6,7 +6,7 @@ class GameplaySubState extends BaseOptionsMenu
 {
     public function new()
     {
-        heading.text = "GamePlay";
+        title = "GamePlay";
         super("Gameplay");
     }
 
