@@ -223,7 +223,7 @@ class MenuState extends GameState
 	        } else {
 	            item.alpha = 0.6;
 	            item.scale.set(0.75, 0.75);
-				item.x = item.x + 30;
+				if (curSelected == i) item.x = item.x + 30;
 	        }
 	        
 	        item.updateHitbox();
