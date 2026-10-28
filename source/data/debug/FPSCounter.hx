@@ -1,15 +1,15 @@
 package data.debug;
 
 import flixel.FlxG;
-import flixel.util.FlxStringUtil;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
-import openfl.text.TextFormatAlign;
 import openfl.system.System as OpenFlSystem;
 import lime.system.System as LimeSystem;
-import lime.ui.KeyCode;
-import lime.app.Application;
 
+/**
+	The FPS class provides an easy-to-use monitor to display
+	the current frame rate of an OpenFL project
+**/
 #if cpp
 #if windows
 @:cppFileCode('#include <windows.h>')
@@ -21,29 +21,23 @@ import lime.app.Application;
 #end
 class FPSCounter extends TextField
 {
+	/**
+		The current frame rate, expressed using frames-per-second
+	**/
 	public var currentFPS(default, null):Int;
-	public var minFPS(default, null):Int;
-	public var maxFPS(default, null):Int;
-	public var avgFPS(get, never):Float;
 
-	public var frameTimeMs(default, null):Float;
-
+	/**
+		The current memory usage (WARNING: this is NOT your total program memory usage, rather it shows the garbage collector memory)
+	**/
 	public var memoryMegas(get, never):Float;
-	public var peakMemoryMegas(default, null):Float;
 
-	public var _visible:Bool = true;
-	public var updateInterval:Float = 500;
+	@:noCompletion private var times:Array<Float>;
 
 	public var os:String = '';
+
 	public var engineVersion:String = '';
 
-	@:noCompletion private var frameCount:Int;
-	@:noCompletion private var elapsedSinceUpdate:Float;
-	@:noCompletion private var fpsSum:Float;
-	@:noCompletion private var fpsSamples:Int;
-	@:noCompletion private var deltaTimeout:Float;
-
-	public function new(x:Float = 10, y:Float = 10, color:Int = 0xFFFFFFFF)
+	public function new(x:Float = 10, y:Float = 10, color:Int = 0x000000)
 	{
 		super();
 
@@ -53,116 +47,57 @@ class FPSCounter extends TextField
 			os = '\nOS: ${LimeSystem.platformName}' #if cpp + ' ${getArch() != 'Unknown' ? getArch() : ''}' #end + ' - ${LimeSystem.platformVersion}';
 
 		engineVersion = '\nAli-A Game v' + Application.current.meta.get('version');
-
+		
 		positionFPS(x, y);
 
 		currentFPS = 0;
-		minFPS = 0;
-		maxFPS = 0;
-		frameTimeMs = 0;
-		peakMemoryMegas = 0;
-
-		frameCount = 0;
-		elapsedSinceUpdate = 0;
-		fpsSum = 0;
-		fpsSamples = 0;
-		deltaTimeout = 0;
-
 		selectable = false;
 		mouseEnabled = false;
-		multiline = true;
-		width = FlxG.width;
 		defaultTextFormat = new TextFormat("_sans", 14, color);
+		width = FlxG.width;
+		multiline = true;
 		text = "FPS: ";
 
-		visible = true;
+		times = [];
 	}
 
+	var deltaTimeout:Float = 0.0;
+
+	// Event Handlers
 	private override function __enterFrame(deltaTime:Float):Void
 	{
-		frameCount++;
-		elapsedSinceUpdate += deltaTime;
-		frameTimeMs = deltaTime;
-
-		final mem:Float = memoryMegas;
-		if (mem > peakMemoryMegas)
-			peakMemoryMegas = mem;
-
-		if (elapsedSinceUpdate < updateInterval)
+		// prevents the overlay from updating every frame, why would you need to anyways
+		if (deltaTimeout > 1000) {
+			deltaTimeout = 0.0;
 			return;
+		}
 
-		currentFPS = Math.round(frameCount / (elapsedSinceUpdate / 1000));
-		currentFPS = currentFPS > FlxG.updateFramerate ? FlxG.updateFramerate : currentFPS;
+		final now:Float = haxe.Timer.stamp() * 1000;
+		times.push(now);
+		while (times[0] < now - 1000) times.shift();
 
-		if (minFPS == 0 || currentFPS < minFPS)
-			minFPS = currentFPS;
-		if (currentFPS > maxFPS)
-			maxFPS = currentFPS;
-
-		fpsSum += currentFPS;
-		fpsSamples++;
-
-		frameCount = 0;
-		elapsedSinceUpdate = 0;
-
-		if (visible)
-			updateText();
+		currentFPS = times.length < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;		
+		updateText();
+		deltaTimeout += deltaTime;
 	}
 
-	public dynamic function updateText():Void
+	public dynamic function updateText():Void // so people can override it in hscript
 	{
-		text =
-			'FPS: $currentFPS' + // (min $minFPS / max $maxFPS / avg ${Math.round(avgFPS)})
-			// '\nFrame: ${FlxStringUtil.formatBytes(0) != null ? Math.round(frameTimeMs * 100) / 100 : frameTimeMs}ms' +
-			'\nMemory: ${FlxStringUtil.formatBytes(memoryMegas)}' + // (peak ${FlxStringUtil.formatBytes(peakMemoryMegas)})
-			// os +
-			engineVersion;
+		text = 
+		'FPS: $currentFPS' + 
+		'\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}' +
+		// os +
+		engineVersion;
 
 		textColor = 0xFFFFFFFF;
 		if (currentFPS < FlxG.drawFramerate * 0.5)
 			textColor = 0xFFFF0000;
 	}
 
-	public function resetStats():Void
-	{
-		minFPS = 0;
-		maxFPS = 0;
-		fpsSum = 0;
-		fpsSamples = 0;
-		peakMemoryMegas = memoryMegas;
-	}
-
-	public function toggle():Void
-	{
-		visible = !visible;
-	}
-
-	inline function get_avgFPS():Float
-		return fpsSamples > 0 ? fpsSum / fpsSamples : currentFPS;
-
 	inline function get_memoryMegas():Float
 		return cast(OpenFlSystem.totalMemory, UInt);
 
-	override function get_visible():Bool
-	{
-		return _visible;
-	}
-
-	override function set_visible(value:Bool):Bool
-	{
-		if (_visible == value) return value;
-		_visible = value;
-		
-		if (!value)
-			text = "";
-		else
-			updateText();
-			
-		return super.set_visible(value);
-	}
-
-	public inline function positionFPS(X:Float, Y:Float, ?scale:Float = 1)
-	{
+	public inline function positionFPS(X:Float, Y:Float, ?scale:Float = 1){
 		scaleX = scaleY = #if android (scale > 1 ? scale : 1) #else (scale < 1 ? scale : 1) #end;
 		x = FlxG.game.x + X;
 		y = FlxG.game.y + Y;
