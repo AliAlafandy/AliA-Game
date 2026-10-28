@@ -8,7 +8,7 @@
 	<SubTexture name="Ellawy Walking0002" x="1558" y="0" width="314" height="596" frameX="-177" frameY="-20" frameWidth="640" frameHeight="640"/>
 	<SubTexture name="Ellawy Walking0003" x="1558" y="0" width="314" height="596" frameX="-177" frameY="-20" frameWidth="640" frameHeight="640"/>
 	<SubTexture name="Ellawy Running0000" x="475" y="0" width="405" height="535" frameX="-75" frameY="-20" frameWidth="640" frameHeight="640"/>
-	<SubTexture name="Ellawy Jumping0000" x="1227" y="586" width="211" height="213" frameX="-213" frameY="-174" frameWidth="640" frameHeight="640"/>
+	<SubTexture name="Ellawy Spinning0000" x="1227" y="586" width="211" height="213" frameX="-213" frameY="-174" frameWidth="640" frameHeight="640"/>
 	<SubTexture name="Ellawy LookUP0000" x="1872" y="0" width="204" height="600" frameX="-211" frameY="-16" frameWidth="640" frameHeight="640"/>
 	<SubTexture name="Ellawy Under0000" x="1872" y="1196" width="203" height="447" frameX="-215" frameY="-35" frameWidth="640" frameHeight="640"/>
 	<SubTexture name="Ellawy Flash0000" x="475" y="0" width="405" height="535" frameX="-75" frameY="-20" frameWidth="640" frameHeight="640"/>
