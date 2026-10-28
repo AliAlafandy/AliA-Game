@@ -271,23 +271,69 @@ class PlayState extends GameState
 		trace('Global mods: ${Mods.getGlobalMods()}');
 		trace('All mod directories: ${Mods.getModDirectories()}');
 		
-		var scriptResult = callOnEllawyScripts('onCreate', []);
-		if (scriptResult != null && Reflect.hasField(scriptResult, "charLoad")) 
+		// Run the selection callback after the default player and partner exist.
+		// "isPartner" is exposed to Ellawy so the same script can return a
+		// different character configuration for the main player and partner.
+		for (script in ellawyScripts)
 		{
-			var charPath:String = Reflect.field(scriptResult, "charLoad");
-			var charName:String = charPath.split("/").pop(); 
-			remove(player, true);
-			player.destroy();
-			player = new Player(500, 130, charName, false);
-			player.updateHitbox();
-			player.y = groundY - player.height;
-			player.velocity.set(0, 0);
-			player.grounded = true;
-			player.touching = FlxDirectionFlags.FLOOR;
-			add(player);
-			
-			FlxG.camera.follow(player, LOCKON, 0.05);
-			addTextToDebug("Loaded custom character via Ellawy: " + charName, FlxColor.GREEN);
+			if (script != null) script.set("isPartner", false);
+		}
+		var scriptResult:Dynamic = callOnEllawyScripts('onLoadGame', []);
+		if (scriptResult == null)
+			scriptResult = callOnEllawyScripts('onCreate', []);
+
+		if (scriptResult != null && Reflect.hasField(scriptResult, "charLoad"))
+		{
+			var charPath:String = Std.string(Reflect.field(scriptResult, "charLoad"));
+			var charName:String = charPath.split("/").pop();
+			if (charName != null && charName.length > 0)
+			{
+				remove(player, true);
+				player.destroy();
+				player = new Player(500, 130, charName, false);
+				player.updateHitbox();
+				player.y = groundY - player.height;
+				player.velocity.set(0, 0);
+				player.grounded = true;
+				player.touching = FlxDirectionFlags.FLOOR;
+				add(player);
+				FlxG.camera.follow(player, LOCKON, 0.05);
+				addTextToDebug("Ellawy selected character: " + charName, FlxColor.GREEN);
+			}
+		}
+
+		if (partner != null)
+		{
+			for (script in ellawyScripts)
+			{
+				if (script != null) script.set("isPartner", true);
+			}
+			var partnerResult:Dynamic = callOnEllawyScripts('onLoadGame', []);
+			if (partnerResult != null && Reflect.hasField(partnerResult, "partnerLoad"))
+			{
+				var partnerPath:String = Std.string(Reflect.field(partnerResult, "partnerLoad"));
+				var partnerName:String = partnerPath.split("/").pop();
+				if (partnerName != null && partnerName.length > 0)
+				{
+					remove(partner, true);
+					partner.destroy();
+					partner = new Player(450, 130, partnerName, true);
+					partner.followTarget = player;
+					partner.updateHitbox();
+					partner.y = groundY - partner.height;
+					partner.velocity.set(0, 0);
+					partner.grounded = true;
+					partner.touching = FlxDirectionFlags.FLOOR;
+					partner.moveSpeed *= 0.85;
+					partner.maxMoveSpeed *= 0.85;
+					add(partner);
+					addTextToDebug("Ellawy selected partner: " + partnerName, FlxColor.GREEN);
+				}
+			}
+		}
+		for (script in ellawyScripts)
+		{
+			if (script != null) script.set("isPartner", false);
 		}
 		#end
 	}
