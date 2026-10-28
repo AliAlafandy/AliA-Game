@@ -19,6 +19,7 @@ import mobile.data.debug.Vibration;
 
 	public var antialiasing:Bool = false;
 	public var debugSecret:Bool = false;
+	public var timeType:String = "0'00''00"
 
 	#if android
 	public var storageType:String = 'EXTERNAL_DATA';
@@ -47,7 +48,6 @@ import mobile.data.debug.Vibration;
 		'debugMode' => false,
 		'infiniteLife' => false,
 		'infinitePower' => false,
-		'timeType' => "0'00''00"
 	];
 	public var safeFrames:Float = 10;
 	public var showFPS:Bool = false;
