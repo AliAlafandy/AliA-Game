@@ -31,7 +31,8 @@ class SelectState extends GameState
         #end
     }
 
-    override public function create() {
+    override public function create()
+	{
 		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
 		add(bg);
 
@@ -44,9 +45,7 @@ class SelectState extends GameState
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
 		{
 		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
-		}
-		else if (FlxG.sound.music != null || !FlxG.sound.music.playing)
-		{
+		} else if (FlxG.sound.music != null || !FlxG.sound.music.playing) {
 			FlxG.sound.music.resume();
 		}
 
@@ -60,15 +59,14 @@ class SelectState extends GameState
 		#end
     }
 
-    override public function update(elapsed:Float) {
+    override public function update(elapsed:Float)
+	{
         super.update(elapsed);
 
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
 		{
 		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
-		}
-		else if (FlxG.sound.music != null || !FlxG.sound.music.playing)
-		{
+		} else if (FlxG.sound.music != null || !FlxG.sound.music.playing) {
 			FlxG.sound.music.resume();
 		}
 
@@ -105,7 +103,7 @@ class SelectState extends GameState
         }
 
         if (controls.BACK) {
-			FlxG.sound.music.pause();
+			// FlxG.sound.music.pause();
 			FlxG.sound.play(Paths.sound('cancel_sound'));
             GameState.switchState(new MenuState());
         }
