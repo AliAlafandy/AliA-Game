@@ -62,9 +62,9 @@
 			"indices": []
 		],
 		[
-			"name": "jumping",
+			"name": "spinning",
 			"image": "Zezo",
-			"prefix": "Zezo Jumping0",
+			"prefix": "Zezo Spinning0",
 			"offsets": [0, 0],
 			"loop": true,
 			"scale": 1,
