@@ -18,8 +18,8 @@ import states.online.Network;
 import states.online.MultiPlayer;
 import states.online.MultiPlayer.RemotePlayer;
 import states.online.MultiPlayer.ConnectionState;
-import states.online.mods.states.online.mods.ModInstaller;
-import states.online.mods.states.online.mods.ModInstaller.InstallResult;
+import states.online.mods.ModInstaller;
+import states.online.mods.ModInstaller.InstallResult;
 
 enum abstract OnlineTab(Int)
 {
