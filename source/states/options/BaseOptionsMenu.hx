@@ -7,11 +7,12 @@ import flixel.util.FlxColor;
 class BaseOptionsMenu extends GameSubState
 {
     public var category:String;
-	public var heading:FlxText;
+	public var title:String;
 
     var rows:Array<Dynamic> = [];
     var labels:Array<FlxText> = [];
     var selected:Int = 0;
+	var heading:FlxText;
     var help:FlxText;
 
     public function new(category:String)
@@ -22,7 +23,7 @@ class BaseOptionsMenu extends GameSubState
 		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
 		#end
-		if(heading == null) heading.text = "Options";
+		if(title == null) title = "Options";
         super();
         buildRows();
     }
@@ -85,7 +86,7 @@ class BaseOptionsMenu extends GameSubState
         shade.alpha = 0.78;
         add(shade);
 
-        heading = new FlxText(0, 24, FlxG.width, "", 32);
+        heading = new FlxText(0, 24, FlxG.width, title, 32);
         heading.setFormat(null, 32, FlxColor.WHITE, CENTER);
         add(heading);
 
