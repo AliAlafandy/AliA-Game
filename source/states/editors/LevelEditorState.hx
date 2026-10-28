@@ -524,7 +524,7 @@ class LevelEditorState extends GameState
 				loadLevelFromPath(path);
 			}
 		});
-		dialog.browse(FileDialogType.OPEN, "*.json"); 
+		dialog.browse(FileDialogType.OPEN, ".json"); 
 	}
 
 	private function loadLevelFromPath(path:String):Void
