@@ -423,16 +423,12 @@ class PlayState extends GameState
 		callOnEllawyScripts('onUpdate', [elapsed]);
 		#end
 
-		if (!paused && (FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.P
+		if (!paused && (FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.ENTER || FlxG.keys.justPressed.P
 				#if mobile
-				#if android
-				|| FlxG.android.justReleased.BACK || customDPad.pauseButton.justPressed
-				#else
-				|| customDPad.pauseButton.justPressed
+				#if android || FlxG.android.justReleased.BACK || customDPad.pauseButton.justPressed
+				#else || customDPad.pauseButton.justPressed #end
 				#end
-				#end
-			)
-		)
+			))
 		{
 			FlxG.sound.play(Paths.sound('cancel_sound'));
 			openPauseMenu();
