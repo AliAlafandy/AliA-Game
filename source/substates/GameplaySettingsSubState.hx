@@ -35,12 +35,5 @@ class GameplaySettingsSubState extends BaseOptionsMenu
             "infinitePower",
             "Make power infinite."
         );
-
-        addString(
-            "Time Type",
-            "timeType",
-            "What type of time do you like?",
-            ["0'00''00", "0:00"]
-        );
     }
 }
