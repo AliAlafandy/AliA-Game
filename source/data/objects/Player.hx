@@ -293,7 +293,7 @@ class Player extends FlxSprite
 
 		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR) || velocity.y == 0;
 
-		if (jumpPressed && isOnGround)
+		if (jumpPressed && isOnGround || jumpPressed && !isOnGround)
 		{
 			velocity.y = -jumpSpeed;
 			grounded = false;
