@@ -14,6 +14,10 @@ import sys.FileSystem;
 
 import data.backend.Paths;
 
+#if ELLAWY_ALLOWED
+import data.scripts.GameEllawyScript;
+#end
+
 class CharacterState extends GameState
 {
 	public static var selectedCharacter:String = "Ellawy";
@@ -91,6 +95,9 @@ class CharacterState extends GameState
 	private function loadCharactersList():Void
 	{
 		chars = defaultChars.copy();
+		#if ELLAWY_ALLOWED
+		loadEllawyCharacters();
+		#end
 
 		#if MODS_ALLOWED
 		var charactersDir:String = Mods.getModDirectories() + "/characters";
@@ -105,6 +112,57 @@ class CharacterState extends GameState
 		}
 		#end
 	}
+
+	#if ELLAWY_ALLOWED
+	/**
+	 * Reads character definitions from mod scripts before building the grid.
+	 * Each script can return a config from onLoadGame(), for example:
+	 * { "charLoad": "characters/MyCharacter", "charNum": 5, "charOpen": true }
+	 */
+	private function loadEllawyCharacters():Void
+	{
+		var scriptFiles:Array<String> = [];
+		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'scripts/'))
+		{
+			for (file in Paths.readDirectory(folder))
+			{
+				if (file.toLowerCase().endsWith('.ellawy'))
+				{
+					var fullPath:String = folder + file;
+					if (!scriptFiles.contains(fullPath)) scriptFiles.push(fullPath);
+				}
+			}
+		}
+
+		for (file in scriptFiles)
+		{
+			var source:String = null;
+			#if sys
+			if (sys.FileSystem.exists(file)) source = sys.io.File.getContent(file);
+			#end
+			if (source == null) source = Paths.getTextFromFile(file);
+			if (source == null) continue;
+
+			var script = new GameEllawyScript(file, source);
+			script.set("CharacterState", CharacterState);
+			script.set("isPartner", false);
+			var config:Dynamic = script.call("onLoadGame", []);
+			if (config == null) continue;
+
+			var charPath:Dynamic = Reflect.field(config, "charLoad");
+			if (charPath == null) continue;
+
+			var charName:String = Std.string(charPath).split("/").pop();
+			if (charName == null || charName.length == 0 || chars.contains(charName)) continue;
+
+			var charNum:Dynamic = Reflect.field(config, "charNum");
+			var insertAt:Int = charNum == null ? chars.length : Std.int(Std.parseFloat(Std.string(charNum)));
+			if (insertAt < 0 || Math.isNaN(insertAt)) insertAt = chars.length;
+			if (insertAt > chars.length) insertAt = chars.length;
+			chars.insert(insertAt, charName);
+		}
+	}
+	#end
 
 	private function createGrid():Void
 	{
