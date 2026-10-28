@@ -224,6 +224,7 @@ class AccountState extends GameState
     {
         var req = new haxe.Http(url);
         req.addHeader("Content-Type", "application/json");
+        req.setPostData(haxe.Json.stringify(payload));
         req.onData = function(data:String) {
             try {
                 var json = haxe.Json.parse(data);
@@ -232,9 +233,10 @@ class AccountState extends GameState
                 onError("Invalid response");
             }
         };
+        
         req.onError = function(error:String) {
             onError(error);
         };
-        req.request(haxe.Json.stringify(payload));
+        req.request(true);
     }
 }
