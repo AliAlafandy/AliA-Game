@@ -10,17 +10,39 @@ class DataSubState extends BaseOptionsMenu
 	final lastStorageType:String = ClientPrefs.data.storageType;
     #end
 
-    public function new() super("Data");
+    public function new()
+	{
+		heading = 'Data';
+		super();
+	}
 
     override public function buildRows():Void
     {
-        addDynamic("Account", "signInAction", "Manage your Ali-A Online account.");
+        addDynamic(
+			"Account",
+			"signInAction",
+			"Manage your Ali-A Online account."
+		);
+
         // Save Data
+
         // Load Data
+
         // Delete Data
-        addBool("Check Updates", "checkForUpdates", "Check for game updates.");
+
+        addBool(
+			"Check Updates",
+			"checkForUpdates",
+			"Check for game updates."
+		);
+
         #if android
-        addString("Storage Type", "storageType", storageTypes, "Storage location used by the Android build.");
+        addString(
+			"Storage Type",
+			"storageType",
+			storageTypes,
+			"Storage location used by the Android build."
+		);
         #end
     }
 
