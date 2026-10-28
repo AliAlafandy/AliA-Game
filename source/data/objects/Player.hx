@@ -248,7 +248,7 @@ class Player extends FlxSprite
 		if (!canMove)
 		{
 			stopHorizontalMovement();
-			updateMovementAnimation(false, false);
+			updateMovementAnimation(false, false, false);
 			return;
 		}
 
@@ -307,7 +307,7 @@ class Player extends FlxSprite
 			hasJumped = false;
 		}
 
-		updateMovementAnimation(upPressed, downPressed);
+		updateMovementAnimation(jumpPressed, upPressed, downPressed);
 	}
 
 	private function stopHorizontalMovement():Void
