@@ -243,7 +243,7 @@ class BaseOptionsMenu extends GameSubState
 			if (displayKind == 'dynamic') {
             	labels[i].text = (i == selected ? "> " : "  ") + row.label;
 			} else {
-				labels[i].text = (i == selected ? "> " : "  ");+ row.label + ": " + shown;
+				labels[i].text = (i == selected ? "> " : "  ") + row.label + ": " + shown;
 			}
 
             labels[i].color = i == selected ? FlxColor.YELLOW : FlxColor.WHITE;
