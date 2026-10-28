@@ -12,8 +12,8 @@ class DataSubState extends BaseOptionsMenu
 
     public function new()
 	{
-		heading = "Data";
-		super();
+		heading.text = "Data";
+		super("Data");
 	}
 
     override public function buildRows():Void
