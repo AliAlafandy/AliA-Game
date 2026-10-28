@@ -14,7 +14,7 @@ class DataSubState extends BaseOptionsMenu
 
     override public function buildRows():Void
     {
-        addString("Account", "signInAction", ["Sign In / Manage"], "Manage your Ali-A Online account.");
+        addDynamic("Account", "signInAction", "Manage your Ali-A Online account.");
         // Save Data
         // Load Data
         // Delete Data
