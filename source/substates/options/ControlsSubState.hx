@@ -6,8 +6,8 @@ class ControlsSubState extends BaseOptionsMenu
 {
     public function new()
     {
-        heading = "Controls";
-        super();
+        heading.text = "Controls";
+        super("Controls");
     }
 
     override public function buildRows():Void
