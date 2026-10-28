@@ -45,9 +45,6 @@ class SelectState extends GameState
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
 		{
 		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
-			if (FlxG.sound.music != null) {
-			    FlxG.sound.music.persist = false;
-			}
 		} else if (FlxG.sound.music != null || !FlxG.sound.music.playing) {
 			FlxG.sound.music.resume();
 		}
