@@ -7,7 +7,7 @@ class SelectState extends GameState
 	private var selected:Int = 0;
 
 	private final saves:Array<String> = [
-		'No Save',
+		'NO SAVE',
         'NEW GAME 1',
         'NEW GAME 2',
         'NEW GAME 3',
@@ -16,7 +16,7 @@ class SelectState extends GameState
         'NEW GAME 6',
         'NEW GAME 7',
         'NEW GAME 8',
-		'Delete'
+		'DELETE'
     ];
 
 	private var t:FlxText;
