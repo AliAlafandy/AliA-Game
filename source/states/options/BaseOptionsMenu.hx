@@ -21,7 +21,7 @@ class BaseOptionsMenu extends GameSubState
 		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
 		#end
-		if(heading == null) heading = "Options";
+		if(heading == null) heading.text = "Options";
         super();
         buildRows();
     }
@@ -84,7 +84,7 @@ class BaseOptionsMenu extends GameSubState
         shade.alpha = 0.78;
         add(shade);
 
-        heading = new FlxText(0, 24, FlxG.width, heading, 32);
+        heading = new FlxText(0, 24, FlxG.width, "", 32);
         heading.setFormat(null, 32, FlxColor.WHITE, CENTER);
         add(heading);
 
