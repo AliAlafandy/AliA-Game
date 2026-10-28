@@ -9,7 +9,7 @@ import flixel.util.FlxAxes;
 import openfl.events.Event;
 import openfl.events.TextEvent;
 
-import states.GameState;
+import data.backend.GameState;
 import states.online.OnlineState;
 import states.options.OptionsState;
 
