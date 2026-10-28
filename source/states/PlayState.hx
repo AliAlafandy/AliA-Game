@@ -267,6 +267,10 @@ class PlayState extends GameState
 			setupOnlineMode();
 
 		#if ELLAWY_ALLOWED
+		trace('Current mod directory: ${Mods.currentModDirectory}');
+		trace('Global mods: ${Mods.getGlobalMods()}');
+		trace('All mod directories: ${Mods.getModDirectories()}');
+		
 		var scriptResult = callOnEllawyScripts('onCreate', []);
 		if (scriptResult != null && Reflect.hasField(scriptResult, "charLoad")) 
 		{
