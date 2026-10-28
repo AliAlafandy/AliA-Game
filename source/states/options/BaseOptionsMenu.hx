@@ -7,10 +7,11 @@ import flixel.util.FlxColor;
 class BaseOptionsMenu extends GameSubState
 {
     public var category:String;
+	public var heading:FlxText;
+
     var rows:Array<Dynamic> = [];
     var labels:Array<FlxText> = [];
     var selected:Int = 0;
-    var heading:FlxText;
     var help:FlxText;
 
     public function new(category:String)
