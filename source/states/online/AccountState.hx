@@ -37,7 +37,7 @@ class AccountState extends GameState
         add(titleText);
 
         var inputWidth = 300;
-        var centerX = (FlxG.width - inputWidth) / 2;
+        var centerX = FlxG.width / 2;
 
         usernameInput = new TextInputField(centerX, 120, inputWidth, "Username or Email");
         add(usernameInput.display);
@@ -45,13 +45,13 @@ class AccountState extends GameState
         passwordInput = new TextInputField(centerX, 180, inputWidth, "Password");
         add(passwordInput.display);
 
-        var loginBtn = new FlxButton(centerX, 240, "Login", onLogin);
-        loginBtn.setGraphicSize(Std.int(loginBtn.width * 1.2), Std.int(loginBtn.height * 1.3));
+        var loginBtn = new FlxButton(centerX - 90, 240, "Login", onLogin);
+        // loginBtn.setGraphicSize(Std.int(loginBtn.width * 1.2), Std.int(loginBtn.height * 1.3));
         loginBtn.updateHitbox();
         add(loginBtn);
 
-        var registerBtn = new FlxButton(centerX + 100, 240, "Register", onRegister);
-        registerBtn.setGraphicSize(Std.int(loginBtn.width * 1.2), Std.int(loginBtn.height * 1.3));
+        var registerBtn = new FlxButton(centerX + 10, 240, "Register", onRegister);
+        // registerBtn.setGraphicSize(Std.int(loginBtn.width * 1.2), Std.int(loginBtn.height * 1.3));
         registerBtn.updateHitbox();
         add(registerBtn);
 
