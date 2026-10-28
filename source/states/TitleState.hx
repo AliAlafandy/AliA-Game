@@ -35,7 +35,11 @@ class TitleState extends GameState
     var videoSprite:FlxVideoSprite;
 	#end
 
-    override public function create() {
+    override public function create()
+	{
+		Paths.clearStoredMemory();
+		ClientPrefs.loadPrefs();
+
         var title = new FlxText(0, 0, 0, "Ali Alafandy Game", 24);
         title.screenCenter(X);
         title.y = 140;
