@@ -62,9 +62,9 @@
 			"indices": []
 		},
 		{
-			"name": "jumping",
+			"name": "spinning",
 			"image": "Ellawy",
-			"prefix": "Ellawy Jumping0",
+			"prefix": "Ellawy Spinning0",
 			"offsets": [192, 180],
 			"loop": true,
 			"scale": 0.4,
