@@ -32,6 +32,7 @@ class CharacterState extends GameState
 	var iconGroup:FlxTypedGroup<FlxSprite>;
 	var nameTxt:FlxText;
 	var selectors:Array<FlxSprite> = [];
+	var characterBoxes:Array<FlxSprite> = [];
 
 	static inline var SLOTS:Int = 5;
 	static inline var BOX_SIZE:Float = 125;
@@ -106,6 +107,8 @@ class CharacterState extends GameState
 	{
 		gridGroup.clear();
 		iconGroup.clear();
+		selectors = [];
+		characterBoxes = [];
 
 		var totalSLOTS:Int = SLOTS;
 		var gridWidth:Float = (totalSLOTS * BOX_SIZE) + ((totalSLOTS - 1) * SPACING_X);
@@ -132,6 +135,7 @@ class CharacterState extends GameState
 			box.updateHitbox();
 			box.ID = i;
 			gridGroup.add(box);
+			characterBoxes.push(box);
 			
 			var charName:String = chars[i];
 			var iconPath:String = (charName == "Ellawy+") ? 'characters/Ellawy/icon-partner' : 'characters/$charName/icon';
@@ -166,14 +170,22 @@ class CharacterState extends GameState
 
 	private function updateSelection():Void
 	{
-		for (i in 0...gridGroup.members.length) {
-			var box = gridGroup.members[i];
-			var selector = selectors[i];
-			if (box.animation.exists('idle')) box.animation.play('idle');
+		// Only update actual character boxes. gridGroup also contains selector
+		// overlays, so indexing gridGroup.members by character index is incorrect.
+		for (i in 0...characterBoxes.length)
+		{
+			var box:FlxSprite = characterBoxes[i];
+			var selector:FlxSprite = selectors[i];
 
-			if (i == index) {
+			if (i == index)
+			{
+				// Keep the selected box's current animation (including "press").
 				if (selector != null) selector.visible = true;
-			} else {
+			}
+			else
+			{
+				if (box != null && box.animation.exists("idle"))
+					box.animation.play("idle");
 				if (selector != null) selector.visible = false;
 			}
 		}
@@ -214,7 +226,7 @@ class CharacterState extends GameState
 
 		if (controls.ACCEPT) {
 			selectedCharacter = chars[index];
-			var activeBox = gridGroup.members[index];
+			var activeBox = characterBoxes[index];
 			if (activeBox != null && activeBox.animation.exists('press')) {
 				activeBox.animation.play('press');
 			}
