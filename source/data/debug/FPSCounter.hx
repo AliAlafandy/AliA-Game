@@ -5,6 +5,7 @@ import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.system.System as OpenFlSystem;
 import lime.system.System as LimeSystem;
+import lime.app.Application;
 
 /**
 	The FPS class provides an easy-to-use monitor to display
