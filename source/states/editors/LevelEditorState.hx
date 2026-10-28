@@ -14,6 +14,9 @@ import sys.io.File;
 import sys.FileSystem;
 #end
 
+import lime.ui.FileDialog;
+import lime.ui.FileDialogType;
+
 using StringTools;
 
 typedef LevelData =
@@ -77,8 +80,11 @@ class LevelEditorState extends GameState
 	private var uiCamera:FlxCamera;
 
 	private var saveButton:FlxSprite;
+	private var loadButton:FlxSprite;
 	private var propsButton:FlxSprite;
 	private var inputField:openfl.text.TextField;
+	
+	private var isTyping:Bool = false;
 
 	#if mobile
     public var manager:MobileInputManager;
@@ -201,7 +207,7 @@ class LevelEditorState extends GameState
 		toolText.cameras = [uiCamera];
 		add(toolText);
 		
-		propsButton = new FlxSprite(FlxG.width - 180, 4);
+		propsButton = new FlxSprite(FlxG.width - 260, 4);
 		propsButton.makeGraphic(70, 24, FlxColor.BLUE);
 		propsButton.cameras = [uiCamera];
 		add(propsButton);
@@ -210,6 +216,16 @@ class LevelEditorState extends GameState
 		propsTxt.setFormat(null, 14, FlxColor.WHITE, CENTER);
 		propsTxt.cameras = [uiCamera];
 		add(propsTxt);
+
+		loadButton = new FlxSprite(FlxG.width - 180, 4);
+		loadButton.makeGraphic(70, 24, FlxColor.PURPLE);
+		loadButton.cameras = [uiCamera];
+		add(loadButton);
+		
+		var loadTxt = new FlxText(loadButton.x, loadButton.y, 70, "LOAD", 14);
+		loadTxt.setFormat(null, 14, FlxColor.WHITE, CENTER);
+		loadTxt.cameras = [uiCamera];
+		add(loadTxt);
 
 		#if mobile
 		saveButton = new FlxSprite(FlxG.width - 90, FlxG.height - 50);
@@ -229,13 +245,19 @@ class LevelEditorState extends GameState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-		if (FlxG.mouse.justPressed)
+		
+		if (FlxG.mouse.justPressed && !isTyping)
 		{
 			var mousePos = FlxG.mouse.getScreenPosition(uiCamera);
 			if (propsButton != null && 
 				mousePos.x >= propsButton.x && mousePos.x <= propsButton.x + propsButton.width &&
 				mousePos.y >= propsButton.y && mousePos.y <= propsButton.y + propsButton.height) {
 				promptResize();
+			}
+			if (loadButton != null && 
+				mousePos.x >= loadButton.x && mousePos.x <= loadButton.x + loadButton.width &&
+				mousePos.y >= loadButton.y && mousePos.y <= loadButton.y + loadButton.height) {
+				browseLoadLevel();
 			}
 			#if mobile
 			if (saveButton != null && 
@@ -256,11 +278,19 @@ class LevelEditorState extends GameState
 		refreshHud();
 
 		if (controls.BACK)
-			FlxG.switchState(new EditorState());
+		{
+			if (isTyping) {
+				closeResizePrompt();
+			} else {
+				FlxG.switchState(new EditorState());
+		 }
+		}
 	}
 
 	private function handleCamera(elapsed:Float):Void
 	{
+		if (isTyping) return;
+
 		var moveX:Float = 0;
 		var moveY:Float = 0;
 
@@ -291,6 +321,8 @@ class LevelEditorState extends GameState
 
 	private function handleZoom():Void
 	{
+		if (isTyping) return;
+
 		if (FlxG.mouse.wheel != 0)
 		{
 			camZoom = FlxMath.bound(camZoom + (FlxG.mouse.wheel * ZOOM_STEP), MIN_ZOOM, MAX_ZOOM);
@@ -300,6 +332,8 @@ class LevelEditorState extends GameState
 
 	private function handleToolSwitch():Void
 	{
+		if (isTyping) return;
+
 		for (i in 0...PALETTE_SIZE)
 		{
 			switch (i)
@@ -318,6 +352,8 @@ class LevelEditorState extends GameState
 
 	private function handlePlacement():Void
 	{
+		if (isTyping) return;
+
 		var mousePoint = FlxG.mouse.getWorldPosition(null);
 		if (mousePoint == null) return;
 
@@ -388,16 +424,21 @@ class LevelEditorState extends GameState
 	{
 		if (inputField != null) return;
 		
+		isTyping = true;
+		
 		inputField = new openfl.text.TextField();
 		inputField.type = openfl.text.TextFieldType.INPUT;
 		inputField.background = true;
 		inputField.backgroundColor = 0xFFFFFF;
 		inputField.textColor = 0x000000;
 		inputField.width = 320;
-		inputField.height = 30;
+		inputField.height = 40;
 		inputField.x = (FlxG.width - 320) / 2;
-		inputField.y = (FlxG.height - 30) / 2;
+		inputField.y = (FlxG.height - 40) / 2;
 		inputField.text = "Name, Cols, Rows (e.g. MyLevel, 50, 30)";
+		inputField.maxChars = 64;
+		inputField.border = true;
+		inputField.borderColor = 0x000000;
 		
 		openfl.Lib.current.stage.addChild(inputField);
 		inputField.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, onResizeInput);
@@ -429,11 +470,14 @@ class LevelEditorState extends GameState
 			inputField.removeEventListener(openfl.events.KeyboardEvent.KEY_DOWN, onResizeInput);
 			inputField = null;
 			FlxG.stage.focus = null;
+			isTyping = false;
 		}
 	}
 
 	private function handleUndoRedo():Void
 	{
+		if (isTyping) return;
+
 		if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.Z)
 			undo();
 		else if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.Y)
@@ -464,46 +508,39 @@ class LevelEditorState extends GameState
 
 	private function handleSaveLoad():Void
 	{
+		if (isTyping) return;
+
 		if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.S)
 			saveLevel();
 		else if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.L)
-			loadLevel();
+			browseLoadLevel();
 	}
 
-	private function saveLevel():Void
+	private function browseLoadLevel():Void
 	{
-		#if sys
-		var data:LevelData = {
-			name: levelName,
-			cols: cols,
-			rows: rows,
-			tileSize: TILE_SIZE,
-			tiles: tileGrid
-		};
-
-		var directory = 'levels';
-		if (!FileSystem.exists(directory))
-			FileSystem.createDirectory(directory);
-
-		File.saveContent('$directory/$levelName.json', haxe.Json.stringify(data, null, '\t'));
-		#end
+		var dialog = new FileDialog();
+		dialog.onSelect.add(function(path:String) {
+			if (path != null && path.length > 0) {
+				loadLevelFromPath(path);
+			}
+		});
+		dialog.browse(FileDialogType.OPEN, ["json"]);
 	}
 
-	private function loadLevel():Void
+	private function loadLevelFromPath(path:String):Void
 	{
 		#if sys
-		var path = 'levels/$levelName.json';
-		if (!FileSystem.exists(path))
+		if (!sys.FileSystem.exists(path))
 			return;
 
-		var content = File.getContent(path);
+		var content = sys.io.File.getContent(path);
 		var data:LevelData = haxe.Json.parse(content);
 
+		levelName = data.name;
 		cols = data.cols;
 		rows = data.rows;
 		tileGrid = data.tiles;
 
-		// Rebuild sprite/grid buffers when the loaded level dimensions change.
 		if (tileSprites != null)
 		{
 			remove(tileSprites, true);
@@ -522,6 +559,27 @@ class LevelEditorState extends GameState
 		for (y in 0...rows)
 			for (x in 0...cols)
 				applyTileVisual(x, y, tileGrid[y][x]);
+				
+		refreshHud();
+		#end
+	}
+
+	private function saveLevel():Void
+	{
+		#if sys
+		var data:LevelData = {
+			name: levelName,
+			cols: cols,
+			rows: rows,
+			tileSize: TILE_SIZE,
+			tiles: tileGrid
+		};
+
+		var directory = 'levels';
+		if (!FileSystem.exists(directory))
+			FileSystem.createDirectory(directory);
+
+		File.saveContent('$directory/$levelName.json', haxe.Json.stringify(data, null, '\t'));
 		#end
 	}
 
@@ -564,6 +622,6 @@ class LevelEditorState extends GameState
 
 	private function refreshToolText():Void
 	{
-		toolText.text = 'TOOL: $currentTool   CTRL+S Save   CTRL+L Load   CTRL+Z Undo   CTRL+Y Redo   BACK Exit';
+		toolText.text = 'TOOL: $currentTool   CLICK LOAD/SAVE   CTRL+Z Undo   CTRL+Y Redo   BACK Exit';
 	}
 }
