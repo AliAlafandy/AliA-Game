@@ -136,17 +136,18 @@ class BaseOptionsMenu extends GameSubState
         refresh();
     }
 
-    function refresh():Void
+        function refresh():Void
     {
         for (i in 0...rows.length)
         {
             var row = rows[i];
-            var value = readValue(row);
+            var value:Dynamic = readValue(row);
             var shown:String = Std.string(value);
+            
             switch (row.kind)
             {
                 case "bool", "mute":
-                    shown = value == true ? "ON" : "OFF";
+                    shown = (value == true) ? "ON" : "OFF";
                 case "volume":
                     shown = Std.int(Std.parseFloat(Std.string(value)) * 100) + "%";
                 case "float":
@@ -154,8 +155,9 @@ class BaseOptionsMenu extends GameSubState
                 case "int":
                     shown = Std.string(Std.int(Std.parseFloat(Std.string(value))));
                 case "string":
-                    shown = value == null ? "" : Std.string(value);
+                    shown = (value == null) ? "" : Std.string(value);
             }
+            
             labels[i].text = (i == selected ? "> " : "  ") + row.label + ": " + shown;
             labels[i].color = i == selected ? FlxColor.YELLOW : FlxColor.WHITE;
         }
