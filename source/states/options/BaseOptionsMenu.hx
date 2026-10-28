@@ -239,8 +239,13 @@ class BaseOptionsMenu extends GameSubState
                 case "string":
                     shown = (value == null) ? "" : Std.string(value);
             }
-            
-            labels[i].text = (i == selected ? "> " : "  ") + row.label + ": " + shown;
+
+			if (displayKind == 'dynamic') {
+            	labels[i].text = (i == selected ? "> " : "  ") + row.label;
+			} else {
+				labels[i].text = (i == selected ? "> " : "  ");+ row.label + ": " + shown;
+			}
+
             labels[i].color = i == selected ? FlxColor.YELLOW : FlxColor.WHITE;
         }
         if (rows.length > 0) help.text = rows[selected].description; // + "\nLEFT/RIGHT: change   ENTER: toggle   ESC/BACK: return"
@@ -288,8 +293,8 @@ class BaseOptionsMenu extends GameSubState
         }
         if (controls.BACK)
         {
-			// FlxTransitionableState.skipNextTransOut = true;
-			FlxG.resetState();
+			/*FlxTransitionableState.skipNextTransOut = true;
+			FlxG.resetState();*/
             ClientPrefs.saveSettings();
             #if mobile
 			// controls.isInSubstate = false;
