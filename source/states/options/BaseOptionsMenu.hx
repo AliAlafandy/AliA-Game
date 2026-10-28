@@ -74,7 +74,7 @@ class BaseOptionsMenu extends GameSubState
             if (row.field == "timeLimit" || row.field == "debugMode" || row.field == "infiniteLife" || row.field == "infinitePower" || row.field == "timeType")
                 return ClientPrefs.data.gameplaySettings.get(row.field);
         }
-        return Reflect.getProperty(ClientPrefs.data, row.field);
+        return Reflect.field(ClientPrefs.data, row.field);
     }
 
     function writeValue(row:Dynamic, value:Dynamic):Void
@@ -96,7 +96,7 @@ class BaseOptionsMenu extends GameSubState
             ClientPrefs.data.gameplaySettings.set(row.field, value);
             return;
         }
-        Reflect.setProperty(ClientPrefs.data, row.field, value);
+        Reflect.setField(ClientPrefs.data, row.field, value);
         if (row.field == "showFPS" && Main.fpsVar != null) Main.fpsVar.visible = value;
         if (row.field == "framerate")
         {
@@ -116,12 +116,17 @@ class BaseOptionsMenu extends GameSubState
             case "bool", "mute":
                 writeValue(row, value != true);
             case "int", "float", "volume":
-                value = (value == null ? row.min : value) + row.step * direction;
-                if (value < row.min) value = row.max;
-                if (value > row.max) value = row.min;
-                if (row.kind == "int") value = Std.int(value);
-                writeValue(row, value);
+                var numeric:Float = value == null ? row.min : Std.parseFloat(Std.string(value));
+                if (Math.isNaN(numeric)) numeric = row.min;
+                numeric += row.step * direction;
+                if (numeric < row.min) numeric = row.max;
+                if (numeric > row.max) numeric = row.min;
+                if (row.kind == "int")
+                    writeValue(row, Std.int(numeric));
+                else
+                    writeValue(row, numeric);
             case "string":
+                if (row.values == null || row.values.length == 0) return;
                 var idx:Int = row.values.indexOf(Std.string(value));
                 if (idx < 0) idx = 0;
                 idx = Std.int((idx + direction + row.values.length) % row.values.length);
@@ -138,8 +143,19 @@ class BaseOptionsMenu extends GameSubState
             var row = rows[i];
             var value = readValue(row);
             var shown:String = Std.string(value);
-            if (row.kind == "bool" || row.kind == "mute") shown = value == true ? "ON" : "OFF";
-            if (row.kind == "volume") shown = Std.int(Std.parseFloat(Std.string(value)) * 100) + "%";
+            switch (row.kind)
+            {
+                case "bool", "mute":
+                    shown = value == true ? "ON" : "OFF";
+                case "volume":
+                    shown = Std.int(Std.parseFloat(Std.string(value)) * 100) + "%";
+                case "float":
+                    shown = Std.string(Math.round(Std.parseFloat(Std.string(value)) * 100) / 100);
+                case "int":
+                    shown = Std.string(Std.int(Std.parseFloat(Std.string(value))));
+                case "string":
+                    shown = value == null ? "" : Std.string(value);
+            }
             labels[i].text = (i == selected ? "> " : "  ") + row.label + ": " + shown;
             labels[i].color = i == selected ? FlxColor.YELLOW : FlxColor.WHITE;
         }
