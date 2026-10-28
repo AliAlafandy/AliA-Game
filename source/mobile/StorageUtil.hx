@@ -467,8 +467,8 @@ class StorageUtil
 enum abstract StorageType(String) from String to String
 {
 	final forcedPath = '/storage/emulated/0/';
-	final packageNameLocal = 'com.alialafandy.aliagame';
-	final fileLocal = 'AliA_Game';
+	final packageNameLocal = 'com.alafandy.ellawygame';
+	final fileLocal = 'Ali-A_Game';
 
 	var EXTERNAL_DATA = "EXTERNAL_DATA";
 	var EXTERNAL_OBB = "EXTERNAL_OBB";
