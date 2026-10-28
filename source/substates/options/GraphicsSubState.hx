@@ -6,8 +6,8 @@ class GraphicsSubState extends BaseOptionsMenu
 {
     public function new()
     {
-        heading = "Graphics";
-        super();
+        heading.text = "Graphics";
+        super("Graphics");
     }
 
     override public function buildRows():Void
