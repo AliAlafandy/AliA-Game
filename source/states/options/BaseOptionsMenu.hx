@@ -16,13 +16,13 @@ class BaseOptionsMenu extends GameSubState
     public function new(category:String)
     {
         this.category = category;
-		if(heading == null) heading = 'Options';
-        super();
-        #if mobile
+		#if mobile
 		// controls.isInSubstate = true;
 		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
 		#end
+		if(heading == null) heading = "Options";
+        super();
         buildRows();
     }
 
@@ -32,39 +32,35 @@ class BaseOptionsMenu extends GameSubState
         rows.push({
 			label:label,
 			field:field,
-			kind:"bool",
-			description:description
+			description:description,
+			kind:"bool"
 		});
 
-    public function addInt(label:String, field:String, min:Int, max:Int, step:Int, description:String):Void
+    public function addInt(label:String, field:String, description:String, min:Int, max:Int, step:Int):Void
         rows.push({
 			label:label,
 			field:field,
+			description:description,
 			kind:"int",
-			min:min,
-			max:max,
-			step:step,
-			description:description
+			min:min, max:max, step:step
 		});
 
-    public function addFloat(label:String, field:String, min:Float, max:Float, step:Float, description:String):Void
+    public function addFloat(label:String, field:String, description:String, min:Float, max:Float, step:Float):Void
         rows.push({
 			label:label,
 			field:field,
+			description:description,
 			kind:"float",
-			min:min,
-			max:max,
-			step:step,
-			description:description
+			min:min, max:max, step:step
 		});
 
-    public function addString(label:String, field:String, values:Array<String>, description:String):Void
+    public function addString(label:String, field:String, description:String, values:Array<String>):Void
         rows.push({
 			label:label,
 			field:field,
+			description:description,
 			kind:"string",
-			values:values,
-			description:description
+			values:values
 		});
 
     public function addDynamic(label:String, field:String, description:String, ?values:Array<Dynamic>, ?min:Float, ?max:Float, ?step:Float):Void
@@ -72,12 +68,12 @@ class BaseOptionsMenu extends GameSubState
         rows.push({
             label: label,
             field: field,
+			description: description,
             kind: "dynamic",
             values: values,
             min: min == null ? 0 : min,
             max: max == null ? 1 : max,
-            step: step == null ? 0.1 : step,
-            description: description
+            step: step == null ? 0.1 : step
         });
     }
 
