@@ -14,7 +14,8 @@ import sys.FileSystem;
 
 import data.backend.Paths;
 
-class CharacterState extends GameState {
+class CharacterState extends GameState
+{
 	public static var selectedCharacter:String = "Ellawy";
 
 	var index:Int = 0;
@@ -41,21 +42,23 @@ class CharacterState extends GameState {
 	public var manager:MobileInputManager;
 	#end
 
-	public function new():Void {
+	public function new():Void
+	{
 		super();
-		FlxG.sound.music.stop();
+		// FlxG.sound.music.stop();
 		#if mobile
 		manager = new MobileInputManager();
 		#end
 	}
 
-	override public function create() {
+	override public function create()
+	{
 		var selectMusic = Paths.music('menus/select_character');
-		if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
-			if (selectMusic != null) {
+		// if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
+			// if (selectMusic != null) {
 				FlxG.sound.playMusic(selectMusic, 1, true);
-			}
-		}
+			// }
+		// }
 
 		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/background'));
 		add(bg);
@@ -81,7 +84,8 @@ class CharacterState extends GameState {
 		#end
 	}
 
-	private function loadCharactersList():Void {
+	private function loadCharactersList():Void
+	{
 		chars = defaultChars.copy();
 
 		#if MODS_ALLOWED
@@ -98,7 +102,8 @@ class CharacterState extends GameState {
 		#end
 	}
 
-	private function createGrid():Void {
+	private function createGrid():Void
+	{
 		gridGroup.clear();
 		iconGroup.clear();
 
@@ -159,7 +164,8 @@ class CharacterState extends GameState {
 		}
 	}
 
-	private function updateSelection():Void {
+	private function updateSelection():Void
+	{
 		for (i in 0...gridGroup.members.length) {
 			var box = gridGroup.members[i];
 			var selector = selectors[i];
@@ -173,15 +179,16 @@ class CharacterState extends GameState {
 		}
 	}
 
-	override public function update(elapsed:Float) {
+	override public function update(elapsed:Float)
+	{
 		super.update(elapsed);
 
 		var selectMusic = Paths.music('menus/select_character');
-		if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
-			if (selectMusic != null) {
+		// if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
+			// if (selectMusic != null) {
 				FlxG.sound.playMusic(selectMusic, 1, true);
-			}
-		}
+			// }
+		// }
 
 		var oldIndex:Int = index;
 
@@ -213,7 +220,7 @@ class CharacterState extends GameState {
 			}
 			new FlxTimer().start(1, function(tmr:FlxTimer)
             {
-				FlxG.sound.music.stop();
+				// FlxG.sound.music.stop();
                 GameState.switchState(new PlayState());
             });
 			FlxG.sound.play(Paths.sound('confirm_sound'));
