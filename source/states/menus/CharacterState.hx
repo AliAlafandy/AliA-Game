@@ -57,7 +57,9 @@ class CharacterState extends GameState
 		// if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
 			// if (selectMusic != null) {
 				FlxG.sound.playMusic(selectMusic, 1, true);
-				FlxG.sound.music.destroyOnSwitch = true;
+				if (FlxG.sound.music != null) {
+				    FlxG.sound.music.persist = false;
+				}
 			// }
 		// }
 
