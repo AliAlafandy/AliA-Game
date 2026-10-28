@@ -234,7 +234,7 @@ class PlayState extends GameState
 			200
 		);
 
-		var spaceY:Float = 20;
+		var spaceY:Float = 40;
 		timer = new FlxText(10, 10, FlxG.width, "TIME: ", 32);
 		timer.setFormat(null, 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
 		timer.scrollFactor.set(0, 0);
