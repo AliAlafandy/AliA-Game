@@ -1,0 +1,46 @@
+package substates.options;
+
+import states.options.BaseOptionsMenu;
+
+class GameplaySettingsSubState extends BaseOptionsMenu
+{
+    public function new()
+    {
+        heading = "Gameplay Settings";
+        super();
+    }
+
+    override public function buildRows():Void
+    {
+        addBool(
+            "Time Limit",
+            "timeLimit",
+            "Enable Time to Slow down."
+        );
+
+        addBool(
+            "Debug Menu",
+            "debugMenu",
+            "Enable cheats on Main Play."
+        );
+
+        addBool(
+            "Infinite Life",
+            "infiniteLife",
+            "Make lifes infinite."
+        );
+
+        addBool(
+            "Infinite Power",
+            "infinitePower",
+            "Make power infinite."
+        );
+
+        addString(
+            "Time Type",
+            "timeType",
+            "What type of time do you like?",
+            ["0'00''00", "0:00"]
+        );
+    }
+}
