@@ -62,9 +62,9 @@
 			"indices": []
 		],
 		[
-			"name": "jumping",
+			"name": "spinning",
 			"image": "Shaaban",
-			"prefix": "Shaaban Jumping0",
+			"prefix": "Shaaban Spinning0",
 			"offsets": [0, 0],
 			"loop": true,
 			"scale": 1,
