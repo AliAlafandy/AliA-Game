@@ -55,11 +55,6 @@ class AccountState extends GameState
         registerBtn.updateHitbox();
         add(registerBtn);
 
-        var backBtn = new FlxButton(centerX, 300, "Back", onBack);
-        backBtn.setGraphicSize(Std.int(loginBtn.width * 1.2), Std.int(loginBtn.height * 1.3));
-        backBtn.updateHitbox();
-        add(backBtn);
-
         statusText = new FlxText(0, 360, FlxG.width, "", 16);
         statusText.alignment = CENTER;
         statusText.color = FlxColor.YELLOW;
