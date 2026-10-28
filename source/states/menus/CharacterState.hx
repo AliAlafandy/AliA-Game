@@ -17,8 +17,11 @@ import data.backend.Paths;
 class CharacterState extends GameState
 {
 	public static var selectedCharacter:String = "Ellawy";
+	public static var selectedCharacterIndex:Int = 0;
+	public static var charOpen:Bool = false;
 
 	var index:Int = 0;
+	var confirmingSelection:Bool = false;
 	var defaultChars:Array<String> = [
 		"Ellawy",
 		"Hamedo",
@@ -219,8 +222,11 @@ class CharacterState extends GameState
 			updateSelection();
 		}
 
-		if (controls.ACCEPT) {
+		if (controls.ACCEPT && !confirmingSelection && chars.length > 0) {
+			confirmingSelection = true;
 			selectedCharacter = chars[index];
+			selectedCharacterIndex = index;
+			charOpen = false;
 			var activeBox = characterBoxes[index];
 			if (activeBox != null && activeBox.animation.exists('press')) {
 				activeBox.animation.play('press');
@@ -233,7 +239,7 @@ class CharacterState extends GameState
 			FlxG.sound.play(Paths.sound('confirm_sound'));
 		}
 
-		if (controls.BACK) {
+		if (controls.BACK && !confirmingSelection) {
 			FlxG.sound.music.stop();
 			FlxG.sound.play(Paths.sound('cancel_sound'));
 			GameState.switchState(new SelectState());
