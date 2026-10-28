@@ -67,18 +67,6 @@ class AccountState extends GameState
 
         #if (js || sys)
         openfl.Lib.current.stage.addEventListener(TextEvent.TEXT_INPUT, onTextInput);
-        #if mobile
-        openfl.Lib.current.stage.addEventListener(Event.RESIZE, onStageResize);
-
-        function onStageResize(e:Event):Void {
-            var keyboardHeight = FlxG.stage.stageHeight - FlxG.stage.window.height;
-            if (keyboardHeight > 0) {
-                y = -keyboardHeight / 2;
-            } else {
-                y = 0;
-            }
-        }
-        #end
         #end
     }
 
