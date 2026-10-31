@@ -342,6 +342,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 
 		button.scale.set(Width, Height);
 		button.updateHitbox();
+		button.alpha = ClientPrefs.data.controlsAlpha;
 		button.scrollFactor.set();
 		button.immovable = true;
 		button.solid = button.moves = false;
