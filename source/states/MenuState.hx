@@ -91,8 +91,8 @@ class MenuState extends GameState
 
 		for (i in 0...optionShit.length)
 		{
-			var baseX:Float = 15;
-			var baseY:Float = 15;
+			var baseX:Float = 20;
+			var baseY:Float = 20;
 			
 			var menuItem:FlxSprite = new FlxSprite(baseX + (i * 180), baseY + (i * 135));
 			menuItem.loadGraphic(Paths.image('menus/Menus/' + optionShit[i] + '_button'));
@@ -167,24 +167,14 @@ class MenuState extends GameState
 
 				FlxFlicker.flicker(menuItems.members[curSelected], 1, 0.06, false, false, function(flick:FlxFlicker)
 				{
-					switch (optionShit[curSelected])
-					{
-						case 'play':
-							GameState.switchState(new SelectState());
-
-						case 'online':
-							GameState.switchState(new OnlineState());
-
+					switch (optionShit[curSelected]) {
+						case 'play': GameState.switchState(new SelectState());
+						case 'online': GameState.switchState(new OnlineState());
 						#if MODS_ALLOWED
-						case 'mods':
-							GameState.switchState(new ModsState());
+						case 'mods': GameState.switchState(new ModsState());
 						#end
-
-						case 'options':
-							GameState.switchState(new OptionsState());
-
-						case 'exit':
-							LimeSystem.exit(1);
+						case 'options': GameState.switchState(new OptionsState());
+						case 'exit': LimeSystem.exit(1);
 					}
 				});
 
@@ -219,27 +209,29 @@ class MenuState extends GameState
 		FlxG.sound.play(Paths.sound('confirm_sound'));
 		selectedSomethin = true;
 
-		switch (optionShit[index])
+		FlxFlicker.flicker(optionShit[curSelected], 1, 0.06, false, false, function(flick:FlxFlicker)
 		{
-			case 'play': GameState.switchState(new SelectState());
-			case 'online': GameState.switchState(new OnlineState());
-			#if MODS_ALLOWED
-			case 'mods': GameState.switchState(new ModsState());
-			#end
-			case 'options': GameState.switchState(new OptionsState());
-			case 'exit': LimeSystem.exit(1);
-		}
+			switch (optionShit[curSelected]) {
+				case 'play': GameState.switchState(new SelectState());
+				case 'online': GameState.switchState(new OnlineState());
+				#if MODS_ALLOWED
+				case 'mods': GameState.switchState(new ModsState());
+				#end
+				case 'options': GameState.switchState(new OptionsState());
+				case 'exit': LimeSystem.exit(1);
+			}
+		});
 
 		for (i in 0...optionShit.length)
 		{
 			if (i == curSelected)
 				continue;
 
-			FlxTween.tween(menuItems.members[i], {alpha: 0}, 0.4, {
+			FlxTween.tween(optionShit[i], {alpha: 0}, 0.4, {
 			    ease: FlxEase.quadOut,
 			    onComplete: function(twn:FlxTween)
 			    {
-			        menuItems.members[i].kill();
+			        optionShit[i].kill();
 			    }
 			});
 		}
@@ -265,11 +257,14 @@ class MenuState extends GameState
 	        {
 	            item.alpha = 1.0;
 	            item.scale.set(0.9, 0.9);
-				item.x = item.x - 30;
+				// item.x = item.x - 30;
+			/*} else if ( && ) {
+				item.alpha = 0.6;
+	            item.scale.set(0.75, 0.75);
+				item.x = item.x + 30;*/
 	        } else {
 	            item.alpha = 0.6;
 	            item.scale.set(0.75, 0.75);
-				if (curSelected == i) item.x = item.x + 30;
 	        }
 	        
 	        item.updateHitbox();
