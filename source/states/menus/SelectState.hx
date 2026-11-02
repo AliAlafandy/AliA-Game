@@ -2,6 +2,12 @@ package states.menus;
 
 import states.MenuState;
 import substates.GameplaySettingsSubState;
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
+import flixel.ui.FlxButton;
+import flixel.util.FlxTimer;
 
 class SelectState extends GameState
 {
@@ -59,6 +65,7 @@ class SelectState extends GameState
 			addCustomDPad('EXITE', 'MENU');
 		}
 		addCustomDPadCam();
+		addMobileSaveButtons();
 		#end
     }
 
@@ -97,13 +104,7 @@ class SelectState extends GameState
 			refresh();
 		}
 
-        if (controls.ACCEPT) {
-			new FlxTimer().start(1, function(tmr:FlxTimer)
-            {
-                GameState.switchState(new CharacterState());
-            });
-			FlxG.sound.play(Paths.sound('confirm_sound'));
-        }
+        if (controls.ACCEPT) openSelectedSave();
 
         if (controls.BACK) {
 			// FlxG.sound.music.pause();
@@ -118,6 +119,34 @@ class SelectState extends GameState
 			}
 		}
     }
+
+	#if mobile
+	private function addMobileSaveButtons():Void
+	{
+		var labels = ['PREV', 'NEXT', 'OPEN', 'BACK'];
+		var w = (FlxG.width - 20) / labels.length;
+		for (i in 0...labels.length)
+		{
+			var index = i;
+			var b = new FlxButton(4 + i * (w + 4), FlxG.height - 58, labels[i], function() {
+				switch (index) {
+					case 0: selected = (selected - 1 + saves.length) % saves.length; refresh();
+					case 1: selected = (selected + 1) % saves.length; refresh();
+					case 2: openSelectedSave();
+					case 3: GameState.switchState(new MenuState());
+				}
+			});
+			b.scale.set(0.85, 0.85);
+			add(b);
+		}
+	}
+	#end
+
+	private function openSelectedSave():Void
+	{
+		new FlxTimer().start(1, function(tmr:FlxTimer) GameState.switchState(new CharacterState()));
+		FlxG.sound.play(Paths.sound('confirm_sound'));
+	}
 
 	private function refresh():Void
     {
