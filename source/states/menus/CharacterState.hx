@@ -1,7 +1,7 @@
 package states.menus;
 
 import flixel.FlxG;
-import flixel.ui.FlxButton;
+import mobile.TouchUtil;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
@@ -90,36 +90,9 @@ class CharacterState extends GameState
 		#if mobile
 		addCustomDPad('EXITE', 'E-MENU');
 		addCustomDPadCam();
-		addMobileCharacterButtons();
 		#end
 	}
 
-	#if mobile
-	private function addMobileCharacterButtons():Void
-	{
-		var labels = ['LEFT', 'RIGHT', 'UP', 'DOWN', 'SELECT', 'BACK'];
-		var w = (FlxG.width - 28) / labels.length;
-		for (i in 0...labels.length)
-		{
-			var indexButton = i;
-			var b = new FlxButton(4 + i * (w + 4), FlxG.height - 58, labels[i], function() {
-				if (confirmingSelection) return;
-				switch (indexButton) {
-					case 0: index = (index - 1 + chars.length) % chars.length;
-					case 1: index = (index + 1) % chars.length;
-					case 2: if (index - SLOTS >= 0) index -= SLOTS;
-					case 3: if (index + SLOTS < chars.length) index += SLOTS;
-					case 4: confirmCharacter();
-					case 5: GameState.switchState(new SelectState());
-				}
-				updateSelection();
-				if (nameTxt != null && chars.length > 0) nameTxt.text = chars[index];
-			});
-			b.scale.set(0.78, 0.78);
-			add(b);
-		}
-	}
-	#end
 
 	private function confirmCharacter():Void
 	{
@@ -301,6 +274,21 @@ class CharacterState extends GameState
 		}*/
 
 		var oldIndex:Int = index;
+
+		#if mobile
+		if (!confirmingSelection)
+		{
+			for (i in 0...characterBoxes.length)
+			{
+				if (TouchUtil.justPressedOn(characterBoxes[i]))
+				{
+					if (index == i) confirmCharacter();
+					else index = i;
+					break;
+				}
+			}
+		}
+		#end
 
 		if (controls.UI_LEFT_P) {
 			index--;
