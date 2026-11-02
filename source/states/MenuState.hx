@@ -120,7 +120,6 @@ class MenuState extends GameState
 		#if mobile
 		addCustomDPad('EXITE', 'E-MENU');
 		addCustomDPadCam();
-		addMobileMenuButtons();
 		#end
 	}
 
