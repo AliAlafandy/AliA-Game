@@ -183,8 +183,10 @@ class LevelEditorState extends GameState
 		properties.text = "PROPERTIES\n----------------\nType: " + (selectedKind == 0 ? "Player Spawn" : selectedKind == 1 ? "Background Layer" : "Flash Collectible") + "\nX: " + px + "\nY: " + py + "\n\nMusic: " + level.music;
 
 		preview.clear();
-		var spawn = new FlxSprite(42 + level.playerX * 0.35, 82 + level.playerY * 0.22).makeGraphic(16, 24, 0xFF55CCFF);
-		preview.add(spawn);
+		
+		playerMarker = new FlxSprite(42 + level.playerX * 0.35, 82 + level.playerY * 0.22).makeGraphic(16, 24, 0xFF55CCFF);
+		preview.add(playerMarker);
+		
 		for (i in 0...level.flashes.length)
 		{
 			var f = level.flashes[i];
@@ -375,6 +377,10 @@ class LevelEditorState extends GameState
 		if (controls.GAME_RIGHT_P) adjust(16, 0);
 		if (controls.GAME_UP_P) adjust(0, -16);
 		if (controls.GAME_DOWN_P) adjust(0, 16);
-		#if desktop if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(playerMarker)) selectedKind = 0; #end
+		if (playerMarker != null && FlxG.mouse.justPressed && FlxG.mouse.overlaps(playerMarker)) 
+		{
+			selectedKind = 0;
+			refreshUI();
+		}
 	}
 }
