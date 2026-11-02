@@ -2,7 +2,6 @@ package states;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import mobile.TouchUtil;
 import flixel.FlxObject;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
