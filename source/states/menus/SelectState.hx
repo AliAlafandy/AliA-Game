@@ -6,7 +6,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import mobile.TouchUtil;
 import flixel.util.FlxTimer;
 import flixel.util.FlxSave;
 import states.PlayState;
@@ -207,7 +206,7 @@ class SelectState extends GameState
             output += prefix + saves[i] + prefix2 + '\n';
         }
 
-        output += '\nUP / DOWN - Select\nENTER - Open\nESC - Back';
+        // output += '\nUP / DOWN - Select\nENTER - Open\nESC - Back';
 
         t.text = output;
         t.screenCenter();
