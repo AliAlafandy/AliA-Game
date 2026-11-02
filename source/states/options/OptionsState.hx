@@ -3,6 +3,8 @@ package states.options;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.ui.FlxButton;
+import states.MenuState;
 
 class OptionsState extends GameState
 {
@@ -50,6 +52,7 @@ class OptionsState extends GameState
 		#if mobile
 		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
+		addMobileOptionButtons();
 		#end
     }
 
