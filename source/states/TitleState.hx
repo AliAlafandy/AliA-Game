@@ -68,11 +68,13 @@ class TitleState extends GameState
     override public function update(elapsed:Float) {
         super.update(elapsed);
         
+		#if VIDEOS_ALLOWED
         if (videoSprite != null)
         {
             if (FlxG.keys.justPressed.SPACE)
                 videoSprite.togglePaused();
         }
+		#end
 
         if (FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed) {
 			FlxG.sound.play(Paths.sound('confirm_sound'));
