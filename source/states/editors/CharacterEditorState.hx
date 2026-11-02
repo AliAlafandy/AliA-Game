@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.ui.FlxButton;
 import openfl.text.TextField;
 import openfl.text.TextFieldType;
 import openfl.text.TextFormat;
@@ -49,7 +50,37 @@ class CharacterEditorState extends GameState
 		add(status);
 		scan();
 		refresh();
+		#if mobile
+		addTouchControls();
+		#end
 	}
+
+	#if mobile
+	private function addTouchControls():Void
+	{
+		var y = FlxG.height - 88;
+		var w = (FlxG.width - 24) / 5;
+		var labels = ['UP', 'DOWN', 'OPEN', 'NEW', 'BACK'];
+		for (i in 0...labels.length)
+		{
+			var index = i;
+			var b = new FlxButton(4 + i * (w + 4), y, labels[i], function() {
+				switch (index) {
+					case 0: if (paths.length > 0) selected = (selected - 1 + paths.length) % paths.length; refresh();
+					case 1: if (paths.length > 0) selected = (selected + 1) % paths.length; refresh();
+					case 2: if (editing) closeEditor() else openSelected();
+					case 3: createFile();
+					case 4: if (editing) closeEditor() else GameState.switchState(new EditorState());
+				}
+			});
+			b.scale.set(0.8, 0.8);
+			add(b);
+		}
+		var saveButton = new FlxButton(FlxG.width - 72, 8, 'SAVE', save);
+		saveButton.scale.set(0.8, 0.8);
+		add(saveButton);
+	}
+	#end
 
 	private function scan():Void
 	{
