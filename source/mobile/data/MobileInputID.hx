@@ -64,6 +64,7 @@ enum abstract MobileInputID(Int) from Int to Int
 	var POWER = 41;
 	var BACK_M = 42;
 	var PAUSE = 43;
+	var SECRET = 44;
 
 	@:from
 	public static inline function fromString(s:String)
