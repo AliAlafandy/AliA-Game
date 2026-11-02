@@ -3,7 +3,7 @@ package states.options;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.ui.FlxButton;
+import mobile.TouchUtil;
 import states.MenuState;
 
 class OptionsState extends GameState
@@ -52,7 +52,6 @@ class OptionsState extends GameState
 		#if mobile
 		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
-		addMobileOptionButtons();
 		#end
     }
 
@@ -103,6 +102,25 @@ class OptionsState extends GameState
 			refresh();
 		}
 
+        #if mobile
+        if (TouchUtil.justPressed)
+        {
+            for (touch in FlxG.touches.list)
+            {
+                if (!touch.justPressed) continue;
+                var row = Std.int((touch.y - text.y) / 34) - 2;
+                if (row >= 0 && row < options.length)
+                {
+                    selected = row;
+                    refresh();
+                    FlxG.sound.play(Paths.sound('confirm_sound'));
+                    openSelectedSubstate(options[selected]);
+                    break;
+                }
+            }
+        }
+        #end
+
         if (controls.ACCEPT)
         {
 			FlxG.sound.play(Paths.sound('confirm_sound'));
@@ -116,34 +134,6 @@ class OptionsState extends GameState
         }
     }
 
-
-    #if mobile
-    private function addMobileOptionButtons():Void
-    {
-        var buttonWidth = (FlxG.width - 24) / options.length;
-        for (i in 0...options.length)
-        {
-            var index = i;
-            var button = new FlxButton(4 + i * (buttonWidth + 4), FlxG.height - 58, options[i].toUpperCase(), function()
-            {
-                selected = index;
-                refresh();
-                FlxG.sound.play(Paths.sound('confirm_sound'));
-                openSelectedSubstate(options[index]);
-            });
-            button.scale.set(0.78, 0.78);
-            add(button);
-        }
-
-        var backButton = new FlxButton(8, 8, 'BACK', function()
-        {
-            FlxG.sound.play(Paths.sound('cancel_sound'));
-            GameState.switchState(new MenuState());
-        });
-        backButton.scale.set(0.8, 0.8);
-        add(backButton);
-    }
-    #end
 
     private function refresh():Void
     {
