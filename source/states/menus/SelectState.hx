@@ -21,38 +21,6 @@ class SelectState extends GameState
 
 	private final saves:Array<String> = [
 		'NO SAVE',
-		'SAVE SLOT 1',
-		'SAVE SLOT 2',
-		'SAVE SLOT 3',
-		'SAVE SLOT 4',
-		'SAVE SLOT 5',
-		'SAVE SLOT 6',
-		'SAVE SLOT 7',
-		'SAVE SLOT 8',
-		'DELETE'
-	];kage states.menus;
-
-import states.MenuState;
-import substates.GameplaySettingsSubState;
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.text.FlxText;
-import flixel.util.FlxColor;
-import flixel.ui.FlxButton;
-import flixel.util.FlxTimer;
-import flixel.util.FlxSave;
-import states.PlayState;
-import states.menus.CharacterState;
-
-class SelectState extends GameState
-{
-	private var selected:Int = 0;
-	private var deleting:Bool = false;
-	private var saveStatus:String = "";
-	private var staticSave:FlxSave;
-
-	private final saves:Array<String> = [
-		'NO SAVE',
         'NEW GAME 1',
         'NEW GAME 2',
         'NEW GAME 3',
