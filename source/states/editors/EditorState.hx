@@ -4,7 +4,6 @@ import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import mobile.TouchUtil;
 
 import states.editors.*;
 
