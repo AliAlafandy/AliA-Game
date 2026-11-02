@@ -49,10 +49,10 @@ class OptionsState extends GameState
 
 		refresh();
 
-		#if mobile
+		/*#if mobile
 		addCustomDPad('EXITE', 'MENU');
 		addCustomDPadCam();
-		#end
+		#end*/
     }
 
 	override function closeSubState() {
@@ -65,10 +65,10 @@ class OptionsState extends GameState
 		ClientPrefs.saveSettings();
 		ClientPrefs.loadPrefs();
 
-		#if mobile
+		/*#if mobile
 		removeCustomDPad();
 		addCustomDPad("EXITE", "MENU");
-		#end
+		#end*/
 	}
 
     override function update(elapsed:Float)
