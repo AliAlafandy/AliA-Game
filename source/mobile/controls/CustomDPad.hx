@@ -284,6 +284,9 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 			add(backPad);
 			add(backButton);
 		} else if (Action == "SECRET") {
+			add(backPad);
+			add(backButton);
+
 			add(secretButton);
 		} else {
 			// Error
