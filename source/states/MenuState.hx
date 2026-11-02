@@ -30,6 +30,8 @@ import states.menus.ModsState;
 import data.debug.DiscordRPC;
 #end
 
+using StringTools;
+
 class MenuState extends GameState
 {
 	public static var curSelected:Int = 0;
