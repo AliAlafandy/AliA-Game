@@ -2,6 +2,7 @@ package states;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.ui.FlxButton;
 import flixel.FlxObject;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
@@ -119,6 +120,7 @@ class MenuState extends GameState
 		#if mobile
 		addCustomDPad('EXITE', 'E-MENU');
 		addCustomDPadCam();
+		addMobileMenuButtons();
 		#end
 	}
 
@@ -199,6 +201,41 @@ class MenuState extends GameState
 
 		super.update(elapsed);
 	}
+
+	#if mobile
+	private function addMobileMenuButtons():Void
+	{
+		var count = optionShit.length;
+		var buttonWidth = (FlxG.width - 20) / count;
+		for (i in 0...count)
+		{
+			var index = i;
+			var label = optionShit[i].toUpperCase();
+			var b = new FlxButton(10 + i * buttonWidth, FlxG.height - 62, label, function() { activateMobileItem(index); });
+			b.scale.set(0.82, 0.82);
+			add(b);
+		}
+	}
+
+	private function activateMobileItem(index:Int):Void
+	{
+		if (selectedSomethin || index < 0 || index >= optionShit.length) return;
+		curSelected = index;
+		changeItem();
+		selectedSomethin = true;
+		FlxG.sound.play(Paths.sound('confirm_sound'));
+		switch (optionShit[index])
+		{
+			case 'play': GameState.switchState(new SelectState());
+			case 'online': GameState.switchState(new OnlineState());
+			#if MODS_ALLOWED
+			case 'mods': GameState.switchState(new ModsState());
+			#end
+			case 'options': GameState.switchState(new OptionsState());
+			case 'exit': LimeSystem.exit(1);
+		}
+	}
+	#end
 
 	function changeItem(huh:Int = 0)
 	{
