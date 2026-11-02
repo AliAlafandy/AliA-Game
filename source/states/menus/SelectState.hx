@@ -128,7 +128,7 @@ class SelectState extends GameState
 
 	private function slotName(slot:Int):String
 	{
-		return 'AliAGameSaveSlot' + slot;
+		return 'Save Game' + slot;
 	}
 
 	private function bindSlot(slot:Int):Bool
