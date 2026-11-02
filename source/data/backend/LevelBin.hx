@@ -26,6 +26,8 @@ typedef LevelFlashData =
 
 class LevelBin
 {
+	public function new() {}
+
 	public var name:String = "ATown";
 	public var music:String = "";
 	public var playerX:Int = 500;
