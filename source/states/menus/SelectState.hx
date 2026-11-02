@@ -8,10 +8,48 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.ui.FlxButton;
 import flixel.util.FlxTimer;
+import flixel.util.FlxSave;
+import states.PlayState;
+import states.menus.CharacterState;
 
 class SelectState extends GameState
 {
 	private var selected:Int = 0;
+	private var deleting:Bool = false;
+	private var saveStatus:String = "";
+	private var staticSave:FlxSave;
+
+	private final saves:Array<String> = [
+		'NO SAVE',
+		'SAVE SLOT 1',
+		'SAVE SLOT 2',
+		'SAVE SLOT 3',
+		'SAVE SLOT 4',
+		'SAVE SLOT 5',
+		'SAVE SLOT 6',
+		'SAVE SLOT 7',
+		'SAVE SLOT 8',
+		'DELETE'
+	];kage states.menus;
+
+import states.MenuState;
+import substates.GameplaySettingsSubState;
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
+import flixel.ui.FlxButton;
+import flixel.util.FlxTimer;
+import flixel.util.FlxSave;
+import states.PlayState;
+import states.menus.CharacterState;
+
+class SelectState extends GameState
+{
+	private var selected:Int = 0;
+	private var deleting:Bool = false;
+	private var saveStatus:String = "";
+	private var staticSave:FlxSave;
 
 	private final saves:Array<String> = [
 		'NO SAVE',
@@ -50,6 +88,7 @@ class SelectState extends GameState
         add(t);
 
 		refresh();
+		staticSave = new FlxSave();
 
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
 		{
@@ -142,10 +181,73 @@ class SelectState extends GameState
 	}
 	#end
 
+	private function slotName(slot:Int):String
+	{
+		return 'AliAGameSaveSlot' + slot;
+	}
+
+	private function bindSlot(slot:Int):Bool
+	{
+		if (staticSave == null) staticSave = new FlxSave();
+		return staticSave.bind(slotName(slot));
+	}
+
 	private function openSelectedSave():Void
 	{
-		new FlxTimer().start(1, function(tmr:FlxTimer) GameState.switchState(new CharacterState()));
 		FlxG.sound.play(Paths.sound('confirm_sound'));
+
+		// NO SAVE always starts a fresh, non-persistent session.
+		if (selected == 0)
+		{
+			PlayState.saveSlot = 0;
+			PlayState.noSave = true;
+			new FlxTimer().start(0.15, function(tmr:FlxTimer) GameState.switchState(new CharacterState()));
+			return;
+		}
+
+		// DELETE enters deletion mode. Pick one of the eight slots to erase.
+		if (selected == saves.length - 1)
+		{
+			deleting = !deleting;
+			saveStatus = deleting ? 'DELETE MODE: choose slot 1-8, then OPEN' : 'Delete mode cancelled';
+			refresh();
+			return;
+		}
+
+		var slot = selected;
+		if (deleting)
+		{
+			if (bindSlot(slot))
+			{
+				staticSave.erase();
+				staticSave.close();
+			}
+			deleting = false;
+			saveStatus = 'SAVE SLOT $slot deleted. Choose NO SAVE or a slot to start.';
+			refresh();
+			return;
+		}
+
+		// Selecting a slot stores the current character and launches directly.
+		// It deliberately does not open CharacterState.
+		if (!bindSlot(slot))
+		{
+			saveStatus = 'Could not open SAVE SLOT $slot';
+			refresh();
+			return;
+		}
+		staticSave.data.character = CharacterState.selectedCharacter;
+		staticSave.data.characterIndex = CharacterState.selectedCharacterIndex;
+		staticSave.data.stage = PlayState.curStage;
+		staticSave.data.flashCount = 0;
+		staticSave.data.elapsedTime = 0.0;
+		staticSave.data.exists = true;
+		staticSave.flush();
+		staticSave.close();
+
+		PlayState.saveSlot = slot;
+		PlayState.noSave = false;
+		new FlxTimer().start(0.15, function(tmr:FlxTimer) GameState.switchState(new PlayState()));
 	}
 
 	private function refresh():Void
