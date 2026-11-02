@@ -235,12 +235,12 @@ class MenuState extends GameState
 			if (i == curSelected)
 				continue;
 
-			FlxTween.tween(optionShit[i], {alpha: 0}, 0.4, {
-				ease: FlxEase.quadOut,
-				onComplete: function(twn:FlxTween)
-				{
-					optionShit[i].kill();
-				}
+			FlxTween.tween(menuItems.members[i], {alpha: 0}, 0.4, {
+			    ease: FlxEase.quadOut,
+			    onComplete: function(twn:FlxTween)
+			    {
+			        menuItems.members[i].kill();
+			    }
 			});
 		}
 	}
