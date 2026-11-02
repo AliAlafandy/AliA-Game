@@ -24,9 +24,17 @@ class PauseSubState extends GameSubState
 
     private var menuText:FlxText;
 
+	#if mobile
+	public var manager:MobileInputManager;
+	#end
+
     public function new()
     {
         super();
+
+		#if mobile
+		manager = new MobileInputManager();
+		#end
 
         FlxG.camera.stopFX();
 
@@ -41,6 +49,11 @@ class PauseSubState extends GameSubState
         menuText.setFormat(null, 28, FlxColor.WHITE, CENTER);
         menuText.scrollFactor.set();
         add(menuText);
+
+		/*#if mobile
+        addCustomDPad('EXIST', 'JUMP');
+		addCustomDPadCam();
+        #end*/
 
         refresh();
     }
@@ -147,5 +160,9 @@ class PauseSubState extends GameSubState
     override public function close():Void
     {
         super.close();
+
+		/*#if mobile
+		removeCustomDPad();
+		#end*/
     }
 }
