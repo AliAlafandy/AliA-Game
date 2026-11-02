@@ -27,6 +27,7 @@ typedef LevelFlashData =
 class LevelBin
 {
 	public var name:String = "ATown";
+	public var music:String = "";
 	public var playerX:Int = 500;
 	public var playerY:Int = 130;
 	public var backgrounds:Array<LevelBackgroundData> = [];
@@ -63,6 +64,7 @@ class LevelBin
 			var root = parsed.asObject();
 			var result = new LevelBin();
 			result.name = root.get("name").asString(stage);
+			result.music = root.get("music").asString("");
 
 			var playerData = root.get("player").asObject();
 			if (playerData != null)
