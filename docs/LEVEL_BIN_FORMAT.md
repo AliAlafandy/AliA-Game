@@ -5,6 +5,7 @@ Each stage can contain `assets/levels/<StageName>/Level.bin`. The file is read b
 The BIN root must be an object with these fields:
 
 - `name`: stage name (string)
+- `music`: optional music asset path, without extension (for example `levels/ATown/aTown_theme`)
 - `player`: object with `x` and `y` spawn coordinates (integers)
 - `backgrounds`: array of objects with `image`, `x`, `y`, `scrollX`, and `scrollY`
 - `flashes`: array of collectible objects with `x`, `y`, and `value`
@@ -16,6 +17,7 @@ Example data to encode as BIN:
 ```text
 {
   name: "ATown",
+  music: "levels/ATown/aTown_theme",
   player: { x: 160, y: 420 },
   backgrounds: [
     { image: "levels/ATown/background", x: 0, y: 0, scrollX: 350, scrollY: 350 }
@@ -26,6 +28,8 @@ Example data to encode as BIN:
   ]
 }
 ```
+
+The stage music is played on loop when the stage loads. Leave `music` empty or omit it to keep the currently loaded music.
 
 The example is a human-readable representation of the object; save it using the project's `bin.BIN` writer, not as plain text with a `.bin` extension. The editor's existing tile-grid BIN is a separate format and is not a PlayState stage file.
 
