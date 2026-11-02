@@ -2,7 +2,7 @@ package states;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.ui.FlxButton;
+import mobile.TouchUtil;
 import flixel.FlxObject;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
@@ -135,6 +135,18 @@ class MenuState extends GameState
 
 		if (!selectedSomethin)
 		{
+			#if mobile
+			for (i in 0...menuItems.members.length)
+			{
+				if (TouchUtil.justPressedOn(menuItems.members[i]))
+				{
+					curSelected = i;
+					changeItem();
+					activateMobileItem(i);
+					break;
+				}
+			}
+			#end
 			if (controls.UI_UP_P)
 				changeItem(-1);
 
@@ -203,27 +215,11 @@ class MenuState extends GameState
 	}
 
 	#if mobile
-	private function addMobileMenuButtons():Void
-	{
-		var count = optionShit.length;
-		var buttonWidth = (FlxG.width - 20) / count;
-		for (i in 0...count)
-		{
-			var index = i;
-			var label = optionShit[i].toUpperCase();
-			var b = new FlxButton(10 + i * buttonWidth, FlxG.height - 62, label, function() { activateMobileItem(index); });
-			b.scale.set(0.82, 0.82);
-			add(b);
-		}
-	}
-
 	private function activateMobileItem(index:Int):Void
 	{
 		if (selectedSomethin || index < 0 || index >= optionShit.length) return;
-		curSelected = index;
-		changeItem();
-		selectedSomethin = true;
 		FlxG.sound.play(Paths.sound('confirm_sound'));
+		selectedSomethin = true;
 		switch (optionShit[index])
 		{
 			case 'play': GameState.switchState(new SelectState());
