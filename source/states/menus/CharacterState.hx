@@ -308,7 +308,6 @@ class CharacterState extends GameState
 		if (oldIndex != index) {
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 			updateSelection();
-			if (nameTxt != null && chars.length > 0) nameTxt.text = chars[index];
 		}
 
 		if (controls.ACCEPT) confirmCharacter();
