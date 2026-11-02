@@ -31,7 +31,9 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 	public var powerButton:TouchButton;
 	public var backButton:TouchButton;
 	public var pauseButton:TouchButton;
-	
+
+	public var secretButton:TouchButton;
+
 	public var buttonExtra:TouchButton = null;
 	public var buttonExtra2:TouchButton = null;
 	
@@ -217,6 +219,8 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		backButton = createCustomButton(backPad.x, backPad.y, 0.75, 0.75, 'null0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
 		pauseButton = createCustomButton(pausePad.x, pausePad.y, 0.75, 0.75, 'null0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
 
+		secretButton = createCustomButton(FlxG.width, 0, 0.75, 0.75, 'null0000', [MobileInputID.SECRET, MobileInputID.E], customFrames);
+
 		if (DPad == "EXITE")
 		{
 			add(padBG);
@@ -279,6 +283,8 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		} else if (Action == "BACK") {
 			add(backPad);
 			add(backButton);
+		} else if (Action == "SECRET") {
+			add(secretButton);
 		} else {
 			// Error
 		}
