@@ -30,7 +30,7 @@ class ControlsSubState extends BaseOptionsMenu
             "Controls Alpha",
             "controlsAlpha",
             "Opacity of mobile controls.",
-            0.1, 1.0, 0.1
+            0, 1.0, 0.1
     	);
 
         // Edit Controls
