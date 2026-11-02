@@ -19,6 +19,11 @@ import lime.ui.FileDialog;
 import lime.system.System;
 #end
 
+import bin.BIN;
+import bin.BINObject;
+import bin.BINArray;
+import bin.BINValue;
+
 /**
  * Visual level editor.
  * Level data is edited through scene objects and property controls.
@@ -196,14 +201,13 @@ class LevelEditorState extends GameState
 		dialog.onOpen.add(function(res:Resource) {
 			try {
 				var bytes:Bytes = cast res;
-				//for later public static function loadFromBytes(bytes:Bytes):LevelBin { ... }
-				var loaded = LevelBin.loadFromBytes(bytes); 
-				
-				if (loaded == null) {
-					status.text = "Could not parse loaded .bin file.";
-					return;
+				var binValue = BIN.parse(bytes);
+				if (binValue.isObject()) {
+					var loaded = loadLevelFromBinValue(binValue.asObject());
+					applyLoadedLevel(loaded);
+				} else {
+					status.text = "Invalid .bin file format.";
 				}
-				applyLoadedLevel(loaded);
 			} catch (e:Dynamic) {
 				status.text = "Binary load failed: " + Std.string(e);
 			}
@@ -229,14 +233,8 @@ class LevelEditorState extends GameState
 		var dialog = new FileDialog();
 		dialog.onSave.add(function(path:String) {
 			if (path != null) {
-				try {
-					var root = buildBinRoot();
-					bin.BIN.save(path, bin.BINValue.object(root));
-					status.text = "Saved binary to: " + path;
-					reloadEditor();
-				} catch (e:Dynamic) {
-					status.text = "Binary save failed: " + Std.string(e);
-				}
+				status.text = "Saved binary to: " + path;
+				reloadEditor();
 			} else {
 				status.text = "Save cancelled.";
 			}
@@ -246,7 +244,9 @@ class LevelEditorState extends GameState
 		});
 		
 		var defaultName = level.name + ".bin";
-		dialog.save(null, "bin", System.documentsDirectory + "/" + defaultName, "Save Level");
+		var root = buildBinRoot();
+		var bytes:Bytes = BIN.write(BINValue.object(root));
+		dialog.save(bytes, "bin", System.documentsDirectory + "/" + defaultName, "Save Level");
 		#else
 		try {
 			var directory = "assets/levels/" + level.name;
@@ -254,7 +254,7 @@ class LevelEditorState extends GameState
 			if (!FileSystem.exists(directory)) FileSystem.createDirectory(directory);
 			#end
 			var root = buildBinRoot();
-			bin.BIN.save(directory + "/Level.bin", bin.BINValue.object(root));
+			BIN.save(directory + "/Level.bin", BINValue.object(root));
 			status.text = "Saved binary " + directory + "/Level.bin";
 			reloadEditor();
 		} catch (e:Dynamic) {
@@ -263,40 +263,85 @@ class LevelEditorState extends GameState
 		#end
 	}
 
-	private function buildBinRoot():bin.BINObject
+	private function loadLevelFromBinValue(binObj:BINObject):LevelBin
 	{
-		var backgrounds = new bin.BINArray();
+		var loaded = new LevelBin();
+		loaded.name = binObj.get("name").asString(levelName);
+		loaded.music = binObj.get("music").asString("levels/" + levelName + "/theme");
+		
+		var playerObj = binObj.get("player").asObject();
+		if (playerObj != null) {
+			loaded.playerX = playerObj.get("x").asInt(160);
+			loaded.playerY = playerObj.get("y").asInt(420);
+		}
+		
+		var bgArray = binObj.get("backgrounds").asArray();
+		if (bgArray != null) {
+			for (i in 0...bgArray.length) {
+				var bgObj = bgArray.get(i).asObject();
+				if (bgObj != null) {
+					loaded.backgrounds.push({
+						image: bgObj.get("image").asString("levels/" + levelName + "/background"),
+						x: bgObj.get("x").asInt(0),
+						y: bgObj.get("y").asInt(0),
+						scrollX: bgObj.get("scrollX").asInt(350),
+						scrollY: bgObj.get("scrollY").asInt(350)
+					});
+				}
+			}
+		}
+		
+		var flashArray = binObj.get("flashes").asArray();
+		if (flashArray != null) {
+			for (i in 0...flashArray.length) {
+				var flashObj = flashArray.get(i).asObject();
+				if (flashObj != null) {
+					loaded.flashes.push({
+						x: flashObj.get("x").asInt(420),
+						y: flashObj.get("y").asInt(380),
+						value: flashObj.get("value").asInt(1)
+					});
+				}
+			}
+		}
+		
+		return loaded;
+	}
+
+	private function buildBinRoot():BINObject
+	{
+		var backgrounds = new BINArray();
 		for (item in level.backgrounds)
 		{
-			var bg = new bin.BINObject();
-			bg.set("image", bin.BINValue.string(item.image));
-			bg.set("x", bin.BINValue.int(item.x));
-			bg.set("y", bin.BINValue.int(item.y));
-			bg.set("scrollX", bin.BINValue.int(item.scrollX));
-			bg.set("scrollY", bin.BINValue.int(item.scrollY));
-			backgrounds.push(bin.BINValue.object(bg));
+			var bg = new BINObject();
+			bg.set("image", BINValue.string(item.image));
+			bg.set("x", BINValue.int(item.x));
+			bg.set("y", BINValue.int(item.y));
+			bg.set("scrollX", BINValue.int(item.scrollX));
+			bg.set("scrollY", BINValue.int(item.scrollY));
+			backgrounds.push(BINValue.object(bg));
 		}
 		
-		var flashes = new bin.BINArray();
+		var flashes = new BINArray();
 		for (item in level.flashes)
 		{
-			var flash = new bin.BINObject();
-			flash.set("x", bin.BINValue.int(item.x));
-			flash.set("y", bin.BINValue.int(item.y));
-			flash.set("value", bin.BINValue.int(item.value));
-			flashes.push(bin.BINValue.object(flash));
+			var flash = new BINObject();
+			flash.set("x", BINValue.int(item.x));
+			flash.set("y", BINValue.int(item.y));
+			flash.set("value", BINValue.int(item.value));
+			flashes.push(BINValue.object(flash));
 		}
 		
-		var player = new bin.BINObject();
-		player.set("x", bin.BINValue.int(level.playerX));
-		player.set("y", bin.BINValue.int(level.playerY));
+		var player = new BINObject();
+		player.set("x", BINValue.int(level.playerX));
+		player.set("y", BINValue.int(level.playerY));
 		
-		var root = new bin.BINObject();
-		root.set("name", bin.BINValue.string(level.name));
-		root.set("music", bin.BINValue.string(level.music));
-		root.set("player", bin.BINValue.object(player));
-		root.set("backgrounds", bin.BINValue.array(backgrounds));
-		root.set("flashes", bin.BINValue.array(flashes));
+		var root = new BINObject();
+		root.set("name", BINValue.string(level.name));
+		root.set("music", BINValue.string(level.music));
+		root.set("player", BINValue.object(player));
+		root.set("backgrounds", BINValue.array(backgrounds));
+		root.set("flashes", BINValue.array(flashes));
 		
 		return root;
 	}
@@ -330,6 +375,6 @@ class LevelEditorState extends GameState
 		if (controls.GAME_RIGHT_P) adjust(16, 0);
 		if (controls.GAME_UP_P) adjust(0, -16);
 		if (controls.GAME_DOWN_P) adjust(0, 16);
-		if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(playerMarker)) selectedKind = 0;
+		#if desktop if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(playerMarker)) selectedKind = 0; #end
 	}
 }
