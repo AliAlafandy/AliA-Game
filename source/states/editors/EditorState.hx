@@ -122,18 +122,21 @@ class EditorState extends GameState
 
 	private function openLevelEditor():Void
 	{
-		FlxG.switchState(new LevelEditorState());
+		GameState.switchState(new LevelEditorState());
 	}
 
 	private function openCharacterEditor():Void
 	{
+		GameState.switchState(new CharacterEditorState());
 	}
 
 	private function openAnimationEditor():Void
 	{
+		GameState.switchState(new AnimationEditorState());
 	}
 
 	private function openScriptEditor():Void
 	{
+		GameState.switchState(new ScriptEditorState());
 	}
 }
