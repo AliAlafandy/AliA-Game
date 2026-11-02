@@ -99,6 +99,12 @@ jobs:
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
 
+      - name: Clean previous builds
+        if: inputs.name == 'Windows x32'
+        run: |
+          lime clean windows
+          haxelib run hxcpp clean
+
       - name: Compile
         run: |
           haxelib run lime build ${{ inputs.buildArgs }}
