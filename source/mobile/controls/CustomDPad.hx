@@ -219,7 +219,7 @@ class CustomDPad extends MobileInputManager implements IMobileControls
 		backButton = createCustomButton(backPad.x, backPad.y, 0.75, 0.75, 'null0000', [MobileInputID.BACK_M, MobileInputID.B], customFrames);
 		pauseButton = createCustomButton(pausePad.x, pausePad.y, 0.75, 0.75, 'null0000', [MobileInputID.PAUSE, MobileInputID.P], customFrames);
 
-		secretButton = createCustomButton(FlxG.width, 0, 0.75, 0.75, 'null0000', [MobileInputID.SECRET, MobileInputID.E], customFrames);
+		secretButton = createCustomButton(backPad.x, 0, 0.75, 0.75, 'null0000', [MobileInputID.SECRET, MobileInputID.E], customFrames);
 
 		if (DPad == "EXITE")
 		{
