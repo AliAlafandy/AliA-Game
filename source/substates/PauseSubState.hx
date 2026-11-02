@@ -4,6 +4,10 @@ import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 
+#if mobile
+import mobile.TouchUtil;
+#end
+
 import states.PlayState;
 import states.MenuState;
 import states.options.OptionsState;
@@ -66,6 +70,27 @@ class PauseSubState extends GameSubState
 
             refresh();
         }
+
+        #if mobile
+        if (TouchUtil.justPressed)
+        {
+            for (touch in FlxG.touches.list)
+            {
+                if (!touch.justPressed) continue;
+
+                // The menu has a two-line heading; each option occupies one 32px row.
+                var row = Std.int((touch.y - menuText.y) / 32) - 2;
+                if (row >= 0 && row < options.length)
+                {
+                    selected = row;
+                    refresh();
+                    FlxG.sound.play(Paths.sound('confirm_sound'));
+                    select();
+                    break;
+                }
+            }
+        }
+        #end
 
         if (controls.ACCEPT)
         {
