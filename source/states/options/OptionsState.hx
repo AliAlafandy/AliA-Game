@@ -116,6 +116,35 @@ class OptionsState extends GameState
         }
     }
 
+
+    #if mobile
+    private function addMobileOptionButtons():Void
+    {
+        var buttonWidth = (FlxG.width - 24) / options.length;
+        for (i in 0...options.length)
+        {
+            var index = i;
+            var button = new FlxButton(4 + i * (buttonWidth + 4), FlxG.height - 58, options[i].toUpperCase(), function()
+            {
+                selected = index;
+                refresh();
+                FlxG.sound.play(Paths.sound('confirm_sound'));
+                openSelectedSubstate(options[index]);
+            });
+            button.scale.set(0.78, 0.78);
+            add(button);
+        }
+
+        var backButton = new FlxButton(8, 8, 'BACK', function()
+        {
+            FlxG.sound.play(Paths.sound('cancel_sound'));
+            GameState.switchState(new MenuState());
+        });
+        backButton.scale.set(0.8, 0.8);
+        add(backButton);
+    }
+    #end
+
     private function refresh():Void
     {
         var output:String = 'OPTIONS\n\n';
