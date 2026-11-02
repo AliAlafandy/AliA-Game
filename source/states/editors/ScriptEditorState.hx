@@ -301,12 +301,12 @@ class ScriptEditorState extends GameState
 		super.update(elapsed);
 		if (isEditing) return;
 
-		if (controls.GAME_UP_P)
+		if (files.length > 0 && controls.GAME_UP_P)
 		{
 			selected = FlxMath.wrap(selected - 1, 0, files.length - 1);
 			refreshList();
 		}
-		else if (controls.GAME_DOWN_P)
+		else if (files.length > 0 && controls.GAME_DOWN_P)
 		{
 			selected = FlxMath.wrap(selected + 1, 0, files.length - 1);
 			refreshList();
