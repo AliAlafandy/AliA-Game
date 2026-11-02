@@ -6,7 +6,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.ui.FlxButton;
+import mobile.TouchUtil;
 import flixel.util.FlxTimer;
 import flixel.util.FlxSave;
 import states.PlayState;
@@ -72,7 +72,6 @@ class SelectState extends GameState
 			addCustomDPad('EXITE', 'MENU');
 		}
 		addCustomDPadCam();
-		addMobileSaveButtons();
 		#end
     }
 
@@ -127,27 +126,6 @@ class SelectState extends GameState
 		}
     }
 
-	#if mobile
-	private function addMobileSaveButtons():Void
-	{
-		var labels = ['PREV', 'NEXT', 'OPEN', 'BACK'];
-		var w = (FlxG.width - 20) / labels.length;
-		for (i in 0...labels.length)
-		{
-			var index = i;
-			var b = new FlxButton(4 + i * (w + 4), FlxG.height - 58, labels[i], function() {
-				switch (index) {
-					case 0: selected = (selected - 1 + saves.length) % saves.length; refresh();
-					case 1: selected = (selected + 1) % saves.length; refresh();
-					case 2: openSelectedSave();
-					case 3: GameState.switchState(new MenuState());
-				}
-			});
-			b.scale.set(0.85, 0.85);
-			add(b);
-		}
-	}
-	#end
 
 	private function slotName(slot:Int):String
 	{
