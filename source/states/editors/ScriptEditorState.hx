@@ -22,8 +22,7 @@ using StringTools;
 /**
  * Global script editor.
  *
- * Scans every mod's scripts/ directory, rather than scripts belonging to
- * the currently selected song or level. Supports .ellawy, .hx and .lua.
+ * Scans mod scripts folders and edits Ellawy language files only (.ellawy).
  */
 class ScriptEditorState extends GameState
 {
@@ -59,7 +58,7 @@ class ScriptEditorState extends GameState
 		header.makeGraphic(FlxG.width, 54, 0xFF202A3A);
 		add(header);
 
-		title = new FlxText(12, 12, FlxG.width - 24, "GLOBAL MOD SCRIPT EDITOR", 22);
+		title = new FlxText(12, 12, FlxG.width - 24, "ELLAWY SCRIPT EDITOR", 22);
 		title.setFormat(null, 22, FlxColor.WHITE, LEFT);
 		add(title);
 
@@ -72,7 +71,7 @@ class ScriptEditorState extends GameState
 		add(status);
 
 		help = new FlxText(14, FlxG.height - 40, FlxG.width - 28,
-			"UP/DOWN Select  ENTER Open  N New  CTRL+S Save  BACK Return", 12);
+			"ELLawy files only  |  UP/DOWN Select  ENTER Open  N New  CTRL+S Save  BACK Return", 12);
 		help.setFormat(null, 12, FlxColor.GRAY, LEFT);
 		add(help);
 
@@ -159,7 +158,7 @@ class ScriptEditorState extends GameState
 				}
 
 				var lower = entry.toLowerCase();
-				if (lower.endsWith(".ellawy") || lower.endsWith(".hx") || lower.endsWith(".lua"))
+				if (lower.endsWith(".ellawy"))
 					if (!files.contains(fullPath)) files.push(fullPath);
 			}
 		}
@@ -174,7 +173,7 @@ class ScriptEditorState extends GameState
 	{
 		if (files.length == 0)
 		{
-			fileList.text = "No scripts found. Press N to create a script in the selected mod.";
+			fileList.text = "No .ellawy scripts found. Press N to create an Ellawy script in the selected mod.";
 			return;
 		}
 
@@ -199,6 +198,11 @@ class ScriptEditorState extends GameState
 
 	private function openFile(path:String):Void
 	{
+		if (path == null || !path.toLowerCase().endsWith(".ellawy"))
+		{
+			status.text = "Only .ellawy scripts can be opened here.";
+			return;
+		}
 		#if sys
 		try
 		{
@@ -254,6 +258,11 @@ class ScriptEditorState extends GameState
 	{
 		#if sys
 		if (editor == null || selectedPath.length == 0) return;
+		if (!selectedPath.toLowerCase().endsWith(".ellawy"))
+		{
+			status.text = "Save blocked: Script Editor accepts .ellawy files only.";
+			return;
+		}
 		try
 		{
 			File.saveContent(selectedPath, editor.text);
@@ -277,7 +286,7 @@ class ScriptEditorState extends GameState
 		FlxG.stage.focus = null;
 		isEditing = false;
 		fileList.visible = true;
-		help.text = "UP/DOWN Select  ENTER Open  N New  CTRL+S Save  BACK Return";
+		help.text = "ELLawy files only  |  UP/DOWN Select  ENTER Open  N New  CTRL+S Save  BACK Return";
 		refreshList();
 	}
 
