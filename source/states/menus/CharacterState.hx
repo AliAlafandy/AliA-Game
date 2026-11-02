@@ -87,7 +87,7 @@ class CharacterState extends GameState
 		updateSelection();
 
 		#if mobile
-		addCustomDPad('EXITE', 'E-MENU');
+		addCustomDPad('NONE', 'BACK');
 		addCustomDPadCam();
 		#end
 	}
