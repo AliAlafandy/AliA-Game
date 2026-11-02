@@ -231,7 +231,7 @@ class MenuState extends GameState
 			    ease: FlxEase.quadOut,
 			    onComplete: function(twn:FlxTween)
 			    {
-			        optionShit[i].kill();
+			        menuItems.members[i].kill();
 			    }
 			});
 		}
