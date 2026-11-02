@@ -460,7 +460,10 @@ class Controls
 	@:noCompletion
 	private function get_mobileC():Bool
 	{
-		return ClientPrefs.data.controlsAlpha >= 0.1;
+		if (ClientPrefs.data.controlsAlpha >= 0.1)
+			return true;
+		else
+			return true; // false
 	}
 	#end
 }
