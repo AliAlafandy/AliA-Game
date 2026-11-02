@@ -70,6 +70,7 @@
 
 	<haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc"/>
 	<haxedef name="NO_PRECOMPILED_HEADERS" if="linux"/>
+	<haxedef name="HXCPP_M32" if="32bits" />
 
 	<haxelib name="hxcpp-debug-server" if="debug"/>
 	<!-- <haxedef name="HXC_LIBVLC_LOGGING" if="VIDEOS_ALLOWED debug"/> -->
