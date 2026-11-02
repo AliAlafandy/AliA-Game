@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.ui.FlxButton;
 
 import states.editors.*;
 
@@ -61,12 +62,32 @@ class EditorState extends GameState
 		add(info);
 
 		#if mobile
-		addCustomDPad('EXITE', 'MENU');
+		addCustomDPad('NONE', 'BACK');
 		addCustomDPadCam();
+		addMobileMenuButtons();
 		#end
 
 		refreshSelection();
 	}
+
+	#if mobile
+	private function addMobileMenuButtons():Void
+	{
+		var buttonY = FlxG.height - 64;
+		var labels = ['LEVEL', 'CHAR', 'ANIM', 'SCRIPTS'];
+		for (i in 0...options.length)
+		{
+			var index = i;
+			var button = new FlxButton(8 + i * ((FlxG.width - 16) / 4), buttonY, labels[i], function() {
+				selectedIndex = index;
+				refreshSelection();
+				options[index].action();
+			});
+			button.scale.set(0.85, 0.85);
+			add(button);
+		}
+	}
+	#end
 
 	private function buildOptions():Void
 	{
