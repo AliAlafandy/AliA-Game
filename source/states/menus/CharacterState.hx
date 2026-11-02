@@ -1,7 +1,6 @@
 package states.menus;
 
 import flixel.FlxG;
-import mobile.TouchUtil;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
