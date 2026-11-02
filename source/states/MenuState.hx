@@ -228,16 +228,16 @@ class MenuState extends GameState
 			case 'exit': LimeSystem.exit(1);
 		}
 
-		for (i in 0...menuItems.members.length)
+		for (i in 0...optionShit.length)
 		{
 			if (i == curSelected)
 				continue;
 
-			FlxTween.tween(menuItems.members[i], {alpha: 0}, 0.4, {
+			FlxTween.tween(optionShit[i], {alpha: 0}, 0.4, {
 				ease: FlxEase.quadOut,
 				onComplete: function(twn:FlxTween)
 				{
-					menuItems.members[i].kill();
+					optionShit[i].kill();
 				}
 			});
 		}
