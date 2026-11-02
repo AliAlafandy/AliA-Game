@@ -64,10 +64,10 @@ class OptionsState extends GameState
 		ClientPrefs.saveSettings();
 		ClientPrefs.loadPrefs();
 
-		/*#if mobile
+		#if mobile
 		removeCustomDPad();
-		addCustomDPad("EXITE", "MENU");
-		#end*/
+		addCustomDPad("NONE", "BACK");
+		#end
 	}
 
     override function update(elapsed:Float)
