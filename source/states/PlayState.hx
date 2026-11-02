@@ -14,6 +14,7 @@ import data.objects.Player;
 import states.menus.CharacterState;
 
 import data.backend.StageData;
+import data.backend.LevelBin;
 
 import states.online.MultiPlayer;
 import states.online.MultiPlayer.RemotePlayer;
@@ -86,6 +87,9 @@ class PlayState extends GameState
 	private var groundSegments:FlxTypedGroup<FlxSprite>;
 	private var grassTop:FlxSprite;
 	private var backgroundLayers:FlxTypedGroup<FlxSprite>;
+	private var flashGroup:FlxTypedGroup<FlxSprite>;
+	private var levelData:LevelBin;
+	private var flashCount:Int = 0;
 
 	public var timer:FlxText;
 	public var score:FlxText;
@@ -132,6 +136,8 @@ class PlayState extends GameState
         }
 		#end
 
+		levelData = LevelBin.load(curStage);
+
 		// Sonic-inspired scenery built from small generated shapes. Avoid
 		// stretching a placeholder/missing texture across the entire screen.
 		FlxG.camera.bgColor = FlxColor.fromRGB(105, 190, 255);
@@ -166,6 +172,9 @@ class PlayState extends GameState
 			backgroundLayers.add(cloud);
 		}
 
+		// Draw authored background images over the procedural fallback when supplied by Level.bin.
+		if (levelData != null) levelData.addBackgrounds(backgroundLayers);
+
 		// Keep textures small for mobile GPUs; tile the ground across the level.
 		var groundY:Float = FlxG.height - 48;
 		groundSegments = new FlxTypedGroup<FlxSprite>();
@@ -199,12 +208,14 @@ class PlayState extends GameState
 			partnerChar = "Hamedo";
 		}
 
-		player = new Player(500, 130, mainChar, false);
+		var spawnX:Float = levelData != null ? levelData.playerX : 500;
+		var spawnY:Float = levelData != null ? levelData.playerY : groundY;
+		player = new Player(spawnX, spawnY, mainChar, false);
 		player.updateHitbox();
-		player.y = groundY - player.height;
+		if (levelData == null) player.y = groundY - player.height;
 		player.velocity.set(0, 0);
-		player.grounded = true;
-		player.touching = FlxDirectionFlags.FLOOR;
+		player.grounded = (levelData == null);
+		if (levelData == null) player.touching = FlxDirectionFlags.FLOOR;
 		add(player);
 
 		if (partnerChar != "")
@@ -246,9 +257,15 @@ class PlayState extends GameState
 		debugGroup.add(score);
 
 		flash = new FlxText(timer.x, score.y + spaceY, timer.width, "FLASH: ", 32);
-		flash.setFormat(null, 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
+		flash.setFormat(null, 32, FlxColor.WHITE, LEFT);
 		flash.scrollFactor.set(0, 0);
 		debugGroup.add(flash);
+
+		flashGroup = new FlxTypedGroup<FlxSprite>();
+		add(flashGroup);
+		if (levelData != null) levelData.addFlashes(flashGroup);
+		flashCount = 0;
+		updateFlashHud();
 
 		FlxG.sound.music.resume();
 
@@ -338,6 +355,19 @@ class PlayState extends GameState
 		#end
 	}
 
+	private function collectFlash(playerSprite:FlxObject, flashSprite:FlxObject):Void
+	{
+		var item:FlxSprite = cast flashSprite;
+		if (item == null || !item.exists) return;
+		flashCount += item.ID > 0 ? item.ID : 1;
+		item.kill();
+		updateFlashHud();
+	}
+
+	private function updateFlashHud():Void
+	{
+		if (flash != null) flash.text = 'FLASH: $flashCount';
+	}
 	private function setupOnlineMode():Void
 	{
 		ghostGroup = new FlxTypedGroup<RemotePlayerGhost>();
@@ -449,6 +479,9 @@ class PlayState extends GameState
 				partner.updatePartnerAI(elapsed);
 			}
 		}
+
+		if (!paused && player != null && flashGroup != null)
+			FlxG.overlap(player, flashGroup, collectFlash);
 
 		handleInput();
 
