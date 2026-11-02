@@ -103,7 +103,6 @@ jobs:
         if: inputs.name == 'Windows x32'
         run: |
           haxelib run lime clean windows
-          haxelib run hxcpp clean
 
       - name: Compile
         run: |
