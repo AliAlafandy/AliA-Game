@@ -209,9 +209,9 @@ class MenuState extends GameState
 		FlxG.sound.play(Paths.sound('confirm_sound'));
 		selectedSomethin = true;
 
-		FlxFlicker.flicker(optionShit[curSelected], 1, 0.06, false, false, function(flick:FlxFlicker)
+		FlxFlicker.flicker(menuItems.members[index], 1, 0.06, false, false, function(flick:FlxFlicker)
 		{
-			switch (optionShit[curSelected]) {
+			switch (optionShit[index]) {
 				case 'play': GameState.switchState(new SelectState());
 				case 'online': GameState.switchState(new OnlineState());
 				#if MODS_ALLOWED
@@ -222,12 +222,12 @@ class MenuState extends GameState
 			}
 		});
 
-		for (i in 0...optionShit.length)
+		for (i in 0...menuItems.members.length)
 		{
 			if (i == curSelected)
 				continue;
 
-			FlxTween.tween(optionShit[i], {alpha: 0}, 0.4, {
+			FlxTween.tween(menuItems.members[i], {alpha: 0}, 0.4, {
 			    ease: FlxEase.quadOut,
 			    onComplete: function(twn:FlxTween)
 			    {
