@@ -7,9 +7,16 @@ import flixel.util.FlxColor;
 import flixel.ui.FlxButton;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import data.backend.LevelBin;
+import haxe.io.Bytes;
+import lime.utils.Resource;
 
 #if sys
 import sys.FileSystem;
+#end
+
+#if ios
+import lime.ui.FileDialog;
+import lime.system.System;
 #end
 
 /**
@@ -26,7 +33,7 @@ class LevelEditorState extends GameState
 	private var objectList:FlxText;
 	private var properties:FlxText;
 	private var preview:FlxTypedGroup<FlxSprite>;
-	private var selectedKind:Int = 0; // 0 player, 1 background, 2 flash
+	private var selectedKind:Int = 0;
 	private var selectedIndex:Int = 0;
 	private var playerMarker:FlxSprite;
 	private var dragging:Bool = false;
@@ -184,63 +191,130 @@ class LevelEditorState extends GameState
 
 	private function loadLevel():Void
 	{
+		#if ios
+		var dialog = new FileDialog();
+		dialog.onOpen.add(function(res:Resource) {
+			try {
+				var bytes:Bytes = cast res;
+				//for later public static function loadFromBytes(bytes:Bytes):LevelBin { ... }
+				var loaded = LevelBin.loadFromBytes(bytes); 
+				
+				if (loaded == null) {
+					status.text = "Could not parse loaded .bin file.";
+					return;
+				}
+				applyLoadedLevel(loaded);
+			} catch (e:Dynamic) {
+				status.text = "Binary load failed: " + Std.string(e);
+			}
+		});
+		dialog.onCancel.add(function() {
+			status.text = "Load cancelled.";
+		});
+		dialog.open("bin", null, "Load Level");
+		#else
 		var loaded = LevelBin.load(levelName);
 		if (loaded == null)
 		{
 			status.text = "Could not load assets/levels/" + levelName + "/Level.bin";
 			return;
 		}
+		applyLoadedLevel(loaded);
+		#end
+	}
+
+	private function saveLevel():Void
+	{
+		#if ios
+		var dialog = new FileDialog();
+		dialog.onSave.add(function(path:String) {
+			if (path != null) {
+				try {
+					var root = buildBinRoot();
+					bin.BIN.save(path, bin.BINValue.object(root));
+					status.text = "Saved binary to: " + path;
+					reloadEditor();
+				} catch (e:Dynamic) {
+					status.text = "Binary save failed: " + Std.string(e);
+				}
+			} else {
+				status.text = "Save cancelled.";
+			}
+		});
+		dialog.onCancel.add(function() {
+			status.text = "Save cancelled.";
+		});
+		
+		var defaultName = level.name + ".bin";
+		dialog.save(null, "bin", System.documentsDirectory + "/" + defaultName, "Save Level");
+		#else
+		try {
+			var directory = "assets/levels/" + level.name;
+			#if sys
+			if (!FileSystem.exists(directory)) FileSystem.createDirectory(directory);
+			#end
+			var root = buildBinRoot();
+			bin.BIN.save(directory + "/Level.bin", bin.BINValue.object(root));
+			status.text = "Saved binary " + directory + "/Level.bin";
+			reloadEditor();
+		} catch (e:Dynamic) {
+			status.text = "Binary save failed: " + Std.string(e);
+		}
+		#end
+	}
+
+	private function buildBinRoot():bin.BINObject
+	{
+		var backgrounds = new bin.BINArray();
+		for (item in level.backgrounds)
+		{
+			var bg = new bin.BINObject();
+			bg.set("image", bin.BINValue.string(item.image));
+			bg.set("x", bin.BINValue.int(item.x));
+			bg.set("y", bin.BINValue.int(item.y));
+			bg.set("scrollX", bin.BINValue.int(item.scrollX));
+			bg.set("scrollY", bin.BINValue.int(item.scrollY));
+			backgrounds.push(bin.BINValue.object(bg));
+		}
+		
+		var flashes = new bin.BINArray();
+		for (item in level.flashes)
+		{
+			var flash = new bin.BINObject();
+			flash.set("x", bin.BINValue.int(item.x));
+			flash.set("y", bin.BINValue.int(item.y));
+			flash.set("value", bin.BINValue.int(item.value));
+			flashes.push(bin.BINValue.object(flash));
+		}
+		
+		var player = new bin.BINObject();
+		player.set("x", bin.BINValue.int(level.playerX));
+		player.set("y", bin.BINValue.int(level.playerY));
+		
+		var root = new bin.BINObject();
+		root.set("name", bin.BINValue.string(level.name));
+		root.set("music", bin.BINValue.string(level.music));
+		root.set("player", bin.BINValue.object(player));
+		root.set("backgrounds", bin.BINValue.array(backgrounds));
+		root.set("flashes", bin.BINValue.array(flashes));
+		
+		return root;
+	}
+
+	private function applyLoadedLevel(loaded:LevelBin):Void
+	{
 		level = loaded;
 		levelName = level.name;
 		selectedKind = 0;
 		selectedIndex = 0;
 		refreshUI();
-		status.text = "Loaded binary Level.bin.";
+		status.text = "Loaded binary Level.bin and reloaded editor.";
+		reloadEditor();
 	}
 
-	private function saveLevel():Void
+	private function reloadEditor():Void
 	{
-		#if sys
-		try
-		{
-			var backgrounds = new bin.BINArray();
-			for (item in level.backgrounds)
-			{
-				var bg = new bin.BINObject();
-				bg.set("image", bin.BINValue.string(item.image));
-				bg.set("x", bin.BINValue.int(item.x));
-				bg.set("y", bin.BINValue.int(item.y));
-				bg.set("scrollX", bin.BINValue.int(item.scrollX));
-				bg.set("scrollY", bin.BINValue.int(item.scrollY));
-				backgrounds.push(bin.BINValue.object(bg));
-			}
-			var flashes = new bin.BINArray();
-			for (item in level.flashes)
-			{
-				var flash = new bin.BINObject();
-				flash.set("x", bin.BINValue.int(item.x));
-				flash.set("y", bin.BINValue.int(item.y));
-				flash.set("value", bin.BINValue.int(item.value));
-				flashes.push(bin.BINValue.object(flash));
-			}
-			var player = new bin.BINObject();
-			player.set("x", bin.BINValue.int(level.playerX));
-			player.set("y", bin.BINValue.int(level.playerY));
-			var root = new bin.BINObject();
-			root.set("name", bin.BINValue.string(level.name));
-			root.set("music", bin.BINValue.string(level.music));
-			root.set("player", bin.BINValue.object(player));
-			root.set("backgrounds", bin.BINValue.array(backgrounds));
-			root.set("flashes", bin.BINValue.array(flashes));
-			var directory = "assets/levels/" + level.name;
-			if (!FileSystem.exists(directory)) FileSystem.createDirectory(directory);
-			bin.BIN.save(directory + "/Level.bin", bin.BINValue.object(root));
-			status.text = "Saved binary " + directory + "/Level.bin";
-		}
-		catch (e:Dynamic) status.text = "Binary save failed: " + Std.string(e);
-		#else
-		status.text = "Saving requires filesystem support.";
-		#end
+		FlxG.switchState(new LevelEditorState(levelName));
 	}
 
 	private function leaveEditor():Void
