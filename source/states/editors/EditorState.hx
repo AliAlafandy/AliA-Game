@@ -17,7 +17,7 @@ typedef EditorOption =
 class EditorState extends GameState
 {
 	private var title:FlxText;
-	private var info:FlxText;
+	//private var info:FlxText;
 	private var optionTexts:FlxTypedGroup<FlxText>;
 	private var options:Array<EditorOption>;
 	private var selectedIndex:Int = 0;
@@ -57,9 +57,9 @@ class EditorState extends GameState
 			optionTexts.add(entry);
 		}
 
-		info = new FlxText(80, 180 + (options.length * 40) + 40, FlxG.width - 160, 'UP/DOWN - Navigate\nACCEPT - Open\nBACK - Return to Menu', 18);
+		/*info = new FlxText(80, 180 + (options.length * 40) + 40, FlxG.width - 160, 'UP/DOWN - Navigate\nACCEPT - Open\nBACK - Return to Menu', 18);
 		info.setFormat(null, 18, FlxColor.GRAY, CENTER);
-		add(info);
+		add(info);*/
 
 		#if mobile
 		addCustomDPad('NONE', 'BACK');
