@@ -3,7 +3,6 @@ package states.options;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import mobile.TouchUtil;
 import states.MenuState;
 
 class OptionsState extends GameState
