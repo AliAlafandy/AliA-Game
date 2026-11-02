@@ -102,7 +102,7 @@ jobs:
       - name: Clean previous builds
         if: inputs.name == 'Windows x32'
         run: |
-          lime clean windows
+          haxelib lime clean windows
           haxelib run hxcpp clean
 
       - name: Compile
