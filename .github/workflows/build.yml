@@ -83,6 +83,12 @@ jobs:
           haxelib install hmm --quiet
           haxelib run hmm install --quiet
 
+      - name: Lime Test for iOS only
+        if: startsWith(inputs.name, 'iOS')
+        run: |
+          haxelib remove lime
+          haxelib git lime https://github.com/AlafandyPorting/lime-0.7.3.git ios-fix-beta --quiet
+
       - name: Configure Android
         if: startsWith(inputs.name, 'Android')
         run: | # "$ANDROID_NDK_LATEST_HOME"
