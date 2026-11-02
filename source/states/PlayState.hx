@@ -267,7 +267,10 @@ class PlayState extends GameState
 		flashCount = 0;
 		updateFlashHud();
 
-		FlxG.sound.music.resume();
+		if (levelData != null && levelData.music != null && levelData.music.length > 0)
+			FlxG.sound.playMusic(Paths.music(levelData.music), 1, true);
+		else
+			FlxG.sound.music.resume();
 
 		#if mobile
 		addCustomDPad('EXITE', 'PLAY');
