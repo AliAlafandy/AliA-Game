@@ -1,6 +1,7 @@
 package states.menus;
 
 import flixel.FlxG;
+import flixel.ui.FlxButton;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
@@ -89,7 +90,48 @@ class CharacterState extends GameState
 		#if mobile
 		addCustomDPad('EXITE', 'E-MENU');
 		addCustomDPadCam();
+		addMobileCharacterButtons();
 		#end
+	}
+
+	#if mobile
+	private function addMobileCharacterButtons():Void
+	{
+		var labels = ['LEFT', 'RIGHT', 'UP', 'DOWN', 'SELECT', 'BACK'];
+		var w = (FlxG.width - 28) / labels.length;
+		for (i in 0...labels.length)
+		{
+			var indexButton = i;
+			var b = new FlxButton(4 + i * (w + 4), FlxG.height - 58, labels[i], function() {
+				if (confirmingSelection) return;
+				switch (indexButton) {
+					case 0: index = (index - 1 + chars.length) % chars.length;
+					case 1: index = (index + 1) % chars.length;
+					case 2: if (index - SLOTS >= 0) index -= SLOTS;
+					case 3: if (index + SLOTS < chars.length) index += SLOTS;
+					case 4: confirmCharacter();
+					case 5: GameState.switchState(new SelectState());
+				}
+				updateSelection();
+				if (nameTxt != null && chars.length > 0) nameTxt.text = chars[index];
+			});
+			b.scale.set(0.78, 0.78);
+			add(b);
+		}
+	}
+	#end
+
+	private function confirmCharacter():Void
+	{
+		if (confirmingSelection || chars.length == 0) return;
+		confirmingSelection = true;
+		selectedCharacter = chars[index];
+		selectedCharacterIndex = index;
+		charOpen = false;
+		var activeBox = characterBoxes[index];
+		if (activeBox != null && activeBox.animation.exists('press')) activeBox.animation.play('press');
+		new FlxTimer().start(1, function(tmr:FlxTimer) { FlxG.sound.music.stop(); GameState.switchState(new PlayState()); });
+		FlxG.sound.play(Paths.sound('confirm_sound'));
 	}
 
 	private function loadCharactersList():Void
@@ -278,24 +320,10 @@ class CharacterState extends GameState
 		if (oldIndex != index) {
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 			updateSelection();
+			if (nameTxt != null && chars.length > 0) nameTxt.text = chars[index];
 		}
 
-		if (controls.ACCEPT && !confirmingSelection && chars.length > 0) {
-			confirmingSelection = true;
-			selectedCharacter = chars[index];
-			selectedCharacterIndex = index;
-			charOpen = false;
-			var activeBox = characterBoxes[index];
-			if (activeBox != null && activeBox.animation.exists('press')) {
-				activeBox.animation.play('press');
-			}
-			new FlxTimer().start(1, function(tmr:FlxTimer)
-            {
-				FlxG.sound.music.stop();
-                GameState.switchState(new PlayState());
-            });
-			FlxG.sound.play(Paths.sound('confirm_sound'));
-		}
+		if (controls.ACCEPT) confirmCharacter();
 
 		if (controls.BACK && !confirmingSelection) {
 			FlxG.sound.music.stop();
