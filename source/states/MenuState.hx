@@ -62,12 +62,9 @@ class MenuState extends GameState
 
 	override function create()
 	{
-		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
-		{
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
 		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
-		}
-		else if (FlxG.sound.music != null || !FlxG.sound.music.playing)
-		{
+		} else if (FlxG.sound.music != null || !FlxG.sound.music.playing) {
 			FlxG.sound.music.resume();
 		}
 		
@@ -118,7 +115,7 @@ class MenuState extends GameState
 		super.create();
 
 		#if mobile
-		addCustomDPad('EXITE', 'E-MENU');
+		addCustomDPad('NONE', 'SECRET');
 		addCustomDPadCam();
 		#end
 	}
@@ -146,6 +143,7 @@ class MenuState extends GameState
 				}
 			}
 			#end
+
 			if (controls.UI_UP_P)
 				changeItem(-1);
 
@@ -204,7 +202,7 @@ class MenuState extends GameState
 				}
 			}
 
-			if (FlxG.keys.justPressed.E #if mobile || customDPad.powerButton.justPressed #end)
+			if (FlxG.keys.justPressed.E #if mobile || customDPad.secretButton.justPressed #end)
 			{
 				GameState.switchState(new EditorState());
 			}
@@ -219,6 +217,7 @@ class MenuState extends GameState
 		if (selectedSomethin || index < 0 || index >= optionShit.length) return;
 		FlxG.sound.play(Paths.sound('confirm_sound'));
 		selectedSomethin = true;
+
 		switch (optionShit[index])
 		{
 			case 'play': GameState.switchState(new SelectState());
@@ -228,6 +227,20 @@ class MenuState extends GameState
 			#end
 			case 'options': GameState.switchState(new OptionsState());
 			case 'exit': LimeSystem.exit(1);
+		}
+
+		for (i in 0...menuItems.members.length)
+		{
+			if (i == curSelected)
+				continue;
+
+			FlxTween.tween(menuItems.members[i], {alpha: 0}, 0.4, {
+				ease: FlxEase.quadOut,
+				onComplete: function(twn:FlxTween)
+				{
+					menuItems.members[i].kill();
+				}
+			});
 		}
 	}
 	#end
