@@ -3,6 +3,7 @@ package states;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.util.FlxDirectionFlags;
+import flixel.util.FlxSave;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -64,6 +65,8 @@ class PlayState extends GameState
 	public var partner:Player;
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public static var curStage:String = 'ATown';
+	public static var saveSlot:Int = 0;
+	public static var noSave:Bool = true;
 
 	private var elapsedTime:Float = 0;
 	private var rpcTimer:Float = 0;
