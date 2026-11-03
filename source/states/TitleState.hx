@@ -13,7 +13,7 @@ import sys.FileSystem;
 #end
 
 #if VIDEOS_ALLOWED
-import hxvlc.flixel.FlxVideo as VideoHandler;
+import hxvlc.flixel.FlxVideoSprite as VideoHandler;
 #end
 
 class TitleState extends GameState
@@ -106,21 +106,51 @@ class TitleState extends GameState
 
         try
         {
-            video = new VideoHandler();
+            // FlxVideoSprite is the HaxeFlixel display wrapper. FlxVideo alone
+            // is an OpenFL display object and is not rendered by FlxState.add().
+            video = new VideoHandler(0, 0);
+            video.antialiasing = true;
+            add(video);
 
-            video.onEndReached.add(function():Void
+            video.bitmap.onEndReached.add(function():Void
             {
                 finishVideo();
                 startIntro();
             }, true);
 
-            // hxvlc 2.x uses load() + play(); the older MP4Handler API
-            // (playVideo/finishCallback) is not part of this dependency.
-            if (video.load(filepath))
-                video.play();
+            video.bitmap.onFormatSetup.add(function():Void
+            {
+                if (video != null && video.bitmap != null && video.bitmap.bitmapData != null)
+                {
+                    video.setGraphicSize(FlxG.width, FlxG.height);
+                    video.updateHitbox();
+                    video.setPosition(0, 0);
+                }
+            });
+
+            var loaded:Bool = video.load(filepath);
+
+            // Packaged builds may not expose embedded assets as ordinary files.
+            // hxvlc accepts Bytes as a media source, so use the embedded asset
+            // when the direct filesystem path cannot be opened.
+            if (!loaded && OpenFlAssets.exists(filepath))
+            {
+                var videoBytes = OpenFlAssets.getBytes(filepath);
+                if (videoBytes != null)
+                    loaded = video.load(videoBytes);
+            }
+
+            if (loaded)
+            {
+                new FlxTimer().start(0.05, function(_:FlxTimer):Void
+                {
+                    if (video != null && !introStarted && !titleReady)
+                        video.play();
+                });
+            }
             else
             {
-                FlxG.log.warn("Could not load intro video: " + filepath);
+                FlxG.log.warn("Could not load intro video from path or embedded bytes: " + filepath);
                 finishVideo();
                 startIntro();
             }
@@ -141,8 +171,10 @@ class TitleState extends GameState
         #if VIDEOS_ALLOWED
         if (video != null)
         {
-            video.dispose();
+            var oldVideo = video;
             video = null;
+            remove(oldVideo, true);
+            oldVideo.destroy();
         }
         #end
     }
