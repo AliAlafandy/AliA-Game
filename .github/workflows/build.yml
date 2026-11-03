@@ -105,7 +105,7 @@ jobs:
           haxelib run lime clean windows
 
       - name: Compile
-        run: |
+        run: | # lime clean ${{ inputs.buildArgs }}
           haxelib run lime build ${{ inputs.buildArgs }}
 
       - name: Make IPA
