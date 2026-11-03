@@ -16,7 +16,6 @@ import states.menus.CharacterState;
 
 import data.backend.StageData;
 import data.backend.LevelBin;
-import data.backend.ATownAssets;
 
 import states.online.MultiPlayer;
 import states.online.MultiPlayer.RemotePlayer;
@@ -177,29 +176,39 @@ class PlayState extends GameState
 		}
 
 		// Draw authored background images over the procedural fallback when supplied by Level.bin.
-		if (curStage == 'ATown')
-			ATownAssets.addTo(backgroundLayers);
-		else if (levelData != null)
+		StageData.addLevelImages(curStage, backgroundLayers);
+		if (levelData != null)
 			levelData.addBackgrounds(backgroundLayers);
 
-		// Keep textures small for mobile GPUs; tile the ground across the level.
+		// Use the street image as the visible road and its invisible top-edge
+		// collider as the actual floor. Fall back to a generated floor for
+		// stages that do not yet have a packed street.png.
 		var groundY:Float = FlxG.height - 48;
 		groundSegments = new FlxTypedGroup<FlxSprite>();
 		add(groundSegments);
-		for (i in 0...34)
+
+		if (StageData.floorCollider != null)
 		{
-			var dirt = new FlxSprite(-2048 + i * 1024, groundY);
-			dirt.makeGraphic(1024, 48, FlxColor.fromRGB(130, 78, 42));
-			dirt.immovable = true;
-			dirt.allowCollisions = FlxDirectionFlags.UP;
-			groundSegments.add(dirt);
-
-			var grass = new FlxSprite(-2048 + i * 1024, groundY);
-			grass.makeGraphic(1024, 10, FlxColor.fromRGB(70, 180, 65));
-			add(grass);
+			groundSegments.add(StageData.floorCollider);
+			testGround = StageData.floorCollider;
+			groundY = StageData.floorCollider.y;
 		}
-		testGround = groundSegments.members[0];
+		else
+		{
+			for (i in 0...34)
+			{
+				var dirt = new FlxSprite(-2048 + i * 1024, groundY);
+				dirt.makeGraphic(1024, 48, FlxColor.fromRGB(130, 78, 42));
+				dirt.immovable = true;
+				dirt.allowCollisions = FlxDirectionFlags.UP;
+				groundSegments.add(dirt);
 
+				var grass = new FlxSprite(-2048 + i * 1024, groundY);
+				grass.makeGraphic(1024, 10, FlxColor.fromRGB(70, 180, 65));
+				add(grass);
+			}
+			testGround = groundSegments.members[0];
+		}
 		var characterName:String = CharacterState.selectedCharacter;
 		if (characterName == null || characterName.length == 0)
 		{
