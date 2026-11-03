@@ -5,6 +5,8 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.ui.AUIBox;
+import flixel.ui.AUIButton;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
@@ -30,6 +32,7 @@ class CharacterEditorState extends GameState
 	private var previewFlip:Bool = false;
 	private var previewX:Float;
 	private var previewY:Float;
+	private var editorButtons:Array<AUIButton> = [];
 
 	public function new():Void super();
 
@@ -44,8 +47,8 @@ class CharacterEditorState extends GameState
 		add(title);
 
 		var leftW = Std.int(FlxG.width * 0.34);
-		add(new FlxSprite(10, 64).makeGraphic(leftW, FlxG.height - 122, 0xFF1B2736));
-		add(new FlxSprite(leftW + 20, 64).makeGraphic(FlxG.width - leftW - 30, FlxG.height - 122, 0xFF1B2736));
+		add(new AUIBox(10, 64, leftW, FlxG.height - 122, "CHARACTERS"));
+		add(new AUIBox(leftW + 20, 64, FlxG.width - leftW - 30, FlxG.height - 122, "CHARACTER PREVIEW"));
 		var listTitle = new FlxText(22, 72, leftW - 20, "CHARACTERS", 14);
 		listTitle.setFormat(null, 14, FlxColor.CYAN, LEFT);
 		add(listTitle);
@@ -71,6 +74,10 @@ class CharacterEditorState extends GameState
 		status = new FlxText(14, FlxG.height - 28, FlxG.width - 28, "UP/DOWN Select  |  LEFT/RIGHT Scale  |  F Flip  |  S Save  |  BACK Return", 11);
 		status.setFormat(null, 11, 0xFF9EADC2, CENTER);
 		add(status);
+		addEditorButton(leftW + 34, FlxG.height - 62, "SCALE -", function() adjustScale(-0.05));
+		addEditorButton(leftW + 124, FlxG.height - 62, "SCALE +", function() adjustScale(0.05));
+		addEditorButton(leftW + 214, FlxG.height - 62, "FLIP", function() { previewFlip = !previewFlip; buildPreview(); });
+		addEditorButton(leftW + 304, FlxG.height - 62, "SAVE", saveCharacter);
 
 		scanCharacters();
 		refreshList();
@@ -79,6 +86,13 @@ class CharacterEditorState extends GameState
 		addCustomDPad('NONE', 'BACK');
 		addCustomDPadCam();
 		#end
+	}
+
+	private function addEditorButton(x:Float, y:Float, label:String, callback:Void->Void):Void
+	{
+		var button = new AUIButton(x, y, 82, 28, label, callback);
+		editorButtons.push(button);
+		add(button);
 	}
 
 	private function scanCharacters():Void
