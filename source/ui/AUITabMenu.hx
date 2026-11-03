@@ -1,12 +1,12 @@
 package ui;
 
 import flixel.FlxSprite;
-import flixel.group.FlxSpriteGroup;
+import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 
 /** Horizontal tab strip with a content panel and selection callback. */
-class AUITabMenu extends FlxSpriteGroup
+class AUITabMenu extends FlxGroup
 {
     public var tabs:Array<String>;
     public var selectedIndex(default, set):Int = 0;
@@ -19,7 +19,7 @@ class AUITabMenu extends FlxSpriteGroup
 
     public function new(x:Float, y:Float, width:Int, height:Int, tabs:Array<String>, ?callback:Int->String->Void)
     {
-        super(x, y);
+        super();
         this.tabs = tabs == null ? [] : tabs.copy();
         onChange = callback;
         panelWidth = width;
@@ -28,11 +28,11 @@ class AUITabMenu extends FlxSpriteGroup
         for (i in 0...this.tabs.length)
         {
             final index = i;
-            var button = new AUIButton(i * tabWidth, 0, tabWidth, 30, this.tabs[i], function() selectedIndex = index);
+            var button = new AUIButton(x + i * tabWidth, y, tabWidth, 30, this.tabs[i], function() selectedIndex = index);
             tabButtons.push(button);
             add(button);
         }
-        contentPanel = new FlxSprite(0, 34).makeGraphic(width, height, 0xFF172332);
+        contentPanel = new FlxSprite(x, y + 34).makeGraphic(width, height, 0xFF172332);
         add(contentPanel);
         selectedIndex = 0;
     }
