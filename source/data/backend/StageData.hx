@@ -232,10 +232,10 @@ class LevelBin
 {
 	public function new() {}
 
-	public var name:String = "ATown";
-	public var stage:String = "ATown";
-	public var groundY:Int = 562;
-	public var worldWidth:Int = 2920;
+	public var name:String = "NewLevel";
+	public var stage:String = "";
+	public var groundY:Int = 520;
+	public var worldWidth:Int = 1920;
 	public var music:String = "";
 	public var playerX:Int = 500;
 	public var playerY:Int = -1;
@@ -276,7 +276,7 @@ class LevelBin
 			result.stage = stage;
 			result.worldWidth = root.get("worldWidth").asInt(result.worldWidth);
 			result.groundY = root.get("groundY").asInt(result.groundY);
-			if (result.worldWidth < 640) result.worldWidth = 2920;
+			if (result.worldWidth < 640) result.worldWidth = 1920;
 			result.music = root.get("music").asString("");
 
 			var player = root.get("player").asObject();
