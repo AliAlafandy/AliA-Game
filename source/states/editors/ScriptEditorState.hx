@@ -33,8 +33,6 @@ class ScriptEditorState extends GameState
     private var buffers:Map<String, String> = new Map();
     private var dirtyPaths:Map<String, Bool> = new Map();
 
-    private var filePanel:FlxSprite;
-    private var codePanel:FlxSprite;
     private var fileText:FlxText;
     private var tabText:FlxText;
     private var codeText:FlxText;
@@ -70,16 +68,11 @@ class ScriptEditorState extends GameState
         heading.setFormat(null, 20, FlxColor.WHITE, LEFT);
         add(heading);
 
-        filePanel = new FlxSprite(10, 60).makeGraphic(Std.int(FlxG.width * 0.28), FlxG.height - 126, 0xFF1B2635);
-        add(filePanel);
-        codePanel = new FlxSprite(Std.int(FlxG.width * 0.30), 92).makeGraphic(Std.int(FlxG.width * 0.69) - 10, FlxG.height - 158, 0xFF151D29);
-        add(codePanel);
+        var filePanelWidth = Std.int(FlxG.width * 0.28);
+        add(new AUIBox(10, 60, filePanelWidth, FlxG.height - 126, "FILES"));
+        add(new AUIBox(Std.int(FlxG.width * 0.30), 92, Std.int(FlxG.width * 0.69) - 10, FlxG.height - 158, "CODE"));
 
-        var filesTitle = new FlxText(20, 68, filePanel.width - 20, "FILES", 14);
-        filesTitle.setFormat(null, 14, FlxColor.CYAN, LEFT);
-        add(filesTitle);
-
-        fileText = new FlxText(20, 96, filePanel.width - 22, "", 12);
+        fileText = new FlxText(20, 96, filePanelWidth - 22, "", 12);
         fileText.setFormat("_typewriter", 12, FlxColor.WHITE, LEFT);
         add(fileText);
 
