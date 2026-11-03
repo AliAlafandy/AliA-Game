@@ -121,6 +121,11 @@ class LevelEditorState extends GameState
 		addButton(9, "SAVE BIN", saveLevel);
 		addButton(10, "LOAD BIN", loadLevel);
 		refreshUI();
+
+		#if mobile
+		addCustomDPad('NONE', 'BACK');
+		addCustomDPadCam();
+		#end
 	}
 
 	private function addButton(slot:Int, label:String, callback:Void->Void):Void
