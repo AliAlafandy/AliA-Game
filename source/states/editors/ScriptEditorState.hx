@@ -343,12 +343,15 @@ class ScriptEditorState extends GameState
     override public function update(elapsed:Float):Void
     {
         super.update(elapsed);
-        if (controls.GAME_UP_P && files.length > 0) { selectedFile = FlxMath.wrap(selectedFile - 1, -1, files.length - 1); refreshFiles(); }
-        if (controls.GAME_DOWN_P && files.length > 0) { selectedFile = FlxMath.wrap(selectedFile + 1, -1, files.length - 1); refreshFiles(); }
-        if (controls.ACCEPT)
+        if (selectedTab < 0)
         {
-            if (selectedFile < 0) createScript();
-            else if (files.length > 0) openFile(files[selectedFile]);
+            if (controls.GAME_UP_P && files.length > 0) { selectedFile = FlxMath.wrap(selectedFile - 1, -1, files.length - 1); refreshFiles(); }
+            if (controls.GAME_DOWN_P && files.length > 0) { selectedFile = FlxMath.wrap(selectedFile + 1, -1, files.length - 1); refreshFiles(); }
+            if (controls.ACCEPT)
+            {
+                if (selectedFile < 0) createScript();
+                else if (files.length > 0) openFile(files[selectedFile]);
+            }
         }
         if (FlxG.keys.justPressed.N) createScript();
         if (FlxG.keys.justPressed.F5) saveFile();
