@@ -1,19 +1,15 @@
 package states;
 
-import flixel.input.keyboard.FlxKey;
-import flixel.addons.transition.FlxTransitionableState;
-import flixel.graphics.frames.FlxAtlasFrames;
-import flixel.graphics.frames.FlxFrame;
-import flixel.group.FlxGroup;
-import flixel.input.gamepad.FlxGamepad;
-// import haxe.Json;
-
-import openfl.Assets;
-import openfl.utils.Assets as OpenFlAssets;
-import openfl.display.Bitmap;
-import openfl.display.BitmapData;
-
+import flixel.FlxG;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 import states.MenuState;
+import openfl.utils.Assets as OpenFlAssets;
+
+#if sys
+import sys.FileSystem;
+#end
 
 #if VIDEOS_ALLOWED
 #if (hxCodec >= "3.0.0")
@@ -29,166 +25,184 @@ import vlc.MP4Handler as VideoHandler;
 
 class lTitleState extends GameState
 {
-    /*public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
-	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
-	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];*/
-    public var initialized:Bool = false;
-    public var transitioning:Bool = false;
+    public static var initialized:Bool = false;
 
-    override public function create()
-	{
-		super.create();
+    private var introStarted:Bool = false;
+    private var titleReady:Bool = false;
+    private var transitioning:Bool = false;
+    private var skippedIntro:Bool = false;
 
-		Paths.clearStoredMemory();
-		ClientPrefs.loadPrefs();
+    #if VIDEOS_ALLOWED
+    private var video:VideoHandler;
+    #end
 
-		if (initialized) {
-			startGame();
-		} else {
-			new FlxTimer().start(1, function(tmr:FlxTimer)
-        	{
-            	startVideo('alafandy_intro');
-            	trace('starting video...');
-        	});
-		}
+    override public function create():Void
+    {
+        super.create();
+
+        Paths.clearStoredMemory();
+        ClientPrefs.loadPrefs();
+
+        // Do not replay the publisher/video intro when returning to this state.
+        if (initialized)
+            startTitleScreen();
+        else
+            new FlxTimer().start(0.25, function(_:FlxTimer):Void
+            {
+                startVideo("alafandy_intro");
+            });
     }
 
-	public function startIntro()
-	{
-		var person = new FlxText(0, 0, 0, "Ali Alafandy", 24);
-        person.screenCenter(X);
-		person.color = 0xFF0000FF;
-        person.y = 240;
-        add(person);
+    private function hasInput():Bool
+    {
+        var pressed:Bool = FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed;
+        #if FLX_TOUCH
+        for (touch in FlxG.touches.list)
+            if (touch.justPressed) pressed = true;
+        #end
+        return pressed;
+    }
 
-		var t = new FlxText(0, 0, 0, "Present", 12);
-        t.screenCenter(X);
-        t.y = 480;
-        add(t);
-
-		if (initialized) {
-			skipIntro();
-		} else {
-			initialized = true;
-		}
-
-		new FlxTimer().start(1, function(tmr:FlxTimer)
-        {
-            startGame();
-        });
-	}
-
-	public function startGame()
-	{
-		var title = new FlxText(0, 0, 0, "Ali Alafandy Game", 24);
-        title.screenCenter(X);
-        title.y = 140;
-        add(title);
-
-        var press = new FlxText(0, 0, 0, "", 12);
-        press.screenCenter(X);
-        press.y = 200;
-        add(press);
-
-		#if mobile
-		press.text = "Touch On Screen";
-		#else
-        press.text = "Press Any Button";
-		#end
-
-        FlxG.sound.play(Paths.music('themes/start_nice'));
-
-		Paths.clearUnusedMemory();
-
-		if (initialized) {
-			skipIntro();
-		} else {
-			initialized = true;
-		}
-
-		new FlxTimer().start(1, function(tmr:FlxTimer)
-        {
-            skipIntro();
-        });
-	}
-
-	var pressedAny:Bool = FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed;
-
-    override public function update(elapsed:Float) {
+    override public function update(elapsed:Float):Void
+    {
         super.update(elapsed);
 
-		#if FLX_TOUCH
-		for (touch in FlxG.touches.list)
-		{
-			if (touch.justPressed)
-			{
-				pressedAny = true;
-			}
-		}
-		#end
-
-		if (initialized && !transitioning && skippedIntro) {
-        	if (pressedAny) {
-				transitioning = true;
-				new FlxTimer().start(1, function(tmr:FlxTimer)
-        		{
-            		GameState.switchState(new MenuState());
-        		});
-			}
-        }
-
-		if (initialized && pressedAny && !skippedIntro) {
-			skipIntro();
-		}
-    }
-
-	var skippedIntro:Bool = false;
-	public function skipIntro()
-	{
-		if (!skippedIntro) {
-			skippedIntro = true;
-		}
-	}
-
-    public function startVideo(name:String)
-    {
-        #if VIDEOS_ALLOWED
-        var filepath:String = Paths.video(name);
-        #if sys
-        if(!FileSystem.exists(filepath))
-        #else
-        if(!OpenFlAssets.exists(filepath))
-        #end
+        if (!titleReady && !introStarted && hasInput())
         {
-            FlxG.log.warn('Couldnt find video file: ' + name);
-			startIntro();
-			initialized = true;
+            // Allow the player to skip the video without leaving the title state.
+            finishVideo();
+            startIntro();
             return;
         }
-        var video:VideoHandler = new VideoHandler();
-            #if (hxCodec >= "3.0.0")
-            // Recent versions
-            video.play(filepath);
-            video.onEndReached.add(function()
+
+        if (titleReady && !transitioning && hasInput())
+        {
+            transitioning = true;
+            FlxG.sound.play(Paths.sound("confirm_sound"));
+            new FlxTimer().start(0.35, function(_:FlxTimer):Void
             {
-                video.dispose();
-                startIntro();
-                initialized = true;
-                return;
-            }, true);
-            #else
-            // Older versions
-            video.playVideo(filepath);
-            video.finishCallback = function()
-			{
-				startIntro();
-				initialized = true;
-                return;
-            }
-            #end
-        #else
-        FlxG.log.warn('Platform not supported!');
-        return;
+                GameState.switchState(new MenuState());
+            });
+        }
+    }
+
+    public function startVideo(name:String):Void
+    {
+        #if VIDEOS_ALLOWED
+        if (introStarted || titleReady) return;
+
+        var filepath:String = Paths.video(name);
+        var exists:Bool = false;
+
+        #if sys
+        exists = FileSystem.exists(filepath);
         #end
-	}
+        if (!exists) exists = OpenFlAssets.exists(filepath);
+
+        if (!exists)
+        {
+            FlxG.log.warn("Could not find intro video: " + filepath);
+            startIntro();
+            return;
+        }
+
+        try
+        {
+            video = new VideoHandler();
+
+            #if (hxCodec >= "3.0.0")
+            video.onEndReached.add(function():Void
+            {
+                finishVideo();
+                startIntro();
+            }, true);
+            video.play(filepath);
+            #else
+            video.finishCallback = function():Void
+            {
+                finishVideo();
+                startIntro();
+            };
+            video.playVideo(filepath);
+            #end
+        }
+        catch (e:Dynamic)
+        {
+            FlxG.log.error("Could not play intro video: " + Std.string(e));
+            finishVideo();
+            startIntro();
+        }
+        #else
+        startIntro();
+        #end
+    }
+
+    private function finishVideo():Void
+    {
+        #if VIDEOS_ALLOWED
+        if (video != null)
+        {
+            #if (hxCodec >= "3.0.0")
+            video.dispose();
+            #end
+            video = null;
+        }
+        #end
+    }
+
+    public function startIntro():Void
+    {
+        if (introStarted || titleReady) return;
+        introStarted = true;
+
+        var person = new FlxText(0, 0, 0, "Ali Alafandy", 24);
+        person.screenCenter(X);
+        person.color = FlxColor.BLUE;
+        person.y = FlxG.height * 0.36;
+        add(person);
+
+        var present = new FlxText(0, 0, 0, "PRESENTS", 14);
+        present.screenCenter(X);
+        present.y = person.y + 48;
+        add(present);
+
+        new FlxTimer().start(1.4, function(_:FlxTimer):Void
+        {
+            if (this != null) startTitleScreen();
+        });
+    }
+
+    private function startTitleScreen():Void
+    {
+        if (titleReady) return;
+
+        initialized = true;
+        introStarted = true;
+        titleReady = true;
+
+        var title = new FlxText(0, 0, 0, "Ali Alafandy Game", 28);
+        title.screenCenter(X);
+        title.y = FlxG.height * 0.34;
+        add(title);
+
+        var press = new FlxText(0, 0, FlxG.width, "", 16);
+        press.screenCenter(X);
+        press.y = title.y + 64;
+        #if mobile
+        press.text = "TOUCH TO START";
+        #else
+        press.text = "PRESS ANY BUTTON";
+        #end
+        press.alignment = CENTER;
+        add(press);
+
+        FlxG.sound.playMusic(Paths.music("themes/start_nice"), 1, false);
+        Paths.clearUnusedMemory();
+    }
+
+    override public function destroy():Void
+    {
+        finishVideo();
+        super.destroy();
+    }
 }
