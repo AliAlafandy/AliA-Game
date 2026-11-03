@@ -130,8 +130,8 @@ class PauseSubState extends GameSubState
                 output += options[i] + '\n';
         }
 
-        output += '\nUP / DOWN - Select';
-        output += '\nENTER - Confirm';
+        /*output += '\nUP / DOWN - Select';
+        output += '\nENTER - Confirm';*/
 
         menuText.text = output;
         menuText.screenCenter();
