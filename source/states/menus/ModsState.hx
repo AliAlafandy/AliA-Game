@@ -3,9 +3,12 @@ package states.menus;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.group.FlxSpriteGroup;
+import haxe.Json;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxAxes;
+import flixel.util.FlxColor;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
@@ -65,22 +68,60 @@ class ModsState extends GameState
             var fullPath = modsDir + "/" + item;
             
             if (FileSystem.isDirectory(fullPath)) {
-                var txt = new FlxText(0, yPos, FlxG.width, item, 16);
-                txt.alignment = CENTER;
-                add(txt);
+                // Read each mod's own metadata instead of displaying only its folder name.
+                var meta:Dynamic = null;
+                var metaPath = fullPath + "/mod.json";
+                if (FileSystem.exists(metaPath)) {
+                    try meta = Json.parse(File.getContent(metaPath)) catch (e:Dynamic) {
+                        trace('[ModsState] Invalid mod.json in ' + item + ': ' + Std.string(e));
+                    }
+                }
+
+                if (meta == null) {
+                    trace('[ModsState] Skipping folder without a valid mod.json: ' + item);
+                    continue;
+                }
+
+                var modName:String = Reflect.hasField(meta, "name") && meta.name != null ? Std.string(meta.name) : item;
+                var author:String = Reflect.hasField(meta, "author") && meta.author != null ? Std.string(meta.author) : "Unknown author";
+                var description:String = Reflect.hasField(meta, "description") && meta.description != null ? Std.string(meta.description) : "";
+
+                // mod.png is the standard folder icon. Keep a generated placeholder
+                // when an optional icon is missing so the list remains usable.
+                var iconPath = fullPath + "/mod.png";
+                var icon = new FlxSprite(24, yPos);
+                if (FileSystem.exists(iconPath)) {
+                    try {
+                        var bitmap = openfl.display.BitmapData.fromFile(iconPath);
+                        if (bitmap != null) icon.loadGraphic(bitmap);
+                        else icon.makeGraphic(56, 56, 0xFF30445B);
+                    } catch (e:Dynamic) {
+                        icon.makeGraphic(56, 56, 0xFF30445B);
+                    }
+                } else {
+                    icon.makeGraphic(56, 56, 0xFF30445B);
+                }
+                icon.setGraphicSize(56, 56);
+                icon.updateHitbox();
+                add(icon);
+
+                var title = new FlxText(92, yPos, FlxG.width - 110, modName, 16);
+                title.setFormat(null, 16, FlxColor.WHITE, LEFT);
+                add(title);
+
+                var details = new FlxText(92, yPos + 22, FlxG.width - 110,
+                    author + (description.length > 0 ? " - " + description : ""), 11);
+                details.setFormat(null, 11, FlxColor.GRAY, LEFT);
+                add(details);
 
                 var isEnabled = ModLoader.isModEnabled(item);
-                var enableBtn = new FlxButton(0, yPos + 22, isEnabled ? "Disable" : "Enable", function() {
-                    if (isEnabled) {
-                        ModLoader.disable(item);
-                    } else {
-                        ModLoader.enable(item);
-                    }
+                var enableBtn = new FlxButton(92, yPos + 43, isEnabled ? "Disable" : "Enable", function() {
+                    if (isEnabled) ModLoader.disable(item);
+                    else ModLoader.enable(item);
                     FlxG.resetState();
                 });
-                enableBtn.screenCenter(FlxAxes.X);
                 add(enableBtn);
-                yPos += 70;
+                yPos += 112;
             }
         }
 
