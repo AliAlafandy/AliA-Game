@@ -6,6 +6,8 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import mobile.TouchUtil;
+import flixel.ui.AUIBox;
+import flixel.ui.AUIButton;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
@@ -30,9 +32,7 @@ class AnimationEditorState extends GameState
 	private var status:FlxText;
 	private var fps:Int = 24;
 	private var loop:Bool = true;
-	private var actionButtons:FlxTypedGroup<FlxSprite>;
-	private var actionLabels:FlxTypedGroup<FlxText>;
-	private var actionCallbacks:Array<Void->Void> = [];
+	private var actionButtons:Array<AUIButton> = [];
 
 	public function new():Void super();
 
@@ -48,14 +48,11 @@ class AnimationEditorState extends GameState
 
 		var leftW = Std.int(FlxG.width * 0.36);
 		add(new FlxSprite(10, 64).makeGraphic(leftW, FlxG.height - 120, 0xFF1B2736));
-		add(new FlxSprite(leftW + 20, 64).makeGraphic(FlxG.width - leftW - 30, FlxG.height - 120, 0xFF1B2736));
+		add(new AUIBox(10, 64, leftW, FlxG.height - 120, "ANIMATIONS"));
+		add(new AUIBox(leftW + 20, 64, FlxG.width - leftW - 30, FlxG.height - 120, "FRAME PREVIEW"));
 		var listTitle = new FlxText(22, 72, leftW - 20, "ANIMATIONS", 14);
 		listTitle.setFormat(null, 14, FlxColor.CYAN, LEFT);
 		add(listTitle);
-		actionButtons = new FlxTypedGroup<FlxSprite>();
-		actionLabels = new FlxTypedGroup<FlxText>();
-		add(actionButtons);
-		add(actionLabels);
 		addAction("ADD", addAnimation, 0);
 		addAction("REMOVE", removeAnimation, 1);
 		addAction("SAVE", save, 2);
@@ -89,12 +86,9 @@ class AnimationEditorState extends GameState
 	{
 		var x = 18 + index * 92;
 		var y = FlxG.height - 66;
-		var button = new FlxSprite(x, y).makeGraphic(84, 28, 0xFF30445B);
-		actionButtons.add(button);
-		var text = new FlxText(x + 2, y + 8, 80, label, 10);
-		text.setFormat(null, 10, FlxColor.WHITE, CENTER);
-		actionLabels.add(text);
-		actionCallbacks.push(callback);
+		var button = new AUIButton(x, y, 84, 28, label, callback);
+		actionButtons.push(button);
+		add(button);
 	}
 
 	private function addAnimation():Void
@@ -306,12 +300,6 @@ class AnimationEditorState extends GameState
 	{
 		super.update(elapsed);
 		#if mobile
-		for (i in 0...actionButtons.members.length)
-			if (TouchUtil.justPressedOn(actionButtons.members[i]) || TouchUtil.justPressedOn(actionLabels.members[i]))
-			{
-				actionCallbacks[i]();
-				return;
-			}
 		for (i in 0...rows.members.length)
 			if (TouchUtil.justPressedOn(rows.members[i]) || TouchUtil.justPressedOn(rowLabels.members[i]))
 			{
