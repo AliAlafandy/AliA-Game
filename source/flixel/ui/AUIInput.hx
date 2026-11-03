@@ -18,6 +18,7 @@ class AUIInput extends FlxSpriteGroup
     public var focused:Bool = false;
     public var onChange:String->Void;
     public var onSubmit:String->Void;
+    private var keyListenerAttached:Bool = false;
 
     public function new(x:Float, y:Float, width:Int, height:Int, placeholder:String = "", initialValue:String = "")
     {
@@ -30,16 +31,28 @@ class AUIInput extends FlxSpriteGroup
         caption.setFormat(null, 12, FlxColor.WHITE, LEFT);
         add(caption);
         refresh();
-        if (FlxG.stage != null) FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+        attachKeyboardListener();
     }
 
     override public function update(elapsed:Float):Void
     {
         super.update(elapsed);
-        if (FlxG.mouse.justPressed)
+        attachKeyboardListener();
+        var mousePressed = FlxG.mouse.justPressed;
+        var touchPressed = TouchUtil.justPressed;
+        if (mousePressed || touchPressed)
         {
-            var hit = FlxG.mouse.overlaps(background) || TouchUtil.justPressedOn(background);
+            var hit = (mousePressed && FlxG.mouse.overlaps(background)) || TouchUtil.justPressedOn(background);
             setFocused(hit);
+        }
+    }
+
+    private function attachKeyboardListener():Void
+    {
+        if (!keyListenerAttached && FlxG.stage != null)
+        {
+            FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+            keyListenerAttached = true;
         }
     }
 
@@ -95,7 +108,11 @@ class AUIInput extends FlxSpriteGroup
 
     override public function destroy():Void
     {
-        if (FlxG.stage != null) FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+        if (keyListenerAttached && FlxG.stage != null)
+        {
+            FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+            keyListenerAttached = false;
+        }
         super.destroy();
     }
 }
