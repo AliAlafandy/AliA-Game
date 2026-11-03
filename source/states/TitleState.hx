@@ -1,6 +1,9 @@
 package states;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
 import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -179,6 +182,17 @@ class TitleState extends GameState
         #end
     }
 
+    /**
+     * Fade any FlxSprite-based UI element (including FlxText and image sprites)
+     * without touching the intro video layer.
+     */
+    private function fadeInElement(target:FlxSprite, duration:Float = 0.7):Void
+    {
+        if (target == null) return;
+        target.alpha = 0;
+        FlxTween.tween(target, {alpha: 1}, duration, {ease: FlxEase.quadOut});
+    }
+
     public function startIntro():Void
     {
         if (introStarted || titleReady) return;
@@ -189,15 +203,25 @@ class TitleState extends GameState
         person.color = FlxColor.BLUE;
         person.y = FlxG.height * 0.36;
         add(person);
+        fadeInElement(person, 0.75);
 
         var present = new FlxText(0, 0, 0, "PRESENTS", 14);
         present.screenCenter(X);
         present.y = person.y + 48;
         add(present);
+        fadeInElement(present, 0.75);
 
-        new FlxTimer().start(1.4, function(_:FlxTimer):Void
+        // Hold the credit briefly, then fade it away before showing the title.
+        new FlxTimer().start(1.55, function(_:FlxTimer):Void
         {
-            if (this != null) startTitleScreen();
+            FlxTween.tween(person, {alpha: 0}, 0.45, {ease: FlxEase.quadIn});
+            FlxTween.tween(present, {alpha: 0}, 0.45, {
+                ease: FlxEase.quadIn,
+                onComplete: function(_:FlxTween):Void
+                {
+                    if (!titleReady) startTitleScreen();
+                }
+            });
         });
     }
 
@@ -213,6 +237,7 @@ class TitleState extends GameState
         title.screenCenter(X);
         title.y = FlxG.height * 0.34;
         add(title);
+        fadeInElement(title, 0.85);
 
         var press = new FlxText(0, 0, FlxG.width, "", 16);
         press.screenCenter(X);
@@ -224,6 +249,10 @@ class TitleState extends GameState
         #end
         press.alignment = CENTER;
         add(press);
+        new FlxTimer().start(0.25, function(_:FlxTimer):Void
+        {
+            if (press != null) fadeInElement(press, 0.65);
+        });
 
         FlxG.sound.play(Paths.music("themes/start_nice"), 1, false);
         Paths.clearUnusedMemory();
