@@ -41,6 +41,8 @@ class LevelEditorState extends GameState
 	private var selectedKind:Int = 0;
 	private var selectedIndex:Int = 0;
 	private var playerMarker:FlxSprite;
+	private var backgroundMarkers:Array<FlxSprite> = [];
+	private var flashMarkers:Array<FlxSprite> = [];
 	private var canvasX:Float = 12;
 	private var canvasY:Float = 62;
 	private var canvasScale:Float = 0.35;
@@ -200,6 +202,8 @@ class LevelEditorState extends GameState
 		properties.text = "PROPERTIES\n----------------\nType: " + (selectedKind == 0 ? "Player Spawn" : selectedKind == 1 ? "Background Layer" : "Flash Collectible") + "\nX: " + px + "\nY: " + py + "\n\nMusic: " + level.music;
 
 		preview.clear();
+		backgroundMarkers = [];
+		flashMarkers = [];
 		for (i in 0...level.backgrounds.length)
 		{
 			var bg = level.backgrounds[i];
@@ -211,11 +215,13 @@ class LevelEditorState extends GameState
 				layer.updateHitbox();
 				layer.alpha = selectedKind == 1 && selectedIndex == i ? 0.95 : 0.45;
 				preview.add(layer);
+				backgroundMarkers.push(layer);
 			}
 			catch (e:Dynamic)
 			{
 				var missing = new FlxSprite(canvasX + bg.x * canvasScale, canvasY + bg.y * canvasScale).makeGraphic(36, 24, 0xFF704050);
 				preview.add(missing);
+				backgroundMarkers.push(missing);
 			}
 		}
 		playerMarker = new FlxSprite(canvasX + level.playerX * canvasScale, canvasY + level.playerY * canvasScale).makeGraphic(16, 24, 0xFF55CCFF);
@@ -226,6 +232,7 @@ class LevelEditorState extends GameState
 			var f = level.flashes[i];
 			var marker = new FlxSprite(canvasX + f.x * canvasScale, canvasY + f.y * canvasScale).makeGraphic(12, 12, selectedKind == 2 && selectedIndex == i ? FlxColor.YELLOW : 0xFFFFD700);
 			preview.add(marker);
+			flashMarkers.push(marker);
 		}
 		status.text = "Select objects in the list. Use X/Y controls to position. SAVE BIN writes binary Level.bin.";
 	}
@@ -416,6 +423,27 @@ class LevelEditorState extends GameState
 			selectedKind = 0;
 			selectedIndex = 0;
 			refreshUI();
+			return;
+		}
+		for (i in 0...backgroundMarkers.length)
+		{
+			if (TouchUtil.justPressedOn(backgroundMarkers[i]))
+			{
+				selectedKind = 1;
+				selectedIndex = i;
+				refreshUI();
+				return;
+			}
+		}
+		for (i in 0...flashMarkers.length)
+		{
+			if (TouchUtil.justPressedOn(flashMarkers[i]))
+			{
+				selectedKind = 2;
+				selectedIndex = i;
+				refreshUI();
+				return;
+			}
 		}
 		for (i in 0...toolButtons.members.length)
 		{
