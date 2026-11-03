@@ -112,7 +112,7 @@ class EditorState extends GameState
 
 	private function refreshSelection():Void
 	{
-		for (i in 0...optionCards.members.length)
+		for (i in 0...optionButtons.length)
 		{
 			var active = i == selectedIndex;
 			optionButtons[i].background.color = active ? 0xFF315A7C : 0xFF202B3A;
