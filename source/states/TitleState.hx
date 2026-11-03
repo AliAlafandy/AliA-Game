@@ -1,6 +1,7 @@
 package states;
 
 import flixel.FlxG;
+import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
@@ -18,6 +19,11 @@ import hxvlc.flixel.FlxVideo as VideoHandler;
 class TitleState extends GameState
 {
     public static var initialized:Bool = false;
+
+    // Keep the sound hotkeys available to ClientPrefs across state transitions.
+    public static var muteKeys:Array<FlxKey> = [];
+    public static var volumeDownKeys:Array<FlxKey> = [];
+    public static var volumeUpKeys:Array<FlxKey> = [];
 
     private var introStarted:Bool = false;
     private var titleReady:Bool = false;
