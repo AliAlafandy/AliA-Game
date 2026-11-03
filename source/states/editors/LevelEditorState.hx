@@ -6,6 +6,9 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import data.backend.StageData.LevelBin;
+import ui.AUIBox;
+import ui.AUIButton;
+import ui.AUILabel;
 import mobile.TouchUtil;
 import haxe.io.Bytes;
 import lime.utils.Resource;
@@ -47,9 +50,7 @@ class LevelEditorState extends GameState
 	private var canvasY:Float = 62;
 	private var canvasScale:Float = 0.35;
 	private var dragging:Bool = false;
-	private var toolButtons:FlxTypedGroup<FlxSprite>;
-	private var toolLabels:FlxTypedGroup<FlxText>;
-	private var toolActions:Array<Void->Void> = [];
+	private var editorButtons:Array<AUIButton> = [];
 
 	public function new(?name:String = "ATown", ?c:Int = 40, ?r:Int = 24)
 	{
@@ -80,10 +81,6 @@ class LevelEditorState extends GameState
 		title.setFormat(null, 20, FlxColor.WHITE, LEFT);
 		add(title);
 
-		toolButtons = new FlxTypedGroup<FlxSprite>();
-		toolLabels = new FlxTypedGroup<FlxText>();
-		add(toolButtons);
-		add(toolLabels);
 
 		var canvasX = 12;
 		var canvasY = 62;
@@ -98,11 +95,15 @@ class LevelEditorState extends GameState
 		preview = new FlxTypedGroup<FlxSprite>();
 		add(preview);
 
-		objectList = new FlxText(canvasX + canvasW + 12, canvasY, FlxG.width - canvasW - 36, "", 13);
-		objectList.setFormat(null, 13, FlxColor.WHITE, LEFT);
+		var inspectorX = canvasX + canvasW + 12;
+		var inspectorW = Std.int(FlxG.width - inspectorX - 12);
+		var objectsPanel = new AUIBox(inspectorX, canvasY, inspectorW, 138, "OBJECTS");
+		add(objectsPanel);
+		objectList = new AUILabel(inspectorX + 10, canvasY + 38, inspectorW - 20, "", 11);
 		add(objectList);
-		properties = new FlxText(canvasX + canvasW + 12, canvasY + 150, FlxG.width - canvasW - 36, "", 13);
-		properties.setFormat(null, 13, FlxColor.CYAN, LEFT);
+		var propertiesPanel = new AUIBox(inspectorX, canvasY + 148, inspectorW, 150, "INSPECTOR");
+		add(propertiesPanel);
+		properties = new AUILabel(inspectorX + 10, canvasY + 184, inspectorW - 20, "", 11, FlxColor.CYAN);
 		add(properties);
 
 		status = new FlxText(12, FlxG.height - 62, FlxG.width - 24, "", 12);
@@ -133,15 +134,12 @@ class LevelEditorState extends GameState
 		var columns = 6;
 		var row = Std.int((slot - 1) / columns);
 		var col = (slot - 1) % columns;
-		var w = (FlxG.width - 16) / columns;
+		var w = Std.int((FlxG.width - 16) / columns);
 		var x = 8 + col * w;
 		var y = FlxG.height - 112 + row * 34;
-		var button = new FlxSprite(x, y).makeGraphic(Std.int(w - 3), 29, 0xFF30445B);
-		toolButtons.add(button);
-		var labelText = new FlxText(x + 2, y + 8, w - 7, label, 9);
-		labelText.setFormat(null, 9, FlxColor.WHITE, CENTER);
-		toolLabels.add(labelText);
-		toolActions.push(callback);
+		var button = new AUIButton(x, y, w - 3, 29, label, callback);
+		editorButtons.push(button);
+		add(button);
 	}
 	private function addBackground():Void
 	{
@@ -450,13 +448,6 @@ class LevelEditorState extends GameState
 				return;
 			}
 		}
-		for (i in 0...toolButtons.members.length)
-		{
-			if (TouchUtil.justPressedOn(toolButtons.members[i]) || TouchUtil.justPressedOn(toolLabels.members[i]))
-			{
-				toolActions[i]();
-				break;
-			}
-		}
+
 	}
 }
