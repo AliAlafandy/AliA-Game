@@ -58,17 +58,15 @@ class LevelBin
 			#if MODS_ALLOWED
 			if (FileSystem.exists(path))
 				parsed = BIN.read(path);
-			else
 			#end
-			if (FileSystem.exists(path))
+			if (parsed == null && FileSystem.exists(path))
 				parsed = BIN.read(path);
-			#else
-			if (Assets.exists(path))
+			#end
+			if (parsed == null && Assets.exists(path))
 			{
 				var bytes = Assets.getBytes(path);
 				if (bytes != null) parsed = BIN.parse(bytes);
 			}
-			#end
 
 			if (parsed == null || !parsed.isObject())
 			{
