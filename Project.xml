@@ -124,7 +124,12 @@
 		
 	<!-- Custom -->
 	<assets path="documents/app/iconAPP.png" rename="icon.png" if="linux"/>
-
 	<icon path="documents/app/iconOG.png" unless="mobile"/>
+
+	<!--<template path="documents/templates" if="android"/>
+	<config:android>
+    	<application android:icon="@mipmap/ic_launcher"/>
+	</config:android>-->
+
 	<icon path="documents/app/iconAPP.png" if="mobile"/>
 </project>
