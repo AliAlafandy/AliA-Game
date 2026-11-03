@@ -50,9 +50,6 @@ class AnimationEditorState extends GameState
 		add(new FlxSprite(10, 64).makeGraphic(leftW, FlxG.height - 120, 0xFF1B2736));
 		add(new AUIBox(10, 64, leftW, FlxG.height - 120, "ANIMATIONS"));
 		add(new AUIBox(leftW + 20, 64, FlxG.width - leftW - 30, FlxG.height - 120, "FRAME PREVIEW"));
-		var listTitle = new FlxText(22, 72, leftW - 20, "ANIMATIONS", 14);
-		listTitle.setFormat(null, 14, FlxColor.CYAN, LEFT);
-		add(listTitle);
 		addAction("ADD", addAnimation, 0);
 		addAction("REMOVE", removeAnimation, 1);
 		addAction("SAVE", save, 2);
@@ -61,9 +58,6 @@ class AnimationEditorState extends GameState
 		add(rows);
 		add(rowLabels);
 
-		var previewTitle = new FlxText(leftW + 34, 72, FlxG.width - leftW - 50, "FRAME PREVIEW", 14);
-		previewTitle.setFormat(null, 14, FlxColor.CYAN, LEFT);
-		add(previewTitle);
 		preview = new FlxSprite();
 		add(preview);
 		details = new FlxText(leftW + 34, FlxG.height - 145, FlxG.width - leftW - 50, "", 13);
