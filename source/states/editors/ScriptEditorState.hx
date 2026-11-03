@@ -5,7 +5,8 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.math.FlxMath;
-import flixel.ui.FlxButton;
+import flixel.ui.AUIBox;
+import flixel.ui.AUIButton;
 import openfl.events.TextEvent;
 import openfl.events.KeyboardEvent;
 import openfl.ui.Keyboard;
@@ -115,9 +116,20 @@ class ScriptEditorState extends GameState
         FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         #end
 
-        #if mobile
-        addMobileButtons();
-        #end
+        addEditorButton(12, FlxG.height - 66, "OPEN", function() {
+            if (selectedFile == -1) createScript();
+            else if (files.length > 0) openFile(files[selectedFile]);
+        });
+        addEditorButton(102, FlxG.height - 66, "SAVE", saveFile);
+        addEditorButton(192, FlxG.height - 66, "NEW", createScript);
+        addEditorButton(282, FlxG.height - 66, "BACK", function() GameState.switchState(new EditorState()));
+    }
+
+    private function addEditorButton(x:Float, y:Float, label:String, callback:Void->Void):Void
+    {
+        var button = new AUIButton(x, y, 82, 28, label, callback);
+        editorButtons.push(button);
+        add(button);
     }
 
     private function scanFiles():Void
@@ -327,19 +339,7 @@ class ScriptEditorState extends GameState
         refreshCode();
     }
 
-    #if mobile
-    private function addMobileButtons():Void
-    {
-        var y = FlxG.height - 66;
-        add(new FlxButton(12, y, "OPEN", function() {
-            if (selectedFile == -1) createScript();
-            else if (files.length > 0) openFile(files[selectedFile]);
-        }));
-        add(new FlxButton(92, y, "SAVE", saveFile));
-        add(new FlxButton(172, y, "NEW", createScript));
-        add(new FlxButton(252, y, "BACK", function() GameState.switchState(new EditorState())));
-    }
-    #end
+
 
     override public function update(elapsed:Float):Void
     {
