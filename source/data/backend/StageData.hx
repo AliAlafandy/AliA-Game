@@ -36,6 +36,7 @@ class StageData
 	public static var forceNextDirectory:String = null;
 	public static var currentAct:Int = 1;
 	public static var groundSprite:FlxSprite = null;
+	public static var floorCollider:FlxSprite = null;
 	private static var decodedImages:Map<String, BitmapData> = new Map();
 
 	public static function loadDirectory(stageName:String, act:Int = 1):Void
@@ -108,6 +109,7 @@ class StageData
 	public static function addLevelImages(stageName:String, group:FlxTypedGroup<FlxSprite>):FlxSprite
 	{
 		groundSprite = null;
+		floorCollider = null;
 		if (group == null) return null;
 
 		var relative = "levels/" + stageName + "/" + stageName + ".bin";
@@ -169,18 +171,27 @@ class StageData
 						sprite.y = FlxG.height - bitmap.height;
 						sprite.scrollFactor.set(1, 1);
 						// The road image is also the physical floor.
-						sprite.immovable = true;
-						sprite.allowCollisions = flixel.util.FlxDirectionFlags.UP;
 						groundSprite = sprite;
+						floorCollider = new FlxSprite(0, sprite.y);
+						floorCollider.makeGraphic(Std.int(Math.max(bitmap.width, FlxG.width)), 12, 0x00000000);
+						floorCollider.visible = false;
+						floorCollider.immovable = true;
+						floorCollider.allowCollisions = flixel.util.FlxDirectionFlags.UP;
 				}
 				group.add(sprite);
 			}
+			if (floorCollider != null) group.add(floorCollider);
 		}
 		catch (e:Dynamic)
 		{
 			trace("[StageData] Failed to load " + relative + ": " + Std.string(e));
 		}
-		return groundSprite;
+		return floorCollider;
+	}
+
+	public static function getLevelImage(stageName:String, imageName:String):BitmapData
+	{
+		return decodedImages.get(stageName + "/" + imageName);
 	}
 
 	public static function clearLevelImages(stageName:String):Void
@@ -195,5 +206,6 @@ class StageData
 			}
 		}
 		groundSprite = null;
+		floorCollider = null;
 	}
 }
