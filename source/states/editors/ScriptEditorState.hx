@@ -286,6 +286,7 @@ class ScriptEditorState extends GameState
     private function onKeyDown(event:KeyboardEvent):Void
     {
         if (event.ctrlKey && event.keyCode == Keyboard.S) { event.preventDefault(); saveFile(); return; }
+        if (event.ctrlKey && event.keyCode == Keyboard.TAB) { event.preventDefault(); return; }
         if (event.keyCode == Keyboard.ESCAPE) { event.preventDefault(); GameState.switchState(new EditorState()); return; }
         if (selectedTab < 0) return;
         if (event.keyCode == Keyboard.BACKSPACE)
