@@ -46,10 +46,10 @@ class EditorState extends GameState
 
 		var background = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF101722);
 		add(background);
-		add(new AUIBox(0, 0, FlxG.width, 66, "ALI A-GAME / EDITOR ZONE"));
+		// Keep the editor header clear of the engine's top-left debug overlay.
+		add(new AUIBox(0, 48, FlxG.width, 58, "ALI A-GAME / EDITOR ZONE"));
 
-
-		var subtitle = new FlxText(22, 82, FlxG.width - 44, "Choose a workspace", 16);
+		var subtitle = new FlxText(22, 118, FlxG.width - 44, "Choose a workspace", 16);
 		subtitle.setFormat(null, 16, 0xFF9EADC2, LEFT);
 		add(subtitle);
 
@@ -64,22 +64,27 @@ class EditorState extends GameState
 		add(descriptions);
 
 		var cardW = FlxG.width - 44;
-		var cardH = Std.int(Math.min(82, (FlxG.height - 190) / 4));
+		var cardH = Std.int(Math.min(82, (FlxG.height - 226) / 4));
 		for (i in 0...options.length)
 		{
-			var y = 118 + i * (cardH + 10);
+			var y = 154 + i * (cardH + 10);
 			var option = options[i];
 			var button = new AUIButton(22, y, cardW, cardH, option.label, function() {
 				FlxG.sound.play(Paths.sound("confirm_sound"));
 				option.action();
 			});
-			button.background.alpha = 0;
-			button.caption.x = 18;
-			button.caption.y = 10;
-			button.caption.setFormat(null, 17, FlxColor.WHITE, LEFT);
+			// Keep hit testing in AUIButton, but render labels as state-level
+			// text objects so they are not clipped by FlxSpriteGroup bounds.
+			button.caption.visible = false;
 			optionButtons.push(button);
 			add(button);
-			var desc = new FlxText(40, y + 39, cardW - 36, options[i].description, 12);
+
+			var label = new FlxText(40, y + 10, cardW - 36, options[i].label, 17);
+			label.setFormat(null, 17, FlxColor.WHITE, LEFT);
+			label.color = i == selectedIndex ? FlxColor.YELLOW : FlxColor.WHITE;
+			add(label);
+
+			var desc = new FlxText(40, y + 42, cardW - 36, options[i].description, 12);
 			desc.setFormat(null, 12, 0xFF9EADC2, LEFT);
 			descriptions.add(desc);
 		}
@@ -118,7 +123,10 @@ class EditorState extends GameState
 			var active = i == selectedIndex;
 			optionButtons[i].background.color = active ? 0xFF315A7C : 0xFF202B3A;
 			optionButtons[i].background.alpha = active ? 0.65 : 0.28;
-			optionButtons[i].caption.color = active ? FlxColor.YELLOW : FlxColor.WHITE;
+			// Card titles are rendered as standalone FlxText objects; the AUIButton
+			// captions stay hidden and are used only for click/touch hit testing.
+			var label = cast(members[4 + i * 3], FlxText);
+			label.color = active ? FlxColor.YELLOW : FlxColor.WHITE;
 			descriptions.members[i].color = active ? FlxColor.WHITE : 0xFF9EADC2;
 		}
 	}
