@@ -444,7 +444,7 @@ class OnlineState extends GameState
 
 	private function onConnectPressed():Void
 	{
-		MultiPlayer.instance.connect("127.0.0.1", 7777, nameInput.value.length > 0 ? nameInput.value : "Player");
+		MultiPlayer.instance.connect("https://alia-server.onrender.com", 0, nameInput.value.length > 0 ? nameInput.value : "Player");
 		refreshConnectionStatus();
 	}
 
@@ -475,7 +475,6 @@ class OnlineState extends GameState
 			return;
 
 		MultiPlayer.instance.sendChat(message);
-		pushChatLine('${MultiPlayer.instance.localPlayerName}: $message');
 		chatInput.clear();
 	}
 
