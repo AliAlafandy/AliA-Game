@@ -4,12 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.ui.FlxButton;
-import openfl.text.TextField;
-import openfl.text.TextFieldType;
-import openfl.text.TextFormat;
-import openfl.events.KeyboardEvent;
-import openfl.ui.Keyboard;
+import flixel.group.FlxGroup.FlxTypedGroup;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
@@ -17,238 +12,218 @@ import sys.io.File;
 using StringTools;
 
 /**
- * Character editor: browse mod character folders and edit character definition JSON, including character identity and animation metadata.
- * This editor edits the actual JSON file in-place and keeps its path.
+ * Character workspace. This edits character-level presentation only.
+ * Animation definitions are intentionally handled by AnimationEditorState.
  */
 class CharacterEditorState extends GameState
 {
-	private var title:FlxText;
-	private var status:FlxText;
-	private var entries:FlxText;
 	private var paths:Array<String> = [];
 	private var selected:Int = 0;
-	private var editor:TextField;
-	private var editing:Bool = false;
-	private var newFilePath:String = "";
+	private var character:Dynamic;
+	private var preview:FlxSprite;
+	private var fileRows:FlxTypedGroup<FlxSprite>;
+	private var fileLabels:FlxTypedGroup<FlxText>;
+	private var nameLabel:FlxText;
+	private var infoLabel:FlxText;
+	private var status:FlxText;
+	private var previewScale:Float = 1;
+	private var previewFlip:Bool = false;
+	private var previewX:Float;
+	private var previewY:Float;
 
 	public function new():Void super();
 
 	override public function create():Void
 	{
 		super.create();
-		FlxG.camera.bgColor = 0xFF111722;
-		var bar = new FlxSprite().makeGraphic(FlxG.width, 52, 0xFF263449);
-		add(bar);
-		title = new FlxText(12, 12, FlxG.width - 24, "CHARACTER EDITOR", 22);
-		title.setFormat(null, 22, FlxColor.WHITE, LEFT);
+		FlxG.camera.bgColor = 0xFF101722;
+		add(new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF101722));
+		add(new FlxSprite(0, 0).makeGraphic(FlxG.width, 54, 0xFF263449));
+		var title = new FlxText(16, 14, FlxG.width - 32, "CHARACTER WORKSPACE", 21);
+		title.setFormat(null, 21, FlxColor.WHITE, LEFT);
 		add(title);
-		entries = new FlxText(14, 68, FlxG.width - 28, "", 14);
-		entries.setFormat(null, 14, FlxColor.WHITE, LEFT);
-		add(entries);
-		status = new FlxText(12, FlxG.height - 58, FlxG.width - 24, "", 12);
-		status.setFormat(null, 12, FlxColor.LIME, LEFT);
+
+		var leftW = Std.int(FlxG.width * 0.34);
+		add(new FlxSprite(10, 64).makeGraphic(leftW, FlxG.height - 122, 0xFF1B2736));
+		add(new FlxSprite(leftW + 20, 64).makeGraphic(FlxG.width - leftW - 30, FlxG.height - 122, 0xFF1B2736));
+		var listTitle = new FlxText(22, 72, leftW - 20, "CHARACTERS", 14);
+		listTitle.setFormat(null, 14, FlxColor.CYAN, LEFT);
+		add(listTitle);
+		fileRows = new FlxTypedGroup<FlxSprite>();
+		fileLabels = new FlxTypedGroup<FlxText>();
+		add(fileRows);
+		add(fileLabels);
+
+		var previewTitle = new FlxText(leftW + 34, 72, FlxG.width - leftW - 50, "CHARACTER PREVIEW", 14);
+		previewTitle.setFormat(null, 14, FlxColor.CYAN, LEFT);
+		add(previewTitle);
+		previewX = leftW + (FlxG.width - leftW) * 0.5;
+		previewY = FlxG.height * 0.48;
+		preview = new FlxSprite();
+		add(preview);
+
+		nameLabel = new FlxText(leftW + 34, FlxG.height - 112, FlxG.width - leftW - 50, "", 16);
+		nameLabel.setFormat(null, 16, FlxColor.WHITE, LEFT);
+		add(nameLabel);
+		infoLabel = new FlxText(leftW + 34, FlxG.height - 86, FlxG.width - leftW - 50, "", 11);
+		infoLabel.setFormat(null, 11, 0xFFB7C5D8, LEFT);
+		add(infoLabel);
+		status = new FlxText(14, FlxG.height - 28, FlxG.width - 28, "UP/DOWN Select  |  LEFT/RIGHT Scale  |  F Flip  |  BACK Return", 11);
+		status.setFormat(null, 11, 0xFF9EADC2, CENTER);
 		add(status);
-		scan();
-		refresh();
+
+		scanCharacters();
+		refreshList();
+		if (paths.length > 0) loadCharacter(0);
 		#if mobile
-		addTouchControls();
+		addCustomDPad('NONE', 'BACK');
+		addCustomDPadCam();
 		#end
 	}
 
-	#if mobile
-	private function addTouchControls():Void
-	{
-		var y = FlxG.height - 88;
-		var w = (FlxG.width - 24) / 5;
-		var labels = ['UP', 'DOWN', 'OPEN', 'NEW', 'BACK'];
-		for (i in 0...labels.length)
-		{
-			var index = i;
-			var b = new FlxButton(4 + i * (w + 4), y, labels[i], function() {
-				switch (index) {
-					case 0: if (paths.length > 0) selected = (selected - 1 + paths.length) % paths.length; refresh();
-					case 1: if (paths.length > 0) selected = (selected + 1) % paths.length; refresh();
-					case 2: if (editing) closeEditor() else openSelected();
-					case 3: createFile();
-					case 4: if (editing) closeEditor() else GameState.switchState(new EditorState());
-				}
-			});
-			b.scale.set(0.8, 0.8);
-			add(b);
-		}
-		var saveButton = new FlxButton(FlxG.width - 72, 8, 'SAVE', save);
-		saveButton.scale.set(0.8, 0.8);
-		add(saveButton);
-	}
-	#end
-
-	private function scan():Void
+	private function scanCharacters():Void
 	{
 		paths = [];
 		#if sys
 		#if MODS_ALLOWED
-		var modsRoot = Paths.mods();
-		if (FileSystem.exists(modsRoot))
-		{
-			for (mod in FileSystem.readDirectory(modsRoot))
+		var root = Paths.mods();
+		if (FileSystem.exists(root))
+			for (mod in FileSystem.readDirectory(root))
 			{
-				var folder = haxe.io.Path.join([modsRoot, mod, "characters"]);
-				if (FileSystem.exists(folder) && FileSystem.isDirectory(folder)) scanDir(folder);
+				var folder = haxe.io.Path.join([root, mod, "characters"]);
+				if (FileSystem.exists(folder) && FileSystem.isDirectory(folder)) scanDirectory(folder);
 			}
-		}
 		#end
 		var shared = Paths.getSharedPath() + "characters/";
-		if (FileSystem.exists(shared) && FileSystem.isDirectory(shared)) scanDir(shared);
+		if (FileSystem.exists(shared) && FileSystem.isDirectory(shared)) scanDirectory(shared);
 		#end
 		paths.sort(Reflect.compare);
 	}
 
-	private function scanDir(dir:String):Void
+	private function scanDirectory(folder:String):Void
 	{
 		#if sys
-		for (entry in FileSystem.readDirectory(dir))
+		for (entry in FileSystem.readDirectory(folder))
 		{
-			var path = haxe.io.Path.join([dir, entry]);
-			if (FileSystem.isDirectory(path)) scanDir(path);
-			else if (entry.toLowerCase().endsWith(".json") && !paths.contains(path)) paths.push(path);
+			var full = haxe.io.Path.join([folder, entry]);
+			if (FileSystem.isDirectory(full)) scanDirectory(full);
+			else if (entry.toLowerCase().endsWith(".json") && !paths.contains(full)) paths.push(full);
 		}
 		#end
 	}
 
-	private function refresh():Void
+	private function refreshList():Void
 	{
-		if (paths.length == 0)
+		fileRows.clear();
+		fileLabels.clear();
+		var rowH = 34;
+		var leftW = Std.int(FlxG.width * 0.34);
+		var maxRows = Std.int((FlxG.height - 160) / rowH);
+		var start = Std.int(Math.max(0, Math.min(selected - maxRows + 1, paths.length - maxRows)));
+		for (i in start...Std.int(Math.min(paths.length, start + maxRows)))
 		{
-			entries.text = "No characters JSON files found. Press N to create one.";
-			status.text = "Searches shared assets and every mod folder.";
-			return;
+			var y = 102 + (i - start) * rowH;
+			var row = new FlxSprite(16, y).makeGraphic(leftW - 12, 30, i == selected ? 0xFF315A7C : 0xFF243244);
+			fileRows.add(row);
+			var label = new FlxText(25, y + 7, leftW - 30, haxe.io.Path.withoutExtension(haxe.io.Path.withDirectory(pathToName(paths[i]))), 11);
+			label.setFormat(null, 11, FlxColor.WHITE, LEFT);
+			fileLabels.add(label);
 		}
-		selected = (selected % paths.length + paths.length) % paths.length;
-		var lines:Array<String> = [];
-		var start = Std.int(Math.max(0, Math.min(selected - 8, paths.length - 16)));
-		for (i in start...Std.int(Math.min(paths.length, start + 16)))
-			lines.push((i == selected ? "> " : "  ") + paths[i]);
-		entries.text = lines.join("\n");
-		status.text = paths.length + " file(s) | UP/DOWN select | ENTER edit | N new | CTRL+S save | ESC back";
 	}
 
-	private function openSelected():Void
+	private function pathToName(path:String):String
 	{
-		if (paths.length > 0) openPath(paths[selected]);
+		var parts = path.split("/");
+		return parts.length > 0 ? parts[parts.length - 1] : path;
 	}
 
-	private function openPath(path:String):Void
+	private function loadCharacter(index:Int):Void
 	{
+		if (paths.length == 0) return;
+		selected = FlxMath.wrap(index, 0, paths.length - 1);
 		#if sys
 		try
 		{
-			editor = new TextField();
-			editor.type = TextFieldType.INPUT;
-			editor.multiline = true;
-			editor.wordWrap = false;
-			editor.background = true;
-			editor.backgroundColor = 0xFF151A22;
-			editor.border = true;
-			editor.borderColor = 0xFF53647A;
-			editor.textColor = 0xFFFFFFFF;
-			editor.defaultTextFormat = new TextFormat("_typewriter", 14, 0xFFFFFFFF);
-			editor.x = 10;
-			editor.y = 62;
-			editor.width = FlxG.width - 20;
-			editor.height = FlxG.height - 132;
-			editor.text = File.getContent(path);
-			editor.addEventListener(KeyboardEvent.KEY_DOWN, onEditorKey);
-			FlxG.stage.addChild(editor);
-			FlxG.stage.focus = editor;
-			newFilePath = path;
-			editing = true;
-			entries.visible = false;
-			status.text = path;
+			character = haxe.Json.parse(File.getContent(paths[selected]));
+			previewScale = 1;
+			previewFlip = false;
+			buildPreview();
+			var characterName = Reflect.field(character, "charName");
+			nameLabel.text = characterName == null ? pathToName(paths[selected]) : Std.string(characterName);
+			var anims:Array<Dynamic> = cast Reflect.field(character, "anim");
+			infoLabel.text = "Character definition  |  " + (anims == null ? 0 : anims.length) + " animation entries\nPreview controls change only this workspace; animation setup is in Animation Editor.";
+			refreshList();
+			status.text = "Loaded " + paths[selected];
 		}
-		catch (e:Dynamic) status.text = "Open failed: " + Std.string(e);
+		catch (e:Dynamic)
+		{
+			status.text = "Could not load character: " + Std.string(e);
+			character = null;
+		}
 		#end
 	}
 
-	private function onEditorKey(event:KeyboardEvent):Void
+	private function buildPreview():Void
 	{
-		if (event.keyCode == Keyboard.S && event.ctrlKey)
+		if (preview == null || character == null) return;
+		preview.destroy();
+		preview = new FlxSprite();
+		var anims:Array<Dynamic> = cast Reflect.field(character, "anim");
+		if (anims != null && anims.length > 0)
 		{
-			event.stopImmediatePropagation();
-			save();
-		}
-		else if (event.keyCode == Keyboard.ESCAPE)
-		{
-			event.stopImmediatePropagation();
-			closeEditor();
-		}
-	}
-
-	private function save():Void
-	{
-		#if sys
-		if (editor == null || newFilePath.length == 0) return;
-		try
-		{
-			// Validate JSON before overwriting the original file.
-			haxe.Json.parse(editor.text);
-			File.saveContent(newFilePath, editor.text);
-			status.text = "Saved " + newFilePath;
-		}
-		catch (e:Dynamic) status.text = "Save failed (invalid JSON or write error): " + Std.string(e);
-		#end
-	}
-
-	private function closeEditor():Void
-	{
-		if (editor != null)
-		{
-			editor.removeEventListener(KeyboardEvent.KEY_DOWN, onEditorKey);
-			if (editor.parent != null) editor.parent.removeChild(editor);
-			editor = null;
-		}
-		FlxG.stage.focus = null;
-		editing = false;
-		entries.visible = true;
-		refresh();
-	}
-
-	private function createFile():Void
-	{
-		#if sys
-		#if MODS_ALLOWED
-		var root = Paths.mods();
-		var mods:Array<String> = [];
-		if (FileSystem.exists(root))
-			for (mod in FileSystem.readDirectory(root))
+			var data = anims[0];
+			var image = Std.string(Reflect.field(data, "image"));
+			var folder = haxe.io.Path.directory(paths[selected]);
+			var characterFolder = haxe.io.Path.withoutDirectory(folder);
+			var asset = "characters/" + characterFolder + "/" + image;
+			try
 			{
-				var p = haxe.io.Path.join([root, mod]);
-				if (FileSystem.isDirectory(p)) mods.push(mod);
+				preview.frames = Paths.getSparrowAtlas(asset);
+				var prefix = Std.string(Reflect.field(data, "prefix"));
+				preview.animation.addByPrefix("preview", prefix, 24, true);
+				preview.animation.play("preview");
 			}
-		if (mods.length == 0) { status.text = "Create a mod folder first."; return; }
-		var dir = haxe.io.Path.join([root, mods[0], "characters"]);
-		if (!FileSystem.exists(dir)) FileSystem.createDirectory(dir);
-		var path = haxe.io.Path.join([dir, "new_character.json"]);
-		if (FileSystem.exists(path)) { status.text = "File already exists: " + path; return; }
-		File.saveContent(path, "{\"charName\":\"NewCharacter\",\"anim\":[{\"name\":\"idle\",\"image\":\"NewCharacter\",\"prefix\":\"idle\",\"offsets\":[0,0],\"loop\":false,\"scale\":1,\"fps\":24,\"indices\":[]}]}");
-		scan();
-		var index = paths.indexOf(path);
-		if (index >= 0) selected = index;
-		refresh();
-		openPath(path);
-		#else
-		status.text = "Mod support is disabled.";
-		#end
-		#end
+			catch (e:Dynamic)
+			{
+				preview.makeGraphic(70, 100, 0xFF55CCFF);
+				status.text = "Sprite atlas unavailable: " + asset;
+			}
+			var scaleValue:Dynamic = Reflect.field(data, "scale");
+			preview.scale.set((scaleValue == null ? 1 : Std.parseFloat(Std.string(scaleValue))) * previewScale,
+				(scaleValue == null ? 1 : Std.parseFloat(Std.string(scaleValue))) * previewScale);
+		}
+		else preview.makeGraphic(70, 100, 0xFF55CCFF);
+		preview.flipX = previewFlip;
+		preview.updateHitbox();
+		preview.x = previewX - preview.width * 0.5;
+		preview.y = previewY - preview.height * 0.5;
+		add(preview);
+	}
+
+	private function adjustScale(amount:Float):Void
+	{
+		previewScale = Math.max(0.2, Math.min(3, previewScale + amount));
+		buildPreview();
+		status.text = "Preview scale: " + Std.int(previewScale * 100) + "% (not saved to character data)";
 	}
 
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-		if (editing) return;
-		if (paths.length > 0 && controls.GAME_UP_P) { selected = (selected - 1 + paths.length) % paths.length; refresh(); }
-		else if (paths.length > 0 && controls.GAME_DOWN_P) { selected = (selected + 1) % paths.length; refresh(); }
-		if (controls.ACCEPT) openSelected();
-		if (FlxG.keys.justPressed.N) createFile();
+		#if mobile
+		for (i in 0...fileRows.members.length)
+			if (TouchUtil.justPressedOn(fileRows.members[i]) || TouchUtil.justPressedOn(fileLabels.members[i]))
+			{
+				var visibleStart = Std.int(Math.max(0, Math.min(selected - fileRows.members.length + 1, paths.length - fileRows.members.length)));
+				loadCharacter(visibleStart + i);
+				return;
+			}
+		#end
+		if (controls.GAME_UP_P && paths.length > 0) loadCharacter(selected - 1);
+		else if (controls.GAME_DOWN_P && paths.length > 0) loadCharacter(selected + 1);
+		if (controls.GAME_LEFT_P) adjustScale(-0.05);
+		else if (controls.GAME_RIGHT_P) adjustScale(0.05);
+		if (FlxG.keys.justPressed.F) { previewFlip = !previewFlip; buildPreview(); }
 		if (controls.BACK) GameState.switchState(new EditorState());
 	}
 }
