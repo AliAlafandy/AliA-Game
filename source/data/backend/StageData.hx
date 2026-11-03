@@ -274,7 +274,6 @@ class LevelBin
 			var result = new LevelBin();
 			result.name = root.get("name").asString(stage);
 			result.stage = stage;
-			result.groundY = root.get("groundY").asInt(result.groundY);
 			result.worldWidth = root.get("worldWidth").asInt(result.worldWidth);
 			result.groundY = root.get("groundY").asInt(result.groundY);
 			if (result.worldWidth < 640) result.worldWidth = 2920;
