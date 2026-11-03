@@ -239,7 +239,8 @@ class LevelBin
 
 	public var name:String = "ATown";
 	public var stage:String = "ATown";
-	public var groundY:Int = -1;
+	public var groundY:Int = 562;
+	public var worldWidth:Int = 2920;
 	public var music:String = "";
 	public var playerX:Int = 500;
 	public var playerY:Int = -1;
@@ -278,7 +279,9 @@ class LevelBin
 			var result = new LevelBin();
 			result.name = root.get("name").asString(stage);
 			result.stage = stage;
-			result.groundY = root.get("groundY").asInt(-1);
+			result.groundY = root.get("groundY").asInt(result.groundY);
+			result.worldWidth = root.get("worldWidth").asInt(result.worldWidth);
+			if (result.worldWidth < 640) result.worldWidth = 2920;
 			result.music = root.get("music").asString("");
 
 			var player = root.get("player").asObject();
