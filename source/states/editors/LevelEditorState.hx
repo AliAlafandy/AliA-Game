@@ -204,7 +204,7 @@ class LevelEditorState extends GameState
 		properties.text = "PROPERTIES\n----------------\nType: " + (selectedKind == 0 ? "Player Spawn" : selectedKind == 1 ? "Background Layer" : "Flash Collectible") + "\nX: " + px + "\nY: " + py + "\n\nMusic: " + level.music;
 
 		updatePreview();
-		status.text = "Select objects in the list. Use X/Y controls to position. SAVE BIN writes binary Level.bin.";
+		status.text = "Select objects in the list. Use X/Y controls to position. SAVE BIN writes binary ${levelName}.bin.";
 	}
 
 	/** Rebuild only when the level's object collections change. */
