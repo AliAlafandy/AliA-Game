@@ -29,6 +29,8 @@ class ScriptEditorState extends GameState
     private var selectedTab:Int = -1;
     private var source:String = "";
     private var dirty:Bool = false;
+    private var buffers:Map<String, String> = new Map();
+    private var dirtyPaths:Map<String, Bool> = new Map();
 
     private var filePanel:FlxSprite;
     private var codePanel:FlxSprite;
@@ -96,7 +98,7 @@ class ScriptEditorState extends GameState
         completion.setFormat(null, 12, FlxColor.YELLOW, LEFT);
         add(completion);
 
-        status = new FlxText(12, FlxG.height - 28, FlxG.width - 24, "UP/DOWN files | ENTER open | CTRL+S save | type in editor | ESC back", 12);
+        status = new FlxText(12, FlxG.height - 28, FlxG.width - 24, "UP/DOWN files | ENTER open | CTRL+S save | CTRL+TAB switch tabs | type in editor | ESC back", 12);
         status.setFormat(null, 12, 0xFF9EADC2, LEFT);
         add(status);
 
@@ -171,7 +173,14 @@ class ScriptEditorState extends GameState
             return;
         }
         var path = tabs[selectedTab];
-        tabText.text = path.split("/").pop() + (dirty ? "  *" : "");
+        var tabNames:Array<String> = [];
+        for (i in 0...tabs.length)
+        {
+            var label = tabs[i].split("/").pop();
+            if (dirtyPaths.exists(tabs[i]) && dirtyPaths.get(tabs[i])) label += "*";
+            tabNames.push(i == selectedTab ? "[" + label + "]" : label);
+        }
+        tabText.text = tabNames.join("   |   ");
         var shown = source;
         if (shown.length == 0) shown = "// Start writing Ellawy here";
         codeText.text = shown + (dirty ? "▌" : "");
@@ -202,9 +211,10 @@ class ScriptEditorState extends GameState
         try
         {
             if (!tabs.contains(path)) tabs.push(path);
+            if (selectedTab >= 0 && selectedTab < tabs.length) { buffers.set(tabs[selectedTab], source); dirtyPaths.set(tabs[selectedTab], dirty); }
             selectedTab = tabs.indexOf(path);
-            source = File.getContent(path);
-            dirty = false;
+            source = buffers.exists(path) ? buffers.get(path) : File.getContent(path);
+            dirty = dirtyPaths.exists(path) && dirtyPaths.get(path);
             refreshCode();
             status.text = "Opened " + path;
         }
@@ -222,6 +232,8 @@ class ScriptEditorState extends GameState
         {
             File.saveContent(path, source);
             dirty = false;
+            dirtyPaths.set(path, false);
+            buffers.set(path, source);
             status.text = "Saved " + path;
             refreshCode();
         }
@@ -267,6 +279,7 @@ class ScriptEditorState extends GameState
             if (code >= 32 || code == 10 || code == 13) source += text.charAt(i);
         }
         dirty = true;
+        if (selectedTab >= 0) { buffers.set(tabs[selectedTab], source); dirtyPaths.set(tabs[selectedTab], true); }
         refreshCode();
     }
 
@@ -279,6 +292,7 @@ class ScriptEditorState extends GameState
         {
             if (source.length > 0) source = source.substr(0, source.length - 1);
             dirty = true;
+            if (selectedTab >= 0) { buffers.set(tabs[selectedTab], source); dirtyPaths.set(tabs[selectedTab], true); }
             refreshCode();
         }
         else if (event.keyCode == Keyboard.ENTER)
@@ -294,6 +308,18 @@ class ScriptEditorState extends GameState
             dirty = true;
             refreshCode();
         }
+    }
+
+    private function switchTab():Void
+    {
+        if (tabs.length < 2 || selectedTab < 0) return;
+        buffers.set(tabs[selectedTab], source);
+        dirtyPaths.set(tabs[selectedTab], dirty);
+        selectedTab = (selectedTab + 1) % tabs.length;
+        var path = tabs[selectedTab];
+        source = buffers.exists(path) ? buffers.get(path) : "";
+        dirty = dirtyPaths.exists(path) && dirtyPaths.get(path);
+        refreshCode();
     }
 
     #if mobile
@@ -322,6 +348,7 @@ class ScriptEditorState extends GameState
         }
         if (FlxG.keys.justPressed.N) createScript();
         if (FlxG.keys.justPressed.F5) saveFile();
+        if (FlxG.keys.justPressed.TAB && FlxG.keys.pressed.CONTROL) switchTab();
     }
 
     override public function destroy():Void
