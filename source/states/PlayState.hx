@@ -158,8 +158,8 @@ class PlayState extends GameState
 		var worldWidth:Float = levelData.worldWidth > 0 ? levelData.worldWidth : 2920;
 		var segmentWidth:Int = 730;
 
-		// StageData loads the authored sky/buildings/sidewalk/road artwork
-		// from the packed stage image archive (ATown.bin), never procedural art.
+		// Background image layers are defined inside the same ATown.bin data file
+		// and point to regular image assets. No second Level.bin is used.
 		levelData.addBackgrounds(backgroundLayers);
 
 		// Invisible collision strips sit at the top of the sidewalk.
