@@ -183,7 +183,7 @@ class PlayState extends GameState
 		// Use the street image as the visible road and its invisible top-edge
 		// collider as the actual floor. Fall back to a generated floor for
 		// stages that do not yet have a packed street.png.
-		var groundY:Float = FlxG.height - 48;
+		var groundY:Float = (levelData != null && levelData.groundY >= 0) ? levelData.groundY : FlxG.height - 48;
 		groundSegments = new FlxTypedGroup<FlxSprite>();
 		add(groundSegments);
 
@@ -225,13 +225,14 @@ class PlayState extends GameState
 		}
 
 		var spawnX:Float = levelData != null ? levelData.playerX : 500;
-		var spawnY:Float = levelData != null ? levelData.playerY : groundY;
+		var hasCustomSpawn:Bool = levelData != null && levelData.playerY >= 0;
+		var spawnY:Float = hasCustomSpawn ? levelData.playerY : groundY;
 		player = new Player(spawnX, spawnY, mainChar, false);
 		player.updateHitbox();
-		if (levelData == null) player.y = groundY - player.height;
+		if (!hasCustomSpawn) player.y = groundY - player.height;
 		player.velocity.set(0, 0);
-		player.grounded = (levelData == null);
-		if (levelData == null) player.touching = FlxDirectionFlags.FLOOR;
+		player.grounded = !hasCustomSpawn;
+		if (!hasCustomSpawn) player.touching = FlxDirectionFlags.FLOOR;
 		add(player);
 
 		if (partnerChar != "")
