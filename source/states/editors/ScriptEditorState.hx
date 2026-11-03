@@ -70,7 +70,7 @@ class ScriptEditorState extends GameState
 
         var filePanelWidth = Std.int(FlxG.width * 0.28);
         add(new AUIBox(10, 60, filePanelWidth, FlxG.height - 126, "FILES"));
-        add(new AUIBox(Std.int(FlxG.width * 0.30), 92, Std.int(FlxG.width * 0.69) - 10, FlxG.height - 158, "CODE"));
+        add(new AUIBox(Std.int(FlxG.width * 0.30), 92, Std.int(FlxG.width * 0.69) - 10, FlxG.height - 158));
 
         fileText = new FlxText(20, 96, filePanelWidth - 22, "", 12);
         fileText.setFormat("_typewriter", 12, FlxColor.WHITE, LEFT);
