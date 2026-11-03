@@ -5,6 +5,8 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.ui.AUIBox;
+import flixel.ui.AUIButton;
 
 /**
  * Visual editor hub for AliA-Game.
@@ -18,6 +20,7 @@ class EditorState extends GameState
 	private var labels:FlxTypedGroup<FlxText>;
 	private var descriptions:FlxTypedGroup<FlxText>;
 	private var footer:FlxText;
+	private var optionButtons:Array<AUIButton> = [];
 
 	#if mobile
 	public var manager:MobileInputManager;
@@ -45,11 +48,8 @@ class EditorState extends GameState
 
 		var background = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF101722);
 		add(background);
-		add(new FlxSprite(0, 0).makeGraphic(FlxG.width, 66, 0xFF202D40));
+		add(new AUIBox(0, 0, FlxG.width, 66, "ALI A-GAME / EDITOR ZONE"));
 
-		var title = new FlxText(20, 17, FlxG.width - 40, "ALI A-GAME  /  EDITOR ZONE", 24);
-		title.setFormat(null, 24, FlxColor.WHITE, LEFT);
-		add(title);
 
 		var subtitle = new FlxText(22, 82, FlxG.width - 44, "Choose a workspace", 16);
 		subtitle.setFormat(null, 16, 0xFF9EADC2, LEFT);
@@ -76,6 +76,16 @@ class EditorState extends GameState
 			var y = 118 + i * (cardH + 10);
 			var card = new FlxSprite(22, y).makeGraphic(cardW, cardH, 0xFF202B3A);
 			optionCards.add(card);
+			var button = new AUIButton(22, y, cardW, cardH, options[i].label, function() {
+				FlxG.sound.play(Paths.sound("confirm_sound"));
+				options[i].action();
+			});
+			button.background.alpha = 0;
+			button.caption.x = 18;
+			button.caption.y = 10;
+			button.caption.setFormat(null, 17, FlxColor.WHITE, LEFT);
+			optionButtons.push(button);
+			add(button);
 			var label = new FlxText(40, y + 12, cardW - 36, options[i].label, 17);
 			label.setFormat(null, 17, FlxColor.WHITE, LEFT);
 			labels.add(label);
@@ -98,20 +108,6 @@ class EditorState extends GameState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-		#if mobile
-		for (i in 0...optionCards.members.length)
-		{
-			if (TouchUtil.justPressedOn(optionCards.members[i]) || TouchUtil.justPressedOn(labels.members[i]) || TouchUtil.justPressedOn(descriptions.members[i]))
-			{
-				FlxG.sound.music.stop();
-				selectedIndex = i;
-				refreshSelection();
-				FlxG.sound.play(Paths.sound("confirm_sound"));
-				options[i].action();
-				return;
-			}
-		}
-		#end
 		if (controls.GAME_UP_P) moveSelection(-1);
 		else if (controls.GAME_DOWN_P) moveSelection(1);
 		if (controls.ACCEPT) options[selectedIndex].action();
@@ -131,6 +127,7 @@ class EditorState extends GameState
 		{
 			var active = i == selectedIndex;
 			optionCards.members[i].color = active ? 0xFF315A7C : FlxColor.WHITE;
+			optionButtons[i].background.color = active ? 0xFF315A7C : 0xFF202B3A;
 			labels.members[i].color = active ? FlxColor.YELLOW : FlxColor.WHITE;
 			descriptions.members[i].color = active ? FlxColor.WHITE : 0xFF9EADC2;
 		}
