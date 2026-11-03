@@ -12,15 +12,7 @@ import sys.FileSystem;
 #end
 
 #if VIDEOS_ALLOWED
-#if (hxCodec >= "3.0.0")
-import hxcodec.flixel.FlxVideo as VideoHandler;
-#elseif (hxCodec >= "2.6.1")
-import hxcodec.VideoHandler as VideoHandler;
-#elseif (hxCodec == "2.6.0")
-import VideoHandler;
-#else
-import vlc.MP4Handler as VideoHandler;
-#end
+import hxvlc.flixel.FlxVideo as VideoHandler;
 #end
 
 class TitleState extends GameState
@@ -110,21 +102,22 @@ class TitleState extends GameState
         {
             video = new VideoHandler();
 
-            #if (hxCodec >= "3.0.0")
             video.onEndReached.add(function():Void
             {
                 finishVideo();
                 startIntro();
             }, true);
-            video.play(filepath);
-            #else
-            video.finishCallback = function():Void
+
+            // hxvlc 2.x uses load() + play(); the older MP4Handler API
+            // (playVideo/finishCallback) is not part of this dependency.
+            if (video.load(filepath))
+                video.play();
+            else
             {
+                FlxG.log.warn("Could not load intro video: " + filepath);
                 finishVideo();
                 startIntro();
-            };
-            video.playVideo(filepath);
-            #end
+            }
         }
         catch (e:Dynamic)
         {
@@ -142,9 +135,7 @@ class TitleState extends GameState
         #if VIDEOS_ALLOWED
         if (video != null)
         {
-            #if (hxCodec >= "3.0.0")
             video.dispose();
-            #end
             video = null;
         }
         #end
