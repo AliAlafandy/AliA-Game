@@ -121,7 +121,6 @@ class ScriptEditorState extends GameState
     private function addEditorButton(x:Float, y:Float, label:String, callback:Void->Void):Void
     {
         var button = new AUIButton(x, y, 82, 28, label, callback);
-        editorButtons.push(button);
         add(button);
     }
 
