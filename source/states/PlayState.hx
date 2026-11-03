@@ -165,7 +165,7 @@ class PlayState extends GameState
 		levelData.addBackgrounds(backgroundLayers);
 
 		// Neutral template floor: black world with a gray ground surface.
-		var templateGround = new FlxSprite(0, groundY);
+		var templateGround = new FlxSprite(0, levelData.groundY);
 		templateGround.makeGraphic(Std.int(worldWidth), 200, 0xFF777777);
 		backgroundLayers.add(templateGround);
 
