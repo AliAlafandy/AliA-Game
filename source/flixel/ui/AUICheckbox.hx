@@ -35,8 +35,9 @@ class AUICheckbox extends FlxSpriteGroup
     override public function update(elapsed:Float):Void
     {
         super.update(elapsed);
-        if (FlxG.mouse.justPressed && (FlxG.mouse.overlaps(box) || FlxG.mouse.overlaps(caption)
-            || TouchUtil.justPressedOn(box) || TouchUtil.justPressedOn(caption)))
+        var mousePressed = FlxG.mouse.justPressed && (FlxG.mouse.overlaps(box) || FlxG.mouse.overlaps(caption));
+        var touchPressed = TouchUtil.justPressedOn(box) || TouchUtil.justPressedOn(caption);
+        if (mousePressed || touchPressed)
             checked = !checked;
     }
 
