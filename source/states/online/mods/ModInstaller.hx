@@ -68,9 +68,11 @@ class ModInstaller {
         try {
             if (FileSystem.exists(actualModDir + "/" + META_FILENAME)) {
                 var content = File.getContent(actualModDir + "/" + META_FILENAME);
-                meta = Json.parse(content);
+                meta = normalizeMeta(tjson.TJSON.parse(content), Path.withoutDirectory(actualModDir));
             }
-        } catch (e:Dynamic) {}
+        } catch (e:Dynamic) {
+            trace("[ModInstaller] Could not parse mod.json: " + Std.string(e));
+        }
 
         if (meta == null && providedMeta != null) {
             meta = providedMeta;
@@ -131,10 +133,37 @@ class ModInstaller {
         if (!FileSystem.exists(metaPath)) return null;
 
         try {
-            return Json.parse(File.getContent(metaPath));
+            return normalizeMeta(tjson.TJSON.parse(File.getContent(metaPath)), modId);
         } catch (e:Dynamic) {
+            trace("[ModInstaller] Invalid mod.json: " + Std.string(e));
             return null;
         }
+    }
+
+    static function normalizeMeta(raw:Dynamic, fallbackId:String):Null<ModMeta>
+    {
+        if (raw == null) return null;
+        var data:Dynamic = Reflect.hasField(raw, "metaData") ? Reflect.field(raw, "metaData") : raw;
+        if (data == null) return null;
+
+        var id = getMetaString(data, "id", getMetaString(data, "modId", fallbackId));
+        var name = getMetaString(data, "name", fallbackId);
+        var version = getMetaString(data, "modVersion", getMetaString(data, "version", "1.0.0"));
+        var author = getMetaString(data, "author", "Unknown author");
+        var description = getMetaString(data, "description", "");
+        if (id == null || id.length == 0 || name == null || name.length == 0) return null;
+
+        return { id: id, name: name, version: version, author: author, description: description };
+    }
+
+    static function getMetaString(data:Dynamic, field:String, fallback:String):String
+    {
+        if (data != null && Reflect.hasField(data, field))
+        {
+            var value = Reflect.field(data, field);
+            if (value != null && Std.string(value).length > 0) return Std.string(value);
+        }
+        return fallback;
     }
 
     static function findModDirectoryWithMeta(dir:String):Null<String> {
