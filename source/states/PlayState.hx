@@ -7,7 +7,6 @@ import flixel.util.FlxSave;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.util.FlxSpriteUtil;
 import flixel.group.FlxGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
@@ -141,77 +140,34 @@ class PlayState extends GameState
 
 		levelData = LevelBin.load(curStage);
 
-		// ATown street scene: blue sky, outlined city blocks, clouds, sun,
-		// street lamps, a tiled sidewalk and a dark road. All scenery is
-		// generated from lightweight sprites so no external stage image is needed.
+		// Load the stage artwork from assets/levels/<stage>/<stage>.bin.
+		// Gameplay layout, spawn, dimensions, collectibles and music come from
+		// assets/levels/<stage>/Level.bin via LevelBin.load().
 		FlxG.camera.bgColor = FlxColor.fromRGB(105, 218, 245);
 		backgroundLayers = new FlxTypedGroup<FlxSprite>();
 		add(backgroundLayers);
 
-		var worldWidth:Float = 2920;
+		if (levelData == null)
+		{
+			// Keep the game playable if a new stage has not been authored yet;
+			// this is data-only fallback, not generated test scenery.
+			levelData = new LevelBin();
+			levelData.name = curStage;
+			levelData.stage = curStage;
+		}
+
+		var worldWidth:Float = levelData.worldWidth > 0 ? levelData.worldWidth : 2920;
 		var segmentWidth:Int = 730;
 
-		// Sun and cloud clusters in the far background.
-		for (segment in 0...4)
-		{
-			var baseX:Float = segment * segmentWidth;
-			addStageCircle(baseX + 615, 18, 104, FlxColor.BLACK, 0.12, 0.08);
-			addStageCircle(baseX + 620, 22, 88, FlxColor.YELLOW, 0.12, 0.08);
-
-			for (cloudIndex in 0...2)
-			{
-				var cloudX:Float = baseX + 35 + cloudIndex * 345;
-				var cloudY:Float = 12 + ((segment + cloudIndex) % 2) * 12;
-				addStageCircle(cloudX, cloudY + 18, 48, FlxColor.BLACK, 0.10, 0.06);
-				addStageCircle(cloudX + 42, cloudY, 58, FlxColor.BLACK, 0.10, 0.06);
-				addStageCircle(cloudX + 92, cloudY + 18, 48, FlxColor.BLACK, 0.10, 0.06);
-				addStageCircle(cloudX + 5, cloudY + 20, 43, FlxColor.WHITE, 0.10, 0.06);
-				addStageCircle(cloudX + 45, cloudY + 5, 51, FlxColor.WHITE, 0.10, 0.06);
-				addStageCircle(cloudX + 92, cloudY + 20, 42, FlxColor.WHITE, 0.10, 0.06);
-			}
-
-			// City skyline: thick dark outlines with bright flat building colors.
-			addStageBuilding(baseX - 4, 148, 205, 326, 0xFF990000);
-			addStageBuilding(baseX + 198, 244, 168, 230, 0xFFFFE000);
-			addStageBuilding(baseX + 363, 190, 188, 284, 0xFF888888);
-			addStageBuilding(baseX + 548, 232, 102, 242, 0xFF00BDBD);
-			addStageBuilding(baseX + 648, 268, 84, 206, 0xFF00C900);
-
-			// Street lamp in front of the skyline.
-			addStageRect(baseX + 510, 215, 19, 310, FlxColor.BLACK, 0.9, 1);
-			addStageRect(baseX + 516, 226, 7, 292, 0xFFAAAAAA, 0.9, 1);
-			addStageCircle(baseX + 476, 148, 83, FlxColor.BLACK, 0.9, 1);
-			addStageCircle(baseX + 483, 156, 68, 0xFF777777, 0.9, 1);
-			addStageCircle(baseX + 496, 176, 38, FlxColor.BLACK, 0.9, 1);
-			addStageCircle(baseX + 502, 182, 26, 0xFF77C8FF, 0.9, 1);
-		}
-
-		// Sidewalk and road are drawn separately from the collision floor.
-		addStageRect(0, 468, Std.int(worldWidth), 98, FlxColor.BLACK, 1, 1);
-		addStageRect(0, 475, Std.int(worldWidth), 84, 0xFFCCCCCC, 1, 1);
-		for (stripeX in 0...12)
-		{
-			var stripe = new FlxSprite(stripeX * 245 - 35, 472);
-			stripe.makeGraphic(12, 112, FlxColor.BLACK);
-			stripe.angle = 42;
-			stripe.scrollFactor.set(1, 1);
-			backgroundLayers.add(stripe);
-		}
-		addStageRect(0, 562, Std.int(worldWidth), 158, FlxColor.BLACK, 1, 1);
-		for (laneX in 0...8)
-		{
-			addStageRect(laneX * 365 + 18, 624, 252, 44, FlxColor.BLACK, 1, 1);
-			addStageRect(laneX * 365 + 28, 630, 232, 32, FlxColor.WHITE, 1, 1);
-		}
-
-		// Draw authored background images over the procedural fallback when supplied by Level.bin.
+		// StageData loads the authored sky/buildings/sidewalk/road artwork
+		// from the packed stage image archive (ATown.bin), never procedural art.
 		StageData.addLevelImages(curStage, backgroundLayers);
 		if (levelData != null)
 			levelData.addBackgrounds(backgroundLayers);
 
 		// Invisible collision strips sit at the top of the sidewalk.
 		// The visible road and pavement are scenery only.
-		var groundY:Float = (levelData != null && levelData.groundY >= 0) ? levelData.groundY : 562;
+		var groundY:Float = levelData.groundY >= 0 ? levelData.groundY : 562;
 		groundSegments = new FlxTypedGroup<FlxSprite>();
 		add(groundSegments);
 
@@ -223,7 +179,7 @@ class PlayState extends GameState
 		}
 		else
 		{
-			for (segment in 0...4)
+			for (segment in 0...Std.int(Math.ceil(worldWidth / segmentWidth)))
 			{
 				var floor = new FlxSprite(segment * segmentWidth, groundY);
 				floor.makeGraphic(segmentWidth, 24, FlxColor.TRANSPARENT);
@@ -277,7 +233,7 @@ class PlayState extends GameState
 
 		FlxG.camera.follow(player, LOCKON, 0.05);
 
-		FlxG.camera.setScrollBounds(0, 2920, 0, FlxG.height);
+		FlxG.camera.setScrollBounds(0, worldWidth, 0, FlxG.height);
 
 		FlxG.camera.deadzone = new flixel.math.FlxRect(
 			(FlxG.width / 2) - 100, 
@@ -397,36 +353,6 @@ class PlayState extends GameState
 			if (script != null) script.set("isPartner", false);
 		}
 		#end
-	}
-
-	/** Add a flat-color scenery rectangle to the background group. */
-	private function addStageRect(x:Float, y:Float, width:Int, height:Int, color:FlxColor,
-		scrollX:Float = 1, scrollY:Float = 1):FlxSprite
-	{
-		var sprite = new FlxSprite(x, y);
-		sprite.makeGraphic(width, height, color);
-		sprite.scrollFactor.set(scrollX, scrollY);
-		backgroundLayers.add(sprite);
-		return sprite;
-	}
-
-	/** Add a circular scenery shape; used for the sun, clouds and lamp. */
-	private function addStageCircle(x:Float, y:Float, diameter:Int, color:FlxColor,
-		scrollX:Float = 1, scrollY:Float = 1):FlxSprite
-	{
-		var sprite = new FlxSprite(x, y);
-		sprite.makeGraphic(diameter, diameter, FlxColor.TRANSPARENT);
-		FlxSpriteUtil.drawCircle(sprite, diameter * 0.5, diameter * 0.5, diameter * 0.5 - 1, color);
-		sprite.scrollFactor.set(scrollX, scrollY);
-		backgroundLayers.add(sprite);
-		return sprite;
-	}
-
-	/** Add a black-outlined city building. */
-	private function addStageBuilding(x:Float, y:Float, width:Int, height:Int, color:FlxColor):Void
-	{
-		addStageRect(x, y, width, height, FlxColor.BLACK, 0.82, 1);
-		addStageRect(x + 6, y + 6, width - 12, height - 6, color, 0.82, 1);
 	}
 
 	private function collectFlash(playerSprite:FlxObject, flashSprite:FlxObject):Void
