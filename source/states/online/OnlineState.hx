@@ -592,27 +592,41 @@ class OnlineState extends GameState
 		if (currentTab != MULTIPLAYER)
 			return;
 
-		var pressed = FlxG.mouse.justPressed;
-		var pointer = FlxG.mouse.getPosition();
+		var pressed:Bool = FlxG.mouse.justPressed;
+		var pointerX:Float = FlxG.mouse.screenX;
+		var pointerY:Float = FlxG.mouse.screenY;
+
 		#if mobile
 		var touch = FlxG.touches.getFirst();
 		if (touch != null && touch.justPressed)
 		{
 			pressed = true;
-			pointer.set(touch.screenX, touch.screenY);
+			pointerX = touch.screenX;
+			pointerY = touch.screenY;
 		}
 		#end
-		if (pressed)
-		{
-			if (nameInput.display.overlapsPoint(pointer))
-				setActiveInput(nameInput);
-			else if (roomInput.display.overlapsPoint(pointer))
-				setActiveInput(roomInput);
-			else if (chatInput.display.overlapsPoint(pointer))
-				setActiveInput(chatInput);
-			else if (nativeTextInput != null && !nativeTextInput.visible)
-				setActiveInput(null);
-		}
+
+		if (!pressed) return;
+
+		// These are HUD labels (screen-space), so test their screen rectangles
+		// directly instead of FlxText.overlapsPoint(), which can use camera/world
+		// coordinates and miss taps on scaled mobile displays.
+		if (hitInput(nameInput, pointerX, pointerY))
+			setActiveInput(nameInput);
+		else if (hitInput(roomInput, pointerX, pointerY))
+			setActiveInput(roomInput);
+		else if (hitInput(chatInput, pointerX, pointerY))
+			setActiveInput(chatInput);
+		else if (activeInput != null)
+			setActiveInput(null);
+	}
+
+	private function hitInput(field:TextInputField, x:Float, y:Float):Bool
+	{
+		if (field == null || field.display == null || !field.display.visible) return false;
+		var bounds = field.display.getScreenBounds();
+		return x >= bounds.x - 12 && x <= bounds.right + 12
+			&& y >= bounds.y - 12 && y <= bounds.bottom + 12;
 	}
 
 	private function setActiveInput(field:TextInputField):Void
@@ -644,6 +658,11 @@ class OnlineState extends GameState
 				// Assigning stage.focus to a real INPUT TextField triggers the
 				// native soft keyboard on Android and iOS.
 				openfl.Lib.current.stage.focus = nativeTextInput;
+				#if mobile
+				// Explicitly request the platform keyboard; setting stage.focus
+				// alone does not open it on every Android/iOS OpenFL target.
+				nativeTextInput.requestSoftKeyboard();
+				#end
 			}
 		}
 		else if (activeInput != null)
@@ -653,7 +672,14 @@ class OnlineState extends GameState
 	private function onNativeTextChanged(event:Event):Void
 	{
 		if (activeInput == null || nativeTextInput == null) return;
-		activeInput.value = nativeTextInput.text;
+		var text = nativeTextInput.text;
+		if (text.length > activeInput.maxLength)
+		{
+			text = text.substr(0, activeInput.maxLength);
+			nativeTextInput.text = text;
+			nativeTextInput.setSelection(text.length, text.length);
+		}
+		activeInput.value = text;
 		activeInput.refreshFromNative();
 	}
 
