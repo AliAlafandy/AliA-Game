@@ -23,7 +23,7 @@ import vlc.MP4Handler as VideoHandler;
 #end
 #end
 
-class lTitleState extends GameState
+class TitleState extends GameState
 {
     public static var initialized:Bool = false;
 
