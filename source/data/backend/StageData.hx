@@ -173,10 +173,17 @@ class StageData
 						// The road image is also the physical floor.
 						groundSprite = sprite;
 						floorCollider = new FlxSprite(0, sprite.y);
-						floorCollider.makeGraphic(Std.int(Math.max(bitmap.width, FlxG.width)), 12, 0x00000000);
+						floorCollider.makeGraphic(bitmap.width * 8, 12, 0x00000000);
 						floorCollider.visible = false;
 						floorCollider.immovable = true;
 						floorCollider.allowCollisions = flixel.util.FlxDirectionFlags.UP;
+						for (tile in 1...8)
+						{
+							var roadTile = new FlxSprite(tile * bitmap.width, sprite.y);
+							roadTile.loadGraphic(bitmap);
+							roadTile.scrollFactor.set(1, 1);
+							group.add(roadTile);
+						}
 				}
 				group.add(sprite);
 			}
