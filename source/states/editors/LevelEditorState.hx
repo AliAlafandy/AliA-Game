@@ -30,7 +30,7 @@ import bin.BINValue;
 /**
  * Visual level editor.
  * Level data is edited through scene objects and property controls.
- * Level.bin is read/written as binary using the same BIN API as LevelBin.
+ * <LevelName>.bin is read/written as binary using the same BIN API as LevelBin.
  */
 class LevelEditorState extends GameState
 {
@@ -292,7 +292,7 @@ class LevelEditorState extends GameState
 		var loaded = LevelBin.load(levelName);
 		if (loaded == null)
 		{
-			status.text = "Could not load assets/levels/" + levelName + "/Level.bin";
+			status.text = "Could not load assets/levels/" + levelName + "/" + levelName + ".bin";
 			return;
 		}
 		applyLoadedLevel(loaded);
@@ -326,8 +326,8 @@ class LevelEditorState extends GameState
 			if (!FileSystem.exists(directory)) FileSystem.createDirectory(directory);
 			#end
 			var root = buildBinRoot();
-			BIN.save(directory + "/Level.bin", BINValue.object(root));
-			status.text = "Saved binary " + directory + "/Level.bin";
+			BIN.save(directory + "/" + level.name + ".bin", BINValue.object(root));
+			status.text = "Saved binary " + directory + "/" + level.name + ".bin";
 			reloadEditor();
 		} catch (e:Dynamic) {
 			status.text = "Binary save failed: " + Std.string(e);
@@ -340,6 +340,8 @@ class LevelEditorState extends GameState
 		var loaded = new LevelBin();
 		loaded.name = binObj.get("name").asString(levelName);
 		loaded.music = binObj.get("music").asString("levels/" + levelName + "/theme");
+		loaded.groundY = binObj.get("groundY").asInt(562);
+		loaded.worldWidth = binObj.get("worldWidth").asInt(2920);
 		
 		var playerObj = binObj.get("player").asObject();
 		if (playerObj != null) {
@@ -410,6 +412,9 @@ class LevelEditorState extends GameState
 		
 		var root = new BINObject();
 		root.set("name", BINValue.string(level.name));
+		root.set("stage", BINValue.string(level.stage));
+		root.set("groundY", BINValue.int(level.groundY));
+		root.set("worldWidth", BINValue.int(level.worldWidth));
 		root.set("music", BINValue.string(level.music));
 		root.set("player", BINValue.object(player));
 		root.set("backgrounds", BINValue.array(backgrounds));
