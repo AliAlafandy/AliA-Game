@@ -15,7 +15,7 @@ import data.objects.Player;
 import states.menus.CharacterState;
 
 import data.backend.StageData;
-import data.backend.LevelBin;
+import data.backend.StageData.LevelBin;
 
 import states.online.MultiPlayer;
 import states.online.MultiPlayer.RemotePlayer;
