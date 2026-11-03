@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import mobile.TouchUtil;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
@@ -29,6 +30,9 @@ class AnimationEditorState extends GameState
 	private var status:FlxText;
 	private var fps:Int = 24;
 	private var loop:Bool = true;
+	private var actionButtons:FlxTypedGroup<FlxSprite>;
+	private var actionLabels:FlxTypedGroup<FlxText>;
+	private var actionCallbacks:Array<Void->Void> = [];
 
 	public function new():Void super();
 
@@ -48,6 +52,13 @@ class AnimationEditorState extends GameState
 		var listTitle = new FlxText(22, 72, leftW - 20, "ANIMATIONS", 14);
 		listTitle.setFormat(null, 14, FlxColor.CYAN, LEFT);
 		add(listTitle);
+		actionButtons = new FlxTypedGroup<FlxSprite>();
+		actionLabels = new FlxTypedGroup<FlxText>();
+		add(actionButtons);
+		add(actionLabels);
+		addAction("ADD", addAnimation, 0);
+		addAction("REMOVE", removeAnimation, 1);
+		addAction("SAVE", save, 2);
 		rows = new FlxTypedGroup<FlxSprite>();
 		rowLabels = new FlxTypedGroup<FlxText>();
 		add(rows);
@@ -72,6 +83,49 @@ class AnimationEditorState extends GameState
 		addCustomDPad('NONE', 'BACK');
 		addCustomDPadCam();
 		#end
+	}
+
+	private function addAction(label:String, callback:Void->Void, index:Int):Void
+	{
+		var x = 18 + index * 92;
+		var y = FlxG.height - 66;
+		var button = new FlxSprite(x, y).makeGraphic(84, 28, 0xFF30445B);
+		actionButtons.add(button);
+		var text = new FlxText(x + 2, y + 8, 80, label, 10);
+		text.setFormat(null, 10, FlxColor.WHITE, CENTER);
+		actionLabels.add(text);
+		actionCallbacks.push(callback);
+	}
+
+	private function addAnimation():Void
+	{
+		if (characterData == null) return;
+		var image = "character";
+		if (animations.length > 0) image = fieldString(animations[0], "image", image);
+		var name = "newAnimation" + animations.length;
+		animations.push({
+			name: name,
+			image: image,
+			prefix: name,
+			offsets: [0, 0],
+			loop: true,
+			scale: 1,
+			fps: 24,
+			indices: []
+		});
+		selectedAnimation = animations.length - 1;
+		refreshAnimations();
+		status.text = "Created " + name + ". Set its prefix and frame data in the character definition.";
+	}
+
+	private function removeAnimation():Void
+	{
+		if (selectedAnimation < 0 || selectedAnimation >= animations.length) return;
+		var removed = fieldString(animations[selectedAnimation], "name", "animation");
+		animations.splice(selectedAnimation, 1);
+		selectedAnimation = Std.int(Math.max(0, Math.min(selectedAnimation, animations.length - 1)));
+		refreshAnimations();
+		status.text = "Removed " + removed + ". Press SAVE to keep the change.";
 	}
 
 	private function scan():Void
@@ -252,6 +306,12 @@ class AnimationEditorState extends GameState
 	{
 		super.update(elapsed);
 		#if mobile
+		for (i in 0...actionButtons.members.length)
+			if (TouchUtil.justPressedOn(actionButtons.members[i]) || TouchUtil.justPressedOn(actionLabels.members[i]))
+			{
+				actionCallbacks[i]();
+				return;
+			}
 		for (i in 0...rows.members.length)
 			if (TouchUtil.justPressedOn(rows.members[i]) || TouchUtil.justPressedOn(rowLabels.members[i]))
 			{
@@ -275,6 +335,8 @@ class AnimationEditorState extends GameState
 		if (controls.GAME_LEFT_P) changeFPS(-1);
 		else if (controls.GAME_RIGHT_P) changeFPS(1);
 		if (FlxG.keys.justPressed.L) toggleLoop();
+		if (FlxG.keys.justPressed.N) addAnimation();
+		if (FlxG.keys.justPressed.DELETE || FlxG.keys.justPressed.BACKSPACE) removeAnimation();
 		if (FlxG.keys.justPressed.S) save();
 		if (controls.BACK) GameState.switchState(new EditorState());
 	}
