@@ -34,7 +34,7 @@ import bin.BINValue;
  */
 class LevelEditorState extends GameState
 {
-	private var levelName:String = "ATown";
+	private var levelName:String = "NewLevel";
 	private var level:LevelBin;
 	private var title:FlxText;
 	private var status:FlxText;
@@ -50,7 +50,7 @@ class LevelEditorState extends GameState
 	private var canvasY:Float = 62;
 	private var canvasScale:Float = 0.35;
 
-	public function new(?name:String = "ATown", ?c:Int = 40, ?r:Int = 24)
+	public function new(?name:String = "NewLevel", ?c:Int = 40, ?r:Int = 24)
 	{
 		super();
 		levelName = name;
@@ -65,11 +65,13 @@ class LevelEditorState extends GameState
 		{
 			level = new LevelBin();
 			level.name = levelName;
+			level.stage = levelName;
+			level.groundY = 520;
+			level.worldWidth = 1920;
 			level.playerX = 160;
-			level.playerY = 420;
-			level.music = "levels/" + levelName + "/theme";
-			level.backgrounds.push({image: "levels/" + levelName + "/background", x: 0, y: 0, scrollX: 350, scrollY: 350});
-			level.flashes.push({x: 420, y: 380, value: 1});
+			level.playerY = 460;
+			level.music = "";
+			// Empty black/gray template. Add image layers when designing a stage.
 		}
 		levelName = level.name;
 
@@ -340,8 +342,8 @@ class LevelEditorState extends GameState
 		var loaded = new LevelBin();
 		loaded.name = binObj.get("name").asString(levelName);
 		loaded.music = binObj.get("music").asString("levels/" + levelName + "/theme");
-		loaded.groundY = binObj.get("groundY").asInt(562);
-		loaded.worldWidth = binObj.get("worldWidth").asInt(2920);
+		loaded.groundY = binObj.get("groundY").asInt(520);
+		loaded.worldWidth = binObj.get("worldWidth").asInt(1920);
 		
 		var playerObj = binObj.get("player").asObject();
 		if (playerObj != null) {
