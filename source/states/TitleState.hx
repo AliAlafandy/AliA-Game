@@ -39,7 +39,7 @@ class TitleState extends GameState
         if (initialized)
             startTitleScreen();
         else
-            new FlxTimer().start(0.25, function(_:FlxTimer):Void
+            new FlxTimer().start(0.25, function(_:FlxTimer):Void // 1
             {
                 startVideo("alafandy_intro");
             });
@@ -71,7 +71,7 @@ class TitleState extends GameState
         {
             transitioning = true;
             FlxG.sound.play(Paths.sound("confirm_sound"));
-            new FlxTimer().start(0.35, function(_:FlxTimer):Void
+            new FlxTimer().start(0.35, function(_:FlxTimer):Void // 1
             {
                 GameState.switchState(new MenuState());
             });
@@ -187,7 +187,7 @@ class TitleState extends GameState
         press.alignment = CENTER;
         add(press);
 
-        FlxG.sound.playMusic(Paths.music("themes/start_nice"), 1, false);
+        FlxG.sound.play(Paths.music("themes/start_nice"), 1, false);
         Paths.clearUnusedMemory();
     }
 
