@@ -9,6 +9,7 @@ import openfl.events.ProgressEvent;
 import openfl.net.URLLoader;
 import openfl.net.URLLoaderDataFormat;
 import openfl.net.URLRequest;
+import openfl.net.URLRequestMethod;
 
 #if sys
 import sys.FileSystem;
@@ -106,6 +107,52 @@ class Network {
         }
     }
     #end
+
+
+    public static function postJson(url:String, payload:Dynamic, onSuccess:Dynamic->Void, onError:String->Void):Void {
+        var loader = new URLLoader();
+        loader.dataFormat = URLLoaderDataFormat.TEXT;
+        var request = new URLRequest(url);
+        request.method = URLRequestMethod.POST;
+        request.contentType = "application/json";
+        request.data = Json.stringify(payload);
+
+        var completed = false;
+        var timeoutTimer = Timer.delay(function() {
+            if (completed) return;
+            completed = true;
+            try loader.close() catch (e:Dynamic) {}
+            onError("Request timed out");
+        }, Std.int(DEFAULT_TIMEOUT * 1000));
+
+        loader.addEventListener(Event.COMPLETE, function(_) {
+            if (completed) return;
+            completed = true;
+            timeoutTimer.stop();
+            try {
+                var response:Dynamic = Json.parse(Std.string(loader.data));
+                if (Reflect.hasField(response, "error") && response.error != null)
+                    onError(Std.string(response.error));
+                else
+                    onSuccess(response);
+            } catch (e:Dynamic) {
+                onError("Invalid server response: " + Std.string(e));
+            }
+        });
+        loader.addEventListener(IOErrorEvent.IO_ERROR, function(e:IOErrorEvent) {
+            if (completed) return;
+            completed = true;
+            timeoutTimer.stop();
+            onError(e.text);
+        });
+        try loader.load(request) catch (e:Dynamic) {
+            if (!completed) {
+                completed = true;
+                timeoutTimer.stop();
+                onError(Std.string(e));
+            }
+        }
+    }
 
     public static function isReachable(onResult:Bool->Void, testUrl:String = "https://github.com"):Void {
         fetchJson(testUrl, function(_) onResult(true), function(_) onResult(false), 0);
