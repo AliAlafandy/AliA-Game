@@ -49,17 +49,11 @@ class CharacterEditorState extends GameState
 		var leftW = Std.int(FlxG.width * 0.34);
 		add(new AUIBox(10, 64, leftW, FlxG.height - 122, "CHARACTERS"));
 		add(new AUIBox(leftW + 20, 64, FlxG.width - leftW - 30, FlxG.height - 122, "CHARACTER PREVIEW"));
-		var listTitle = new FlxText(22, 72, leftW - 20, "CHARACTERS", 14);
-		listTitle.setFormat(null, 14, FlxColor.CYAN, LEFT);
-		add(listTitle);
 		fileRows = new FlxTypedGroup<FlxSprite>();
 		fileLabels = new FlxTypedGroup<FlxText>();
 		add(fileRows);
 		add(fileLabels);
 
-		var previewTitle = new FlxText(leftW + 34, 72, FlxG.width - leftW - 50, "CHARACTER PREVIEW", 14);
-		previewTitle.setFormat(null, 14, FlxColor.CYAN, LEFT);
-		add(previewTitle);
 		previewX = leftW + (FlxG.width - leftW) * 0.5;
 		previewY = FlxG.height * 0.48;
 		preview = new FlxSprite();
