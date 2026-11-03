@@ -49,8 +49,6 @@ class LevelEditorState extends GameState
 	private var canvasX:Float = 12;
 	private var canvasY:Float = 62;
 	private var canvasScale:Float = 0.35;
-	private var dragging:Bool = false;
-	private var editorButtons:Array<AUIButton> = [];
 
 	public function new(?name:String = "ATown", ?c:Int = 40, ?r:Int = 24)
 	{
@@ -90,8 +88,6 @@ class LevelEditorState extends GameState
 		var canvasH = FlxG.height - 160;
 		var canvas = new FlxSprite(canvasX, canvasY).makeGraphic(canvasW, canvasH, 0xFF182331);
 		add(canvas);
-		var grid = new FlxSprite(canvasX, canvasY).makeGraphic(canvasW, canvasH, FlxColor.TRANSPARENT);
-		add(grid);
 		preview = new FlxTypedGroup<FlxSprite>();
 		add(preview);
 
@@ -121,6 +117,7 @@ class LevelEditorState extends GameState
 		addButton(8, "Y+", function() adjust(0, 16));
 		addButton(9, "SAVE BIN", saveLevel);
 		addButton(10, "LOAD BIN", loadLevel);
+		rebuildPreview();
 		refreshUI();
 
 		#if mobile
@@ -138,7 +135,6 @@ class LevelEditorState extends GameState
 		var x = 8 + col * w;
 		var y = FlxG.height - 112 + row * 34;
 		var button = new AUIButton(x, y, w - 3, 29, label, callback);
-		editorButtons.push(button);
 		add(button);
 	}
 	private function addBackground():Void
@@ -146,6 +142,7 @@ class LevelEditorState extends GameState
 		level.backgrounds.push({image: "levels/" + levelName + "/background", x: 0, y: 0, scrollX: 1000, scrollY: 1000});
 		selectedKind = 1;
 		selectedIndex = level.backgrounds.length - 1;
+		rebuildPreview();
 		refreshUI();
 		status.text = "Background layer added. Select it and adjust its position.";
 	}
@@ -155,6 +152,7 @@ class LevelEditorState extends GameState
 		level.flashes.push({x: level.playerX + 96, y: level.playerY, value: 1});
 		selectedKind = 2;
 		selectedIndex = level.flashes.length - 1;
+		rebuildPreview();
 		refreshUI();
 		status.text = "Collectible added to the level.";
 	}
@@ -166,6 +164,7 @@ class LevelEditorState extends GameState
 		else if (selectedKind == 2 && level.flashes.length > 0)
 			level.flashes.splice(selectedIndex, 1);
 		selectedIndex = 0;
+		rebuildPreview();
 		refreshUI();
 	}
 
@@ -204,40 +203,67 @@ class LevelEditorState extends GameState
 		var py = selectedKind == 0 ? level.playerY : selectedKind == 1 && selectedIndex < level.backgrounds.length ? level.backgrounds[selectedIndex].y : selectedKind == 2 && selectedIndex < level.flashes.length ? level.flashes[selectedIndex].y : 0;
 		properties.text = "PROPERTIES\n----------------\nType: " + (selectedKind == 0 ? "Player Spawn" : selectedKind == 1 ? "Background Layer" : "Flash Collectible") + "\nX: " + px + "\nY: " + py + "\n\nMusic: " + level.music;
 
+		updatePreview();
+		status.text = "Select objects in the list. Use X/Y controls to position. SAVE BIN writes binary Level.bin.";
+	}
+
+	/** Rebuild only when the level's object collections change. */
+	private function rebuildPreview():Void
+	{
+		if (preview == null || level == null) return;
 		preview.clear();
 		backgroundMarkers = [];
 		flashMarkers = [];
-		for (i in 0...level.backgrounds.length)
+
+		for (bg in level.backgrounds)
 		{
-			var bg = level.backgrounds[i];
+			var layer = new FlxSprite();
 			try
 			{
-				var layer = new FlxSprite(canvasX + bg.x * canvasScale, canvasY + bg.y * canvasScale);
 				layer.loadGraphic(Paths.image(bg.image));
 				layer.scale.set(canvasScale, canvasScale);
 				layer.updateHitbox();
-				layer.alpha = selectedKind == 1 && selectedIndex == i ? 0.95 : 0.45;
-				preview.add(layer);
-				backgroundMarkers.push(layer);
 			}
 			catch (e:Dynamic)
 			{
-				var missing = new FlxSprite(canvasX + bg.x * canvasScale, canvasY + bg.y * canvasScale).makeGraphic(36, 24, 0xFF704050);
-				preview.add(missing);
-				backgroundMarkers.push(missing);
+				layer.makeGraphic(36, 24, 0xFF704050);
 			}
+			preview.add(layer);
+			backgroundMarkers.push(layer);
 		}
-		playerMarker = new FlxSprite(canvasX + level.playerX * canvasScale, canvasY + level.playerY * canvasScale).makeGraphic(16, 24, 0xFF55CCFF);
+
+		playerMarker = new FlxSprite().makeGraphic(16, 24, 0xFF55CCFF);
 		preview.add(playerMarker);
-		
-		for (i in 0...level.flashes.length)
+
+		for (flash in level.flashes)
 		{
-			var f = level.flashes[i];
-			var marker = new FlxSprite(canvasX + f.x * canvasScale, canvasY + f.y * canvasScale).makeGraphic(12, 12, selectedKind == 2 && selectedIndex == i ? FlxColor.YELLOW : 0xFFFFD700);
+			var marker = new FlxSprite().makeGraphic(12, 12, 0xFFFFD700);
 			preview.add(marker);
 			flashMarkers.push(marker);
 		}
-		status.text = "Select objects in the list. Use X/Y controls to position. SAVE BIN writes binary Level.bin.";
+		updatePreview();
+	}
+
+	/** Update existing marker transforms and selection styling without reallocating sprites. */
+	private function updatePreview():Void
+	{
+		if (level == null || preview == null) return;
+		for (i in 0...backgroundMarkers.length)
+		{
+			var bg = level.backgrounds[i];
+			var marker = backgroundMarkers[i];
+			marker.setPosition(canvasX + bg.x * canvasScale, canvasY + bg.y * canvasScale);
+			marker.alpha = selectedKind == 1 && selectedIndex == i ? 0.95 : 0.45;
+		}
+		if (playerMarker != null)
+			playerMarker.setPosition(canvasX + level.playerX * canvasScale, canvasY + level.playerY * canvasScale);
+		for (i in 0...flashMarkers.length)
+		{
+			var flash = level.flashes[i];
+			var marker = flashMarkers[i];
+			marker.setPosition(canvasX + flash.x * canvasScale, canvasY + flash.y * canvasScale);
+			marker.color = selectedKind == 2 && selectedIndex == i ? FlxColor.YELLOW : 0xFFFFD700;
+		}
 	}
 
 	private function loadLevel():Void
