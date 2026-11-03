@@ -42,7 +42,7 @@ class LevelBin
 	public var groundY:Int = -1;
 	public var music:String = "";
 	public var playerX:Int = 500;
-	public var playerY:Int = 130;
+	public var playerY:Int = -1;
 	public var backgrounds:Array<LevelBackgroundData> = [];
 	public var flashes:Array<LevelFlashData> = [];
 
