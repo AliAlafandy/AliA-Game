@@ -1,74 +1,87 @@
 package data.backend;
 
+import bin.BIN;
+import bin.BINValue;
+import bin.BINObject;
 import openfl.utils.Assets;
-//import bin.BIN;
-//import bin.BINValue;
-//import bin.BINObject;
 
 #if sys
 import sys.FileSystem;
 #end
 
-class StageData {
-  /*public static var forceNextDirectory:String = null;
-    public static var currentAct:Int = 1;
+/**
+ * Loads the binary stage/act configuration.
+ *
+ * Stage files are stored at:
+ *   assets/levels/<StageName>/Act<act>.bin
+ *
+ * This class owns stage directory selection and Act*.bin parsing.
+ * LevelBin is the separate Level.bin format used by the level editor.
+ */
+class StageData
+{
+	public static var forceNextDirectory:String = null;
+	public static var currentAct:Int = 1;
 
-    public static function loadDirectory(stageName:String, act:Int = 1) {
-        currentAct = act;
-        
-        var stageData:BINValue = getStageFile(stageName, act);
+	public static function loadDirectory(stageName:String, act:Int = 1):Void
+	{
+		currentAct = act;
+		var stageData:BINValue = getStageFile(stageName, act);
 
-        if (stageData == null) {
-            forceNextDirectory = '';
-        } else {
-            if (stageData.isObject()) {
-                var obj:BINObject = stageData.asObject();
-                
-                if (obj.exists("directory")) {
-                    forceNextDirectory = obj.get("directory").asString();
-                } else {
-                    forceNextDirectory = (stageName + act).toLowerCase();
-                }
-            } else {
-                forceNextDirectory = (stageName + act).toLowerCase();
-            }
-        }
-    }
+		if (stageData == null || !stageData.isObject())
+		{
+			forceNextDirectory = "";
+			return;
+		}
 
-	public static function getLevelAssetPath(stageName:String, act:Int, fileName:String):String {
-        var folderPath:String = 'levels/' + stageName.toLowerCase() + '/';
-        
-        #if MODS_ALLOWED
-        var modPath:String = Paths.modFolders(folderPath + fileName);
-        if (sys.FileSystem.exists(modPath)) {
-            return modPath;
-        }
-        #end
-        
-        return folderPath + fileName;
-    }
+		var stageObject:BINObject = stageData.asObject();
+		var directoryValue:BINValue = stageObject.get("directory");
+		if (directoryValue != null && directoryValue.isString())
+		{
+			forceNextDirectory = directoryValue.asString("");
+			return;
+		}
 
-    public static function getStageFile(stageName:String, act:Int):BINValue {
-        var fileName:String = "act" + act;
-        var path:String = Paths.getSharedPath('levels/' + stageName.toLowerCase() + '/' + fileName + '.bin');
-        var parsedData:BINValue = null;
+		forceNextDirectory = (stageName + act).toLowerCase();
+	}
 
-        #if MODS_ALLOWED
-        var modPath:String = Paths.modFolders('levels/' + stageName.toLowerCase() + '/' + fileName + '.bin');
-        if (FileSystem.exists(modPath)) {
-            parsedData = BIN.read(modPath);
-        } else if (FileSystem.exists(path)) {
-            parsedData = BIN.read(path);
-        }
-        #else
-        if (Assets.exists(path)) {
-            var bytes = Assets.getBytes(path);
-            if (bytes != null) {
-                parsedData = BIN.parse(bytes);
-            }
-        }
-        #end
+	public static function getLevelAssetPath(stageName:String, act:Int, fileName:String):String
+	{
+		var relative = "levels/" + stageName + "/" + fileName;
+		#if MODS_ALLOWED
+		var modPath = Paths.modFolders(relative);
+		#if sys
+		if (FileSystem.exists(modPath)) return modPath;
+		#end
+		#end
+		return Paths.getSharedPath(relative);
+	}
 
-        return parsedData;
-    }*/
+	public static function getStageFile(stageName:String, act:Int):BINValue
+	{
+		var relative = "levels/" + stageName + "/Act" + act + ".bin";
+		var path = Paths.getSharedPath(relative);
+
+		try
+		{
+			#if sys
+			#if MODS_ALLOWED
+			var modPath = Paths.modFolders(relative);
+			if (FileSystem.exists(modPath)) return BIN.read(modPath);
+			#end
+			if (FileSystem.exists(path)) return BIN.read(path);
+			#else
+			if (Assets.exists(path))
+			{
+				var bytes = Assets.getBytes(path);
+				if (bytes != null) return BIN.parse(bytes);
+			}
+			#end
+		}
+		catch (e:Dynamic)
+		{
+			trace("[StageData] Failed to load " + relative + ": " + Std.string(e));
+		}
+		return null;
+	}
 }
