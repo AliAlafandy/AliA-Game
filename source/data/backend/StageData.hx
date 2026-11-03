@@ -22,8 +22,9 @@ using StringTools;
  *
  * Each level uses one BIN data file:
  * assets/levels/<LevelName>/<LevelName>.bin
- * LevelBin reads/writes the stage configuration and image layers reference
- * normal image assets. Act<act>.bin remains separate stage metadata.
+ * Each stage BIN may be a packed image archive or a binary LevelBin document.
+ * PlayState loads visuals from this file, never generated scenery.
+ * Act<act>.bin remains separate stage metadata.
  */
 class StageData
 {
@@ -246,86 +247,50 @@ class LevelBin
 	{
 		var relative = "levels/" + stage + "/" + stage + ".bin";
 		var path = StageData.getLevelAssetPath(stage, StageData.currentAct, stage + ".bin");
-		var parsed:BINValue = null;
-
+		var result = new LevelBin();
+		result.name = stage;
+		result.stage = stage;
 		try
 		{
+			var bytes:Bytes = null;
 			#if sys
-			#if MODS_ALLOWED
-			if (FileSystem.exists(path))
-				parsed = BIN.read(path);
+			if (FileSystem.exists(path)) bytes = File.getBytes(path);
 			#end
-			if (parsed == null && FileSystem.exists(path))
-				parsed = BIN.read(path);
-			#end
-			if (parsed == null && Assets.exists(path))
-			{
-				var bytes = Assets.getBytes(path);
-				if (bytes != null) parsed = BIN.parse(bytes);
-			}
-
-			if (parsed == null || !parsed.isObject())
-			{
-				trace("[LevelBin] Missing or invalid " + relative);
-				return null;
-			}
-
+			if (bytes == null && Assets.exists(path)) bytes = Assets.getBytes(path);
+			if (bytes == null) { trace("[LevelBin] Missing " + relative); return null; }
+			// Packed image archives are valid stage BIN files too.
+			var header = bytes.toString().split("\n")[0].trim();
+			if (header == "LEVELASSETS|1") return result;
+			var parsed = BIN.parse(bytes);
+			if (parsed == null || !parsed.isObject()) throw "Unsupported stage BIN format";
 			var root = parsed.asObject();
-			var result = new LevelBin();
 			result.name = root.get("name").asString(stage);
-			result.stage = stage;
+			result.stage = root.get("stage").asString(stage);
 			result.worldWidth = root.get("worldWidth").asInt(result.worldWidth);
 			result.groundY = root.get("groundY").asInt(result.groundY);
 			if (result.worldWidth < 640) result.worldWidth = 1920;
 			result.music = root.get("music").asString("");
-
 			var player = root.get("player").asObject();
-			if (player != null)
-			{
-				result.playerX = player.get("x").asInt(result.playerX);
-				result.playerY = player.get("y").asInt(result.playerY);
-			}
-
+			if (player != null) { result.playerX = player.get("x").asInt(result.playerX); result.playerY = player.get("y").asInt(result.playerY); }
 			var backgroundArray = root.get("backgrounds").asArray();
-			if (backgroundArray != null)
+			if (backgroundArray != null) for (i in 0...backgroundArray.length)
 			{
-				for (i in 0...backgroundArray.length)
-				{
-					var item = backgroundArray.get(i).asObject();
-					if (item == null) continue;
-					var image = item.get("image").asString("");
-					if (image == "") continue;
-					result.backgrounds.push({
-						image: image,
-						x: item.get("x").asInt(0),
-						y: item.get("y").asInt(0),
-						scrollX: item.get("scrollX").asInt(1000),
-						scrollY: item.get("scrollY").asInt(1000)
-					});
-				}
+				var item = backgroundArray.get(i).asObject();
+				if (item == null) continue;
+				var image = item.get("image").asString("");
+				if (image == "") continue;
+				result.backgrounds.push({image:image, x:item.get("x").asInt(0), y:item.get("y").asInt(0), scrollX:item.get("scrollX").asInt(1000), scrollY:item.get("scrollY").asInt(1000)});
 			}
-
 			var flashArray = root.get("flashes").asArray();
-			if (flashArray != null)
+			if (flashArray != null) for (i in 0...flashArray.length)
 			{
-				for (i in 0...flashArray.length)
-				{
-					var item = flashArray.get(i).asObject();
-					if (item == null) continue;
-					result.flashes.push({
-						x: item.get("x").asInt(0),
-						y: item.get("y").asInt(0),
-						value: item.get("value").asInt(1)
-					});
-				}
+				var item = flashArray.get(i).asObject();
+				if (item == null) continue;
+				result.flashes.push({x:item.get("x").asInt(0), y:item.get("y").asInt(0), value:item.get("value").asInt(1)});
 			}
 			return result;
 		}
-		catch (e:Dynamic)
-		{
-			trace("[LevelBin] Failed to parse " + relative + ": " + Std.string(e));
-			return null;
-		}
+		catch (e:Dynamic) { trace("[LevelBin] Failed to parse " + relative + ": " + Std.string(e)); return null; }
 	}
 
 	public function addBackgrounds(group:FlxTypedGroup<FlxSprite>):Void
