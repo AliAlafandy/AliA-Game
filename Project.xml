@@ -126,12 +126,17 @@
 	<assets path="documents/app/iconAPP.png" rename="icon.png" if="linux"/>
 	<icon path="documents/app/iconOG.png" unless="mobile"/>
 
-	<!--<template path="templates/android" if="android"/>
+	<!--<template path="templates" if="mobile"/>
+
+	<language name="en"/>
+	<language name="ar"/>
+
 	<config:android>
+		<application android:label="@string/app_name"/>
     	<application android:icon="@mipmap/ic_launcher"/>
+		<application android:supportsRtl="true"/>
 	</config:android>
 
-	<!--<template path="templates/ios" if="ios"/>
 	<config:ios prerenderedIcon="false"/>-->
 
 	<icon path="documents/app/iconAPP.png" if="mobile"/>
