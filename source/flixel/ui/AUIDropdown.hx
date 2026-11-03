@@ -43,7 +43,7 @@ class AUIDropdown extends FlxSpriteGroup
     override public function update(elapsed:Float):Void
     {
         super.update(elapsed);
-        if (!FlxG.mouse.justPressed) return;
+        if (!FlxG.mouse.justPressed && !TouchUtil.justPressed) return;
         if (FlxG.mouse.overlaps(background) || TouchUtil.justPressedOn(background))
         {
             setOpen(!isOpen);
