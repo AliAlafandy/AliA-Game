@@ -109,7 +109,7 @@ class LevelEditorState extends GameState
 		status.setFormat(null, 12, FlxColor.LIME, LEFT);
 		add(status);
 
-		addButton(8, "PLAYER", function() { selectedKind = 0; selectedIndex = 0; refreshUI(); });
+		addButton(11, "PLAYER", function() { selectedKind = 0; selectedIndex = 0; refreshUI(); });
 		addButton(1, "BACK", leaveEditor);
 		addButton(2, "ADD BG", addBackground);
 		addButton(3, "ADD FLASH", addFlash);
