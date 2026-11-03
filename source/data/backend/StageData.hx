@@ -180,7 +180,6 @@ class StageData
 				}
 				group.add(sprite);
 			}
-			if (floorCollider != null) group.add(floorCollider);
 		}
 		catch (e:Dynamic)
 		{
