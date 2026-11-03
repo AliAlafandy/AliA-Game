@@ -131,18 +131,23 @@ class TitleState extends GameState
                 }
             });
 
-            var loaded:Bool = video.load(filepath);
-            FlxG.log.notice('[TitleState] Intro video load ' + (loaded ? 'succeeded' : 'failed') + ': ' + filepath);
+            // VLC needs a real file path. In packaged builds Lime embeds the
+            // MP4 in the "videos" asset library, so feed its Bytes directly
+            // instead of passing a virtual assets/videos/... path to VLC.
+            var loaded:Bool = false;
+            #if sys
+            if (FileSystem.exists(filepath))
+                loaded = video.load(filepath);
+            #end
 
-            // Packaged builds may not expose embedded assets as ordinary files.
-            // hxvlc accepts Bytes as a media source, so use the embedded asset
-            // when the direct filesystem path cannot be opened.
             if (!loaded && OpenFlAssets.exists(filepath))
             {
                 var videoBytes = OpenFlAssets.getBytes(filepath);
-                if (videoBytes != null)
+                if (videoBytes != null && videoBytes.length > 0)
                     loaded = video.load(videoBytes);
             }
+
+            FlxG.log.notice('[TitleState] Intro video source ' + (loaded ? 'loaded' : 'not loaded') + ': ' + filepath);
 
             if (loaded)
             {
