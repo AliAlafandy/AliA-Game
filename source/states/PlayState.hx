@@ -63,7 +63,7 @@ class PlayState extends GameState
 	public var player:Player;
 	public var partner:Player;
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
-	public static var curStage:String = 'Default';
+	public static var curStage:String = 'ATown';
 	public static var saveSlot:Int = 0;
 	public static var noSave:Bool = true;
 
@@ -157,34 +157,29 @@ class PlayState extends GameState
 			levelData.worldWidth = 1920;
 		}
 
+		// Load the actual artwork from the selected stage's named BIN file.
+		var packedFloor = StageData.addLevelImages(curStage, backgroundLayers);
+		if (packedFloor == null) levelData.addBackgrounds(backgroundLayers);
+
 		var worldWidth:Float = levelData.worldWidth > 0 ? levelData.worldWidth : 1920;
-		var segmentWidth:Int = 640;
-
-		// Background image layers are defined inside the same ATown.bin data file
-		// and point to regular image assets. No second Level.bin is used.
-		levelData.addBackgrounds(backgroundLayers);
-
-		// Neutral template floor: black world with a gray ground surface.
-		var templateGround = new FlxSprite(0, levelData.groundY);
-		templateGround.makeGraphic(Std.int(worldWidth), 200, 0xFF777777);
-		backgroundLayers.add(templateGround);
-
-		// Invisible collision strips sit at the top of the sidewalk.
-		// The visible road and pavement are scenery only.
-		var groundY:Float = levelData.groundY >= 0 ? levelData.groundY : 520;
+		var groundY:Float = packedFloor != null ? packedFloor.y : levelData.groundY;
 		groundSegments = new FlxTypedGroup<FlxSprite>();
 		add(groundSegments);
-
+		if (packedFloor != null)
 		{
-			for (segment in 0...Std.int(Math.ceil(worldWidth / segmentWidth)))
-			{
-				var floor = new FlxSprite(segment * segmentWidth, groundY);
-				floor.makeGraphic(segmentWidth, 24, FlxColor.TRANSPARENT);
-				floor.immovable = true;
-				floor.allowCollisions = FlxDirectionFlags.UP;
-				groundSegments.add(floor);
-			}
-			testGround = groundSegments.members[0];
+			groundSegments.add(packedFloor);
+			testGround = packedFloor;
+			worldWidth = Math.max(worldWidth, packedFloor.width);
+		}
+		else
+		{
+			// Collision-only fallback for an editor-created BIN without floor art.
+			var floor = new FlxSprite(0, groundY);
+			floor.makeGraphic(Std.int(worldWidth), 24, FlxColor.TRANSPARENT);
+			floor.immovable = true;
+			floor.allowCollisions = FlxDirectionFlags.UP;
+			groundSegments.add(floor);
+			testGround = floor;
 		}
 		var characterName:String = CharacterState.selectedCharacter;
 		if (characterName == null || characterName.length == 0)
