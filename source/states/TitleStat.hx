@@ -23,7 +23,7 @@ import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.impl.Instance;
 #end
 
-class TitleState extends GameState
+class lTitleState extends GameState
 {
     public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
 	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
