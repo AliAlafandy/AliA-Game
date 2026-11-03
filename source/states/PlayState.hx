@@ -16,6 +16,7 @@ import states.menus.CharacterState;
 
 import data.backend.StageData;
 import data.backend.LevelBin;
+import data.backend.ATownAssets;
 
 import states.online.MultiPlayer;
 import states.online.MultiPlayer.RemotePlayer;
@@ -176,7 +177,10 @@ class PlayState extends GameState
 		}
 
 		// Draw authored background images over the procedural fallback when supplied by Level.bin.
-		if (levelData != null) levelData.addBackgrounds(backgroundLayers);
+		if (curStage == 'ATown')
+			ATownAssets.addTo(backgroundLayers);
+		else if (levelData != null)
+			levelData.addBackgrounds(backgroundLayers);
 
 		// Keep textures small for mobile GPUs; tile the ground across the level.
 		var groundY:Float = FlxG.height - 48;
