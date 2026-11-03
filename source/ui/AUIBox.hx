@@ -26,5 +26,5 @@ class AUIBox extends FlxSpriteGroup
         }
     }
 
-    public function addContent(item:flixel.FlxBasic):Void add(item);
+    public function addContent(item:FlxSprite):Void add(item);
 }
