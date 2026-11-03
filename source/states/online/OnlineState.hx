@@ -99,6 +99,11 @@ class TextInputField
 		refresh();
 	}
 
+	public function refreshFromNative():Void
+	{
+		refresh();
+	}
+
 	private function refresh():Void
 	{
 		var shown = value.length > 0 ? value : placeholder;
