@@ -195,7 +195,7 @@ class PlayState extends GameState
 		}
 		else
 		{
-			for (i in 0...234)
+			for (i in 0...24)
 			{
 				var dirt = new FlxSprite(-2048 + i * 1024, groundY);
 				dirt.makeGraphic(1024, 48, FlxColor.fromRGB(130, 78, 42));
@@ -253,7 +253,7 @@ class PlayState extends GameState
 
 		FlxG.camera.follow(player, LOCKON, 0.05);
 
-		FlxG.camera.setScrollBounds(0, 10000, 0, FlxG.height);
+		FlxG.camera.setScrollBounds(0, 24576, 0, FlxG.height);
 
 		FlxG.camera.deadzone = new flixel.math.FlxRect(
 			(FlxG.width / 2) - 100, 
