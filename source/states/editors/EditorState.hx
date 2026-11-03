@@ -19,6 +19,7 @@ class EditorState extends GameState
 	private var descriptions:FlxTypedGroup<FlxText>;
 	private var footer:FlxText;
 	private var optionButtons:Array<AUIButton> = [];
+	private var optionLabels:Array<FlxText> = [];
 
 	#if mobile
 	public var manager:MobileInputManager;
@@ -82,6 +83,7 @@ class EditorState extends GameState
 			var label = new FlxText(40, y + 10, cardW - 36, options[i].label, 17);
 			label.setFormat(null, 17, FlxColor.WHITE, LEFT);
 			label.color = i == selectedIndex ? FlxColor.YELLOW : FlxColor.WHITE;
+			optionLabels.push(label);
 			add(label);
 
 			var desc = new FlxText(40, y + 42, cardW - 36, options[i].description, 12);
@@ -125,9 +127,10 @@ class EditorState extends GameState
 			optionButtons[i].background.alpha = active ? 0.65 : 0.28;
 			// Card titles are rendered as standalone FlxText objects; the AUIButton
 			// captions stay hidden and are used only for click/touch hit testing.
-			var label = cast(members[4 + i * 3], FlxText);
-			label.color = active ? FlxColor.YELLOW : FlxColor.WHITE;
-			descriptions.members[i].color = active ? FlxColor.WHITE : 0xFF9EADC2;
+			if (optionLabels[i] != null)
+				optionLabels[i].color = active ? FlxColor.YELLOW : FlxColor.WHITE;
+			if (descriptions.members[i] != null)
+				descriptions.members[i].color = active ? FlxColor.WHITE : 0xFF9EADC2;
 		}
 	}
 
