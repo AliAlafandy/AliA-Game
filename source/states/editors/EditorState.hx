@@ -1,25 +1,23 @@
 package states.editors;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
-import states.editors.*;
-
-typedef EditorOption =
-{
-	label:String,
-	action:Void->Void
-}
-
+/**
+ * Visual editor hub for AliA-Game.
+ * The layout borrows the panel/tool workflow of game editors without importing FNF content.
+ */
 class EditorState extends GameState
 {
-	private var title:FlxText;
-	//private var info:FlxText;
-	private var optionTexts:FlxTypedGroup<FlxText>;
 	private var options:Array<EditorOption>;
 	private var selectedIndex:Int = 0;
+	private var optionCards:FlxTypedGroup<FlxSprite>;
+	private var labels:FlxTypedGroup<FlxText>;
+	private var descriptions:FlxTypedGroup<FlxText>;
+	private var footer:FlxText;
 
 	#if mobile
 	public var manager:MobileInputManager;
@@ -35,129 +33,110 @@ class EditorState extends GameState
 
 	override public function create():Void
 	{
-		if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
-		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
-		} else if (FlxG.sound.music != null || !FlxG.sound.music.playing) {
-			FlxG.sound.music.resume();
-		}
-
 		super.create();
+		FlxG.camera.bgColor = 0xFF101722;
 
-		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/Options/background'));
-		add(bg);
+		var background = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF101722);
+		add(background);
+		add(new FlxSprite(0, 0).makeGraphic(FlxG.width, 66, 0xFF202D40));
 
-		buildOptions();
-
-		title = new FlxText(0, 80, FlxG.width, 'EDITOR ZONE', 32);
-		title.setFormat(null, 32, FlxColor.WHITE, CENTER);
+		var title = new FlxText(20, 17, FlxG.width - 40, "ALI A-GAME  /  EDITOR ZONE", 24);
+		title.setFormat(null, 24, FlxColor.WHITE, LEFT);
 		add(title);
 
-		optionTexts = new FlxTypedGroup<FlxText>();
-		add(optionTexts);
+		var subtitle = new FlxText(22, 82, FlxG.width - 44, "Choose a workspace", 16);
+		subtitle.setFormat(null, 16, 0xFF9EADC2, LEFT);
+		add(subtitle);
 
+		options = [
+			{label:"LEVEL EDITOR", description:"Build scenes, place objects and configure level data.", action:openLevelEditor},
+			{label:"CHARACTER EDITOR", description:"Preview and configure character properties.", action:openCharacterEditor},
+			{label:"ANIMATION EDITOR", description:"Create and preview sprite animations and frame timing.", action:openAnimationEditor},
+			{label:"ELLAWY SCRIPT EDITOR", description:"Write and manage .ellawy mod scripts.", action:openScriptEditor}
+		];
+
+		optionCards = new FlxTypedGroup<FlxSprite>();
+		labels = new FlxTypedGroup<FlxText>();
+		descriptions = new FlxTypedGroup<FlxText>();
+		add(optionCards);
+		add(labels);
+		add(descriptions);
+
+		var cardW = FlxG.width - 44;
+		var cardH = Std.int(Math.min(82, (FlxG.height - 190) / 4));
 		for (i in 0...options.length)
 		{
-			var entry = new FlxText(0, 180 + (i * 40), FlxG.width, options[i].label, 24);
-			entry.setFormat(null, 24, FlxColor.WHITE, CENTER);
-			optionTexts.add(entry);
+			var y = 118 + i * (cardH + 10);
+			var card = new FlxSprite(22, y).makeGraphic(cardW, cardH, 0xFF202B3A);
+			optionCards.add(card);
+			var label = new FlxText(40, y + 12, cardW - 36, options[i].label, 17);
+			label.setFormat(null, 17, FlxColor.WHITE, LEFT);
+			labels.add(label);
+			var desc = new FlxText(40, y + 39, cardW - 36, options[i].description, 12);
+			desc.setFormat(null, 12, 0xFF9EADC2, LEFT);
+			descriptions.add(desc);
 		}
 
-		/*info = new FlxText(80, 180 + (options.length * 40) + 40, FlxG.width - 160, 'UP/DOWN - Navigate\nACCEPT - Open\nBACK - Return to Menu', 18);
-		info.setFormat(null, 18, FlxColor.GRAY, CENTER);
-		add(info);*/
+		footer = new FlxText(20, FlxG.height - 32, FlxG.width - 40, "UP / DOWN  SELECT     ENTER  OPEN     BACK  MENU", 12);
+		footer.setFormat(null, 12, 0xFF8798AE, CENTER);
+		add(footer);
 
 		#if mobile
 		addCustomDPad('NONE', 'BACK');
 		addCustomDPadCam();
 		#end
-
 		refreshSelection();
-	}
-
-
-	private function buildOptions():Void
-	{
-		options = [
-			{ label: 'Level Editor', action: openLevelEditor },
-			{ label: 'Character Editor', action: openCharacterEditor },
-			{ label: 'Animation Editor', action: openAnimationEditor },
-			{ label: 'Script Editor', action: openScriptEditor }
-		];
 	}
 
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-
 		#if mobile
-		for (i in 0...optionTexts.members.length)
+		for (i in 0...optionCards.members.length)
 		{
-			if (TouchUtil.justPressedOn(optionTexts.members[i]))
+			if (TouchUtil.justPressedOn(optionCards.members[i]) || TouchUtil.justPressedOn(labels.members[i]) || TouchUtil.justPressedOn(descriptions.members[i]))
 			{
 				selectedIndex = i;
 				refreshSelection();
-				FlxG.sound.play(Paths.sound('confirm_sound'));
+				FlxG.sound.play(Paths.sound("confirm_sound"));
 				options[i].action();
 				return;
 			}
 		}
 		#end
-
-		if (controls.GAME_UP_P)
-		{
-			moveSelection(-1);
-			FlxG.sound.play(Paths.sound('scroll_sound'));
-		} else if (controls.GAME_DOWN_P) {
-			moveSelection(1);
-			FlxG.sound.play(Paths.sound('scroll_sound'));
-		}
-
-		if (controls.ACCEPT) {
-			options[selectedIndex].action();
-			FlxG.sound.play(Paths.sound('confirm_sound'));
-		}
-
-		if (controls.BACK) {
-			GameState.switchState(new MenuState());
-			FlxG.sound.play(Paths.sound('cancel_sound'));
-		}
+		if (controls.GAME_UP_P) moveSelection(-1);
+		else if (controls.GAME_DOWN_P) moveSelection(1);
+		if (controls.ACCEPT) options[selectedIndex].action();
+		if (controls.BACK) GameState.switchState(new MenuState());
 	}
 
-	private function moveSelection(direction:Int):Void
+	private function moveSelection(amount:Int):Void
 	{
-		selectedIndex = FlxMath.wrap(selectedIndex + direction, 0, options.length - 1);
+		selectedIndex = FlxMath.wrap(selectedIndex + amount, 0, options.length - 1);
+		FlxG.sound.play(Paths.sound("scroll_sound"));
 		refreshSelection();
 	}
 
 	private function refreshSelection():Void
 	{
-		var i = 0;
-		for (entry in optionTexts.members)
+		for (i in 0...optionCards.members.length)
 		{
-			var selected = (i == selectedIndex);
-			entry.color = selected ? FlxColor.YELLOW : FlxColor.WHITE;
-			entry.scale.set(selected ? 1.1 : 1, selected ? 1.1 : 1);
-			i++;
+			var active = i == selectedIndex;
+			optionCards.members[i].color = active ? 0xFF315A7C : FlxColor.WHITE;
+			labels.members[i].color = active ? FlxColor.YELLOW : FlxColor.WHITE;
+			descriptions.members[i].color = active ? FlxColor.WHITE : 0xFF9EADC2;
 		}
 	}
 
-	private function openLevelEditor():Void
-	{
-		GameState.switchState(new LevelEditorState());
-	}
+	private function openLevelEditor():Void GameState.switchState(new LevelEditorState());
+	private function openCharacterEditor():Void GameState.switchState(new CharacterEditorState());
+	private function openAnimationEditor():Void GameState.switchState(new AnimationEditorState());
+	private function openScriptEditor():Void GameState.switchState(new ScriptEditorState());
+}
 
-	private function openCharacterEditor():Void
-	{
-		GameState.switchState(new CharacterEditorState());
-	}
-
-	private function openAnimationEditor():Void
-	{
-		GameState.switchState(new AnimationEditorState());
-	}
-
-	private function openScriptEditor():Void
-	{
-		GameState.switchState(new ScriptEditorState());
-	}
+typedef EditorOption =
+{
+	var label:String;
+	var description:String;
+	var action:Void->Void;
 }
