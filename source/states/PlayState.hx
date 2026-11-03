@@ -195,7 +195,7 @@ class PlayState extends GameState
 		}
 		else
 		{
-			for (i in 0...34)
+			for (i in 0...groundSegments.members[i])
 			{
 				var dirt = new FlxSprite(-2048 + i * 1024, groundY);
 				dirt.makeGraphic(1024, 48, FlxColor.fromRGB(130, 78, 42));
