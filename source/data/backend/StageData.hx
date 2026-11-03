@@ -90,13 +90,12 @@ class StageData
 			if (FileSystem.exists(modPath)) return BIN.read(modPath);
 			#end
 			if (FileSystem.exists(path)) return BIN.read(path);
-			#else
+			#end
 			if (Assets.exists(path))
 			{
 				var bytes = Assets.getBytes(path);
 				if (bytes != null) return BIN.parse(bytes);
 			}
-			#end
 		}
 		catch (e:Dynamic)
 		{
@@ -120,9 +119,8 @@ class StageData
 		{
 			#if sys
 			if (FileSystem.exists(path)) content = File.getContent(path);
-			#else
-			if (Assets.exists(path)) content = Assets.getText(path);
 			#end
+			if (content == null && Assets.exists(path)) content = Assets.getText(path);
 			if (content == null)
 			{
 				trace("[StageData] Packed level images not found: " + relative);
@@ -207,7 +205,7 @@ class StageData
 			if (key.startsWith(stageName + "/"))
 			{
 				var bitmap = decodedImages.get(key);
-				if (bitmap != null && !bitmap.isDisposed) bitmap.dispose();
+				if (bitmap != null) bitmap.dispose();
 				decodedImages.remove(key);
 			}
 		}
