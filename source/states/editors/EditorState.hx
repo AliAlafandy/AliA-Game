@@ -68,9 +68,10 @@ class EditorState extends GameState
 		for (i in 0...options.length)
 		{
 			var y = 118 + i * (cardH + 10);
-			var button = new AUIButton(22, y, cardW, cardH, options[i].label, function() {
+			var option = options[i];
+			var button = new AUIButton(22, y, cardW, cardH, option.label, function() {
 				FlxG.sound.play(Paths.sound("confirm_sound"));
-				options[i].action();
+				option.action();
 			});
 			button.background.alpha = 0;
 			button.caption.x = 18;
@@ -116,6 +117,7 @@ class EditorState extends GameState
 		{
 			var active = i == selectedIndex;
 			optionButtons[i].background.color = active ? 0xFF315A7C : 0xFF202B3A;
+			optionButtons[i].background.alpha = active ? 0.65 : 0.28;
 			optionButtons[i].caption.color = active ? FlxColor.YELLOW : FlxColor.WHITE;
 			descriptions.members[i].color = active ? FlxColor.WHITE : 0xFF9EADC2;
 		}
