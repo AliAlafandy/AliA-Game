@@ -1,5 +1,7 @@
 package data.backend;
 
+import bin.BIN;
+import bin.BINValue;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import openfl.utils.Assets;
@@ -24,6 +26,13 @@ typedef LevelFlashData =
 	var value:Int;
 }
 
+/**
+ * Binary Level.bin data model.
+ *
+ * This is deliberately separate from StageData:
+ * - StageData loads Act<act>.bin and chooses the stage asset directory.
+ * - LevelBin loads the editor/gameplay Level.bin containing spawn, backgrounds and flashes.
+ */
 class LevelBin
 {
 	public function new() {}
@@ -37,29 +46,31 @@ class LevelBin
 
 	public static function load(stage:String):LevelBin
 	{
-		var relative:String = 'levels/$stage/Level.bin';
-		var path:String = Paths.getSharedPath(relative);
-		var parsed:bin.BINValue = null;
+		var relative = "levels/" + stage + "/Level.bin";
+		var path = StageData.getLevelAssetPath(stage, StageData.currentAct, "Level.bin");
+		var parsed:BINValue = null;
 
 		try
 		{
 			#if sys
 			#if MODS_ALLOWED
-			var modPath:String = Paths.modFolders(relative);
-			if (FileSystem.exists(modPath))
-				parsed = bin.BIN.read(modPath);
+			if (FileSystem.exists(path))
+				parsed = BIN.read(path);
 			else
 			#end
 			if (FileSystem.exists(path))
-				parsed = bin.BIN.read(path);
+				parsed = BIN.read(path);
 			#else
 			if (Assets.exists(path))
-				parsed = bin.BIN.parse(Assets.getBytes(path));
+			{
+				var bytes = Assets.getBytes(path);
+				if (bytes != null) parsed = BIN.parse(bytes);
+			}
 			#end
 
 			if (parsed == null || !parsed.isObject())
 			{
-				trace('[LevelBin] No Level.bin found for $stage; using fallback stage.');
+				trace("[LevelBin] Missing or invalid " + relative);
 				return null;
 			}
 
@@ -68,22 +79,22 @@ class LevelBin
 			result.name = root.get("name").asString(stage);
 			result.music = root.get("music").asString("");
 
-			var playerData = root.get("player").asObject();
-			if (playerData != null)
+			var player = root.get("player").asObject();
+			if (player != null)
 			{
-				result.playerX = playerData.get("x").asInt(result.playerX);
-				result.playerY = playerData.get("y").asInt(result.playerY);
+				result.playerX = player.get("x").asInt(result.playerX);
+				result.playerY = player.get("y").asInt(result.playerY);
 			}
 
-			var backgroundData = root.get("backgrounds").asArray();
-			if (backgroundData != null)
+			var backgroundArray = root.get("backgrounds").asArray();
+			if (backgroundArray != null)
 			{
-				for (i in 0...backgroundData.length)
+				for (i in 0...backgroundArray.length)
 				{
-					var item = backgroundData.get(i).asObject();
+					var item = backgroundArray.get(i).asObject();
 					if (item == null) continue;
 					var image = item.get("image").asString("");
-					if (image.length == 0) continue;
+					if (image == "") continue;
 					result.backgrounds.push({
 						image: image,
 						x: item.get("x").asInt(0),
@@ -94,12 +105,12 @@ class LevelBin
 				}
 			}
 
-			var flashData = root.get("flashes").asArray();
-			if (flashData != null)
+			var flashArray = root.get("flashes").asArray();
+			if (flashArray != null)
 			{
-				for (i in 0...flashData.length)
+				for (i in 0...flashArray.length)
 				{
-					var item = flashData.get(i).asObject();
+					var item = flashArray.get(i).asObject();
 					if (item == null) continue;
 					result.flashes.push({
 						x: item.get("x").asInt(0),
@@ -112,7 +123,7 @@ class LevelBin
 		}
 		catch (e:Dynamic)
 		{
-			trace('[LevelBin] Failed to read $path: $e');
+			trace("[LevelBin] Failed to parse " + relative + ": " + Std.string(e));
 			return null;
 		}
 	}
