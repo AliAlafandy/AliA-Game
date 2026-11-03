@@ -25,7 +25,7 @@ class ScriptEditorState extends GameState
 {
     private var files:Array<String> = [];
     private var tabs:Array<String> = [];
-    private var selectedFile:Int = 0;
+    private var selectedFile:Int = -1;
     private var selectedTab:Int = -1;
     private var source:String = "";
     private var dirty:Bool = false;
@@ -153,7 +153,7 @@ class ScriptEditorState extends GameState
 
     private function refreshFiles():Void
     {
-        var lines:Array<String> = ["+ NEW SCRIPT"];
+        var lines:Array<String> = [selectedFile == -1 ? "> + NEW SCRIPT" : "+ NEW SCRIPT"];
         for (i in 0...files.length)
         {
             var marker = (i == selectedFile) ? "> " : "  ";
@@ -299,6 +299,8 @@ class ScriptEditorState extends GameState
         {
             source += "\n";
             dirty = true;
+            buffers.set(tabs[selectedTab], source);
+            dirtyPaths.set(tabs[selectedTab], true);
             refreshCode();
         }
         else if (event.keyCode == Keyboard.TAB)
@@ -306,6 +308,8 @@ class ScriptEditorState extends GameState
             event.preventDefault();
             source += "    ";
             dirty = true;
+            buffers.set(tabs[selectedTab], source);
+            dirtyPaths.set(tabs[selectedTab], true);
             refreshCode();
         }
     }
