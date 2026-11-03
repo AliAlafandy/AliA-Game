@@ -20,15 +20,10 @@ using StringTools;
 /**
  * Stage and level asset access.
  *
- * Every level may provide one <LevelName>.bin image archive at:
+ * Each level uses one BIN data file:
  * assets/levels/<LevelName>/<LevelName>.bin
- *
- * The archive stores the original PNG files as base64 records:
- * LEVELASSETS|1
- * image.png|<base64 PNG bytes>
- *
- * Act<act>.bin is stage metadata. Level.bin gameplay/editor data is
- * represented by the LevelBin type declared in this same module.
+ * LevelBin reads/writes the stage configuration and image layers reference
+ * normal image assets. Act<act>.bin remains separate stage metadata.
  */
 class StageData
 {
@@ -249,8 +244,8 @@ class LevelBin
 
 	public static function load(stage:String):LevelBin
 	{
-		var relative = "levels/" + stage + "/Level.bin";
-		var path = StageData.getLevelAssetPath(stage, StageData.currentAct, "Level.bin");
+		var relative = "levels/" + stage + "/" + stage + ".bin";
+		var path = StageData.getLevelAssetPath(stage, StageData.currentAct, stage + ".bin");
 		var parsed:BINValue = null;
 
 		try
@@ -281,6 +276,7 @@ class LevelBin
 			result.stage = stage;
 			result.groundY = root.get("groundY").asInt(result.groundY);
 			result.worldWidth = root.get("worldWidth").asInt(result.worldWidth);
+			result.groundY = root.get("groundY").asInt(result.groundY);
 			if (result.worldWidth < 640) result.worldWidth = 2920;
 			result.music = root.get("music").asString("");
 
