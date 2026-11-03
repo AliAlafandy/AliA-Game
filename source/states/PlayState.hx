@@ -140,9 +140,8 @@ class PlayState extends GameState
 
 		levelData = LevelBin.load(curStage);
 
-		// Load the stage artwork from assets/levels/<stage>/<stage>.bin.
-		// Gameplay layout, spawn, dimensions, collectibles and music come from
-		// assets/levels/<stage>/Level.bin via LevelBin.load().
+		// Load all stage configuration from the single
+		// assets/levels/<stage>/<stage>.bin file via LevelBin.load().
 		FlxG.camera.bgColor = FlxColor.fromRGB(105, 218, 245);
 		backgroundLayers = new FlxTypedGroup<FlxSprite>();
 		add(backgroundLayers);
@@ -161,9 +160,7 @@ class PlayState extends GameState
 
 		// StageData loads the authored sky/buildings/sidewalk/road artwork
 		// from the packed stage image archive (ATown.bin), never procedural art.
-		StageData.addLevelImages(curStage, backgroundLayers);
-		if (levelData != null)
-			levelData.addBackgrounds(backgroundLayers);
+		levelData.addBackgrounds(backgroundLayers);
 
 		// Invisible collision strips sit at the top of the sidewalk.
 		// The visible road and pavement are scenery only.
@@ -171,13 +168,6 @@ class PlayState extends GameState
 		groundSegments = new FlxTypedGroup<FlxSprite>();
 		add(groundSegments);
 
-		if (StageData.floorCollider != null)
-		{
-			groundSegments.add(StageData.floorCollider);
-			testGround = StageData.floorCollider;
-			groundY = StageData.floorCollider.y;
-		}
-		else
 		{
 			for (segment in 0...Std.int(Math.ceil(worldWidth / segmentWidth)))
 			{
