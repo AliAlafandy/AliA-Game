@@ -63,7 +63,7 @@ class PlayState extends GameState
 	public var player:Player;
 	public var partner:Player;
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
-	public static var curStage:String = 'ATown';
+	public static var curStage:String = 'Default';
 	public static var saveSlot:Int = 0;
 	public static var noSave:Bool = true;
 
@@ -142,7 +142,7 @@ class PlayState extends GameState
 
 		// Load all stage configuration from the single
 		// assets/levels/<stage>/<stage>.bin file via LevelBin.load().
-		FlxG.camera.bgColor = FlxColor.fromRGB(105, 218, 245);
+		FlxG.camera.bgColor = FlxColor.BLACK;
 		backgroundLayers = new FlxTypedGroup<FlxSprite>();
 		add(backgroundLayers);
 
@@ -153,18 +153,25 @@ class PlayState extends GameState
 			levelData = new LevelBin();
 			levelData.name = curStage;
 			levelData.stage = curStage;
+			levelData.groundY = 520;
+			levelData.worldWidth = 1920;
 		}
 
-		var worldWidth:Float = levelData.worldWidth > 0 ? levelData.worldWidth : 2920;
-		var segmentWidth:Int = 730;
+		var worldWidth:Float = levelData.worldWidth > 0 ? levelData.worldWidth : 1920;
+		var segmentWidth:Int = 640;
 
 		// Background image layers are defined inside the same ATown.bin data file
 		// and point to regular image assets. No second Level.bin is used.
 		levelData.addBackgrounds(backgroundLayers);
 
+		// Neutral template floor: black world with a gray ground surface.
+		var templateGround = new FlxSprite(0, groundY);
+		templateGround.makeGraphic(Std.int(worldWidth), 200, 0xFF777777);
+		backgroundLayers.add(templateGround);
+
 		// Invisible collision strips sit at the top of the sidewalk.
 		// The visible road and pavement are scenery only.
-		var groundY:Float = levelData.groundY >= 0 ? levelData.groundY : 562;
+		var groundY:Float = levelData.groundY >= 0 ? levelData.groundY : 520;
 		groundSegments = new FlxTypedGroup<FlxSprite>();
 		add(groundSegments);
 
