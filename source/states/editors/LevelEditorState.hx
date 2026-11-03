@@ -7,6 +7,7 @@ import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import data.backend.LevelBin;
+import mobile.TouchUtil;
 import haxe.io.Bytes;
 import lime.utils.Resource;
 
