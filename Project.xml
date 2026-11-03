@@ -126,10 +126,12 @@
 	<assets path="documents/app/iconAPP.png" rename="icon.png" if="linux"/>
 	<icon path="documents/app/iconOG.png" unless="mobile"/>
 
-	<!--<template path="documents/templates" if="android"/>
+	<!--<template path="documents/templates/android" if="android"/>
 	<config:android>
     	<application android:icon="@mipmap/ic_launcher"/>
-	</config:android>-->
+	</config:android>
+	
+	<config:ios prerenderedIcon="false"/>-->
 
 	<icon path="documents/app/iconAPP.png" if="mobile"/>
 </project>
