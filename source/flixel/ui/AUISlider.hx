@@ -46,10 +46,10 @@ class AUISlider extends FlxSpriteGroup
     override public function update(elapsed:Float):Void
     {
         super.update(elapsed);
-        if (FlxG.mouse.justPressed && (FlxG.mouse.overlaps(track) || FlxG.mouse.overlaps(knob)
-            || TouchUtil.justPressedOn(track) || TouchUtil.justPressedOn(knob)))
+        if ((FlxG.mouse.justPressed && (FlxG.mouse.overlaps(track) || FlxG.mouse.overlaps(knob)))
+            || TouchUtil.justPressedOn(track) || TouchUtil.justPressedOn(knob))
             dragging = true;
-        if (FlxG.mouse.justReleased) dragging = false;
+        if (FlxG.mouse.justReleased || TouchUtil.justReleased) dragging = false;
         if (dragging)
         {
             var ratio = (FlxG.mouse.x - x) / sliderWidth;
