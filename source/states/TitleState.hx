@@ -111,7 +111,7 @@ class TitleState extends GameState
         {
             // FlxVideoSprite is the HaxeFlixel display wrapper. FlxVideo alone
             // is an OpenFL display object and is not rendered by FlxState.add().
-            video = new VideoHandler(0, 0);
+            video = new VideoHandler();
             video.antialiasing = true;
             add(video);
 
@@ -132,6 +132,7 @@ class TitleState extends GameState
             });
 
             var loaded:Bool = video.load(filepath);
+            FlxG.log.notice('[TitleState] Intro video load ' + (loaded ? 'succeeded' : 'failed') + ': ' + filepath);
 
             // Packaged builds may not expose embedded assets as ordinary files.
             // hxvlc accepts Bytes as a media source, so use the embedded asset
@@ -148,7 +149,14 @@ class TitleState extends GameState
                 new FlxTimer().start(0.05, function(_:FlxTimer):Void
                 {
                     if (video != null && !introStarted && !titleReady)
-                        video.play();
+                    {
+                        if (!video.play())
+                        {
+                            FlxG.log.warn('[TitleState] VLC could not start intro playback: ' + filepath);
+                            finishVideo();
+                            startIntro();
+                        }
+                    }
                 });
             }
             else
