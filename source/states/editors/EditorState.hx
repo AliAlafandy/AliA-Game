@@ -16,8 +16,6 @@ class EditorState extends GameState
 {
 	private var options:Array<EditorOption>;
 	private var selectedIndex:Int = 0;
-	private var optionCards:FlxTypedGroup<FlxSprite>;
-	private var labels:FlxTypedGroup<FlxText>;
 	private var descriptions:FlxTypedGroup<FlxText>;
 	private var footer:FlxText;
 	private var optionButtons:Array<AUIButton> = [];
@@ -62,11 +60,7 @@ class EditorState extends GameState
 			{label:"ELLAWY SCRIPT EDITOR", description:"Write and manage .ellawy mod scripts.", action:openScriptEditor}
 		];
 
-		optionCards = new FlxTypedGroup<FlxSprite>();
-		labels = new FlxTypedGroup<FlxText>();
 		descriptions = new FlxTypedGroup<FlxText>();
-		add(optionCards);
-		add(labels);
 		add(descriptions);
 
 		var cardW = FlxG.width - 44;
@@ -74,8 +68,6 @@ class EditorState extends GameState
 		for (i in 0...options.length)
 		{
 			var y = 118 + i * (cardH + 10);
-			var card = new FlxSprite(22, y).makeGraphic(cardW, cardH, 0xFF202B3A);
-			optionCards.add(card);
 			var button = new AUIButton(22, y, cardW, cardH, options[i].label, function() {
 				FlxG.sound.play(Paths.sound("confirm_sound"));
 				options[i].action();
@@ -86,9 +78,6 @@ class EditorState extends GameState
 			button.caption.setFormat(null, 17, FlxColor.WHITE, LEFT);
 			optionButtons.push(button);
 			add(button);
-			var label = new FlxText(40, y + 12, cardW - 36, options[i].label, 17);
-			label.setFormat(null, 17, FlxColor.WHITE, LEFT);
-			labels.add(label);
 			var desc = new FlxText(40, y + 39, cardW - 36, options[i].description, 12);
 			desc.setFormat(null, 12, 0xFF9EADC2, LEFT);
 			descriptions.add(desc);
@@ -126,9 +115,8 @@ class EditorState extends GameState
 		for (i in 0...optionCards.members.length)
 		{
 			var active = i == selectedIndex;
-			optionCards.members[i].color = active ? 0xFF315A7C : FlxColor.WHITE;
 			optionButtons[i].background.color = active ? 0xFF315A7C : 0xFF202B3A;
-			labels.members[i].color = active ? FlxColor.YELLOW : FlxColor.WHITE;
+			optionButtons[i].caption.color = active ? FlxColor.YELLOW : FlxColor.WHITE;
 			descriptions.members[i].color = active ? FlxColor.WHITE : 0xFF9EADC2;
 		}
 	}
