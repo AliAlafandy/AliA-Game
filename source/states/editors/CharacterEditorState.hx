@@ -227,6 +227,8 @@ class CharacterEditorState extends GameState
 			var baseScale = currentScale == null ? 1.0 : Std.parseFloat(Std.string(currentScale));
 			Reflect.setField(anims[0], "scale", baseScale * previewScale);
 			File.saveContent(paths[selected], haxe.Json.stringify(character, null, "\\t"));
+			previewScale = 1;
+			buildPreview();
 			status.text = "Saved character scale to " + pathToName(paths[selected]);
 		}
 		catch (e:Dynamic)
