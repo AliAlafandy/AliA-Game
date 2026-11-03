@@ -86,10 +86,4 @@ class ATownAssets
         }
     }
 
-    public static function clear():Void
-    {
-        for (bitmap in decoded) if (bitmap != null && !bitmap.isDisposed) bitmap.dispose();
-        decoded.clear();
-        loaded = false;
-    }
 }
