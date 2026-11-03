@@ -424,8 +424,7 @@ class LevelEditorState extends GameState
 		levelName = level.name;
 		selectedKind = 0;
 		selectedIndex = 0;
-		refreshUI();
-		status.text = "Loaded binary Level.bin and reloaded editor.";
+		// Recreate the state so preview markers match the newly loaded object arrays.
 		reloadEditor();
 	}
 
