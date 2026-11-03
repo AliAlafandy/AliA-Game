@@ -34,6 +34,13 @@ class EditorState extends GameState
 	override public function create():Void
 	{
 		super.create();
+
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
+		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
+		} else if (FlxG.sound.music != null || !FlxG.sound.music.playing) {
+			FlxG.sound.music.resume();
+		}
+
 		FlxG.camera.bgColor = 0xFF101722;
 
 		var background = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF101722);
@@ -96,6 +103,7 @@ class EditorState extends GameState
 		{
 			if (TouchUtil.justPressedOn(optionCards.members[i]) || TouchUtil.justPressedOn(labels.members[i]) || TouchUtil.justPressedOn(descriptions.members[i]))
 			{
+				FlxG.sound.music.stop();
 				selectedIndex = i;
 				refreshSelection();
 				FlxG.sound.play(Paths.sound("confirm_sound"));
