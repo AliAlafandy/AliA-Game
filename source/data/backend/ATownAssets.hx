@@ -8,6 +8,8 @@ import openfl.utils.Assets;
 import haxe.crypto.Base64;
 import haxe.io.Bytes;
 
+using StringTools;
+
 /**
  * Runtime reader for assets/levels/ATown/ATown.bin.
  * The packed file contains the original PNG byte streams, preserving each
