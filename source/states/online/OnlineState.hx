@@ -13,6 +13,10 @@ import states.online.mods.ModLoader;
 
 import openfl.events.TextEvent;
 import openfl.events.KeyboardEvent;
+import openfl.events.Event;
+import openfl.text.TextField;
+import openfl.text.TextFieldType;
+import openfl.text.TextFormat;
 
 import states.online.Network;
 import states.online.MultiPlayer;
@@ -132,6 +136,7 @@ class OnlineState extends GameState
 	var roomInput:TextInputField;
 	var chatInput:TextInputField;
 	var activeInput:TextInputField;
+	var nativeTextInput:TextField;
 
 	var connectionStatusText:FlxText;
 	var playerListText:FlxText;
@@ -190,6 +195,25 @@ class OnlineState extends GameState
 		#if (js || sys)
 		openfl.Lib.current.stage.addEventListener(TextEvent.TEXT_INPUT, onTextInput);
 		#end
+
+		// A FlxText is only a visual label; it cannot request Android/iOS's
+		// soft keyboard. Use a real OpenFL INPUT TextField as the native editor.
+		// It is nearly transparent but remains focusable by the platform.
+		nativeTextInput = new TextField();
+		nativeTextInput.type = TextFieldType.INPUT;
+		nativeTextInput.defaultTextFormat = new TextFormat("_sans", 16, 0xFFFFFF);
+		nativeTextInput.text = "";
+		nativeTextInput.width = 280;
+		nativeTextInput.height = 42;
+		nativeTextInput.alpha = 0.015;
+		nativeTextInput.background = false;
+		nativeTextInput.border = false;
+		nativeTextInput.multiline = false;
+		nativeTextInput.visible = true;
+		nativeTextInput.addEventListener(Event.CHANGE, onNativeTextChanged);
+		nativeTextInput.addEventListener(KeyboardEvent.KEY_DOWN, onNativeKeyDown);
+		openfl.Lib.current.addChild(nativeTextInput);
+		nativeTextInput.visible = false;
 
 		switchTab(MODS);
 	}
@@ -563,15 +587,25 @@ class OnlineState extends GameState
 		if (currentTab != MULTIPLAYER)
 			return;
 
-		if (FlxG.mouse.justPressed)
+		var pressed = FlxG.mouse.justPressed;
+		var pointer = FlxG.mouse.getPosition();
+		#if mobile
+		var touch = FlxG.touches.getFirst();
+		if (touch != null && touch.justPressed)
 		{
-			if (nameInput.display.overlapsPoint(FlxG.mouse.getPosition()))
+			pressed = true;
+			pointer.set(touch.screenX, touch.screenY);
+		}
+		#end
+		if (pressed)
+		{
+			if (nameInput.display.overlapsPoint(pointer))
 				setActiveInput(nameInput);
-			else if (roomInput.display.overlapsPoint(FlxG.mouse.getPosition()))
+			else if (roomInput.display.overlapsPoint(pointer))
 				setActiveInput(roomInput);
-			else if (chatInput.display.overlapsPoint(FlxG.mouse.getPosition()))
+			else if (chatInput.display.overlapsPoint(pointer))
 				setActiveInput(chatInput);
-			else
+			else if (nativeTextInput != null && !nativeTextInput.visible)
 				setActiveInput(null);
 		}
 	}
@@ -583,8 +617,51 @@ class OnlineState extends GameState
 
 		activeInput = field;
 
-		if (activeInput != null)
+		if (nativeTextInput != null)
+		{
+			nativeTextInput.visible = field != null;
+			if (field == null)
+			{
+				if (openfl.Lib.current.stage.focus == nativeTextInput)
+					openfl.Lib.current.stage.focus = null;
+			}
+			else
+			{
+				nativeTextInput.text = field.value;
+				nativeTextInput.maxChars = field.maxLength;
+				nativeTextInput.displayAsPassword = field.placeholder == "Password";
+				nativeTextInput.x = field.display.x;
+				nativeTextInput.y = field.display.y;
+				nativeTextInput.width = Math.max(160, field.display.width);
+				nativeTextInput.height = Math.max(36, field.display.height);
+				field.focus();
+
+				// Assigning stage.focus to a real INPUT TextField triggers the
+				// native soft keyboard on Android and iOS.
+				openfl.Lib.current.stage.focus = nativeTextInput;
+			}
+		}
+		else if (activeInput != null)
 			activeInput.focus();
+	}
+
+	private function onNativeTextChanged(event:Event):Void
+	{
+		if (activeInput == null || nativeTextInput == null) return;
+		activeInput.value = nativeTextInput.text;
+		activeInput.refreshFromNative();
+	}
+
+	private function onNativeKeyDown(event:KeyboardEvent):Void
+	{
+		if (activeInput == null) return;
+		if (event.keyCode == 13)
+		{
+			activeInput.handleEnter();
+			if (activeInput == chatInput) nativeTextInput.text = "";
+		}
+		if (event.keyCode == 27)
+			setActiveInput(null);
 	}
 
 	private function handleTextControlKeys():Void
@@ -640,6 +717,13 @@ class OnlineState extends GameState
 		#if (js || sys)
 		openfl.Lib.current.stage.removeEventListener(TextEvent.TEXT_INPUT, onTextInput);
 		#end
+		if (nativeTextInput != null)
+		{
+			nativeTextInput.removeEventListener(Event.CHANGE, onNativeTextChanged);
+			nativeTextInput.removeEventListener(KeyboardEvent.KEY_DOWN, onNativeKeyDown);
+			if (nativeTextInput.parent != null) nativeTextInput.parent.removeChild(nativeTextInput);
+			nativeTextInput = null;
+		}
 		super.destroy();
 	}
 }
