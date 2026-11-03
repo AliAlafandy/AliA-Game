@@ -257,11 +257,11 @@ class MenuState extends GameState
 	        {
 	            item.alpha = 1.0;
 	            item.scale.set(0.9, 0.9);
-				// item.x = item.x - 30;
+				// item.x = item.x - 20;
 			/*} else if ( && ) {
 				item.alpha = 0.6;
 	            item.scale.set(0.75, 0.75);
-				item.x = item.x + 30;*/
+				item.x = item.x + 20;*/
 	        } else {
 	            item.alpha = 0.6;
 	            item.scale.set(0.75, 0.75);
