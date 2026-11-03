@@ -35,6 +35,12 @@ class EditorState extends GameState
 
 	override public function create():Void
 	{
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing) {
+		    FlxG.sound.playMusic(Paths.music('menus/menu'), 1, true);
+		} else if (FlxG.sound.music != null || !FlxG.sound.music.playing) {
+			FlxG.sound.music.resume();
+		}
+
 		super.create();
 
 		var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('menus/Options/background'));
