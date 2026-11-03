@@ -4,7 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.ui.FlxButton;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import data.backend.LevelBin;
 import haxe.io.Bytes;
@@ -42,6 +42,9 @@ class LevelEditorState extends GameState
 	private var selectedIndex:Int = 0;
 	private var playerMarker:FlxSprite;
 	private var dragging:Bool = false;
+	private var toolButtons:FlxTypedGroup<FlxSprite>;
+	private var toolLabels:FlxTypedGroup<FlxText>;
+	private var toolActions:Array<Void->Void> = [];
 
 	public function new(?name:String = "ATown", ?c:Int = 40, ?r:Int = 24)
 	{
@@ -71,6 +74,11 @@ class LevelEditorState extends GameState
 		title = new FlxText(12, 12, FlxG.width - 24, "LEVEL EDITOR  /  " + levelName, 20);
 		title.setFormat(null, 20, FlxColor.WHITE, LEFT);
 		add(title);
+
+		toolButtons = new FlxTypedGroup<FlxSprite>();
+		toolLabels = new FlxTypedGroup<FlxText>();
+		add(toolButtons);
+		add(toolLabels);
 
 		var canvasX = 12;
 		var canvasY = 62;
@@ -110,15 +118,19 @@ class LevelEditorState extends GameState
 
 	private function addButton(slot:Int, label:String, callback:Void->Void):Void
 	{
-		var row = slot <= 5 ? 0 : 1;
-		var col = slot <= 5 ? slot - 1 : slot - 6;
-		var count = row == 0 ? 5 : 5;
-		var w = (FlxG.width - 16) / count;
-		var b = new FlxButton(8 + col * w, FlxG.height - 104 + row * 34, label, callback);
-		b.scale.set(0.82, 0.82);
-		add(b);
+		var columns = 6;
+		var row = Std.int((slot - 1) / columns);
+		var col = (slot - 1) % columns;
+		var w = (FlxG.width - 16) / columns;
+		var x = 8 + col * w;
+		var y = FlxG.height - 112 + row * 34;
+		var button = new FlxSprite(x, y).makeGraphic(Std.int(w - 3), 29, 0xFF30445B);
+		toolButtons.add(button);
+		var labelText = new FlxText(x + 2, y + 8, w - 7, label, 9);
+		labelText.setFormat(null, 9, FlxColor.WHITE, CENTER);
+		toolLabels.add(labelText);
+		toolActions.push(callback);
 	}
-
 	private function addBackground():Void
 	{
 		level.backgrounds.push({image: "levels/" + levelName + "/background", x: 0, y: 0, scrollX: 1000, scrollY: 1000});
@@ -377,10 +389,19 @@ class LevelEditorState extends GameState
 		if (controls.GAME_RIGHT_P) adjust(16, 0);
 		if (controls.GAME_UP_P) adjust(0, -16);
 		if (controls.GAME_DOWN_P) adjust(0, 16);
-		if (playerMarker != null && FlxG.mouse.justPressed && FlxG.mouse.overlaps(playerMarker)) 
+		if (playerMarker != null && TouchUtil.justPressedOn(playerMarker))
 		{
 			selectedKind = 0;
+			selectedIndex = 0;
 			refreshUI();
+		}
+		for (i in 0...toolButtons.members.length)
+		{
+			if (TouchUtil.justPressedOn(toolButtons.members[i]) || TouchUtil.justPressedOn(toolLabels.members[i]))
+			{
+				toolActions[i]();
+				break;
+			}
 		}
 	}
 }
