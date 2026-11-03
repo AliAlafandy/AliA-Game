@@ -36,10 +36,14 @@ class StageData
 
 		var stageObject:BINObject = stageData.asObject();
 		var directoryValue:BINValue = stageObject.get("directory");
-		if (directoryValue != null && directoryValue.isString())
+		if (directoryValue != null)
 		{
-			forceNextDirectory = directoryValue.asString("");
-			return;
+			var directory = directoryValue.asString("");
+			if (directory != null && directory.length > 0)
+			{
+				forceNextDirectory = directory;
+				return;
+			}
 		}
 
 		forceNextDirectory = (stageName + act).toLowerCase();
