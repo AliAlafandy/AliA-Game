@@ -140,7 +140,7 @@ class ModsState extends GameState
             if (settings.length > 0) detailsText += "  |  " + settings.length + " settings";
             if (website.length > 0) detailsText += "  |  " + website;
             var details = new FlxText(textX, yPos + 36, textWidth, detailsText, 10);
-            details.setFormat(null, 10, FlxColor.LIGHT_GRAY, LEFT);
+            details.setFormat(null, 10, FlxColor.GRAY, LEFT);
             add(details);
 
             var enabled = ModLoader.isModEnabled(item);
