@@ -38,6 +38,8 @@ class LevelBin
 	public function new() {}
 
 	public var name:String = "ATown";
+	public var stage:String = "ATown";
+	public var groundY:Int = -1;
 	public var music:String = "";
 	public var playerX:Int = 500;
 	public var playerY:Int = 130;
@@ -77,6 +79,8 @@ class LevelBin
 			var root = parsed.asObject();
 			var result = new LevelBin();
 			result.name = root.get("name").asString(stage);
+			result.stage = stage;
+			result.groundY = root.get("groundY").asInt(-1);
 			result.music = root.get("music").asString("");
 
 			var player = root.get("player").asObject();
@@ -134,7 +138,9 @@ class LevelBin
 		for (data in backgrounds)
 		{
 			var sprite = new FlxSprite(data.x, data.y);
-			sprite.loadGraphic(Paths.image(data.image));
+			var packedImage = StageData.getLevelImage(stage, data.image);
+			if (packedImage != null) sprite.loadGraphic(packedImage);
+			else sprite.loadGraphic(Paths.image(data.image));
 			sprite.scrollFactor.set(data.scrollX / 1000, data.scrollY / 1000);
 			group.add(sprite);
 		}
