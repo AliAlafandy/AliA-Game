@@ -160,13 +160,13 @@ class StageData
 				switch (imageName)
 				{
 					case "sky.png": sprite.y = 0; sprite.scrollFactor.set(0.05, 0.05);
-					case "sun.png": sprite.y = 60; sprite.scrollFactor.set(0.08, 0.08);
-					case "clouds.png": sprite.y = 40; sprite.scrollFactor.set(0.12, 0.08);
-					case "buildings.png": sprite.y = 150; sprite.scrollFactor.set(0.35, 0.35);
-					case "sidewalk.png": sprite.y = FlxG.height - bitmap.height - 48; sprite.scrollFactor.set(0.8, 0.8);
+					case "sun.png": sprite.y = 60; sprite.scrollFactor.set(0.25, 0.25);
+					case "clouds.png": sprite.y = 40; sprite.scrollFactor.set(0.25, 0.25);
+					case "buildings.png": sprite.y = 150; sprite.scrollFactor.set(0.25, 0.25);
+					case "sidewalk.png": sprite.y = FlxG.height - bitmap.height - 48; sprite.scrollFactor.set(0.25, 0.25);
 					case "street.png":
 						sprite.y = FlxG.height - bitmap.height;
-						sprite.scrollFactor.set(1, 1);
+						sprite.scrollFactor.set(0.25, 0.25);
 						// The road image is also the physical floor.
 						groundSprite = sprite;
 						floorCollider = new FlxSprite(0, sprite.y);
