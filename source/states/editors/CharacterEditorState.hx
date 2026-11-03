@@ -68,7 +68,7 @@ class CharacterEditorState extends GameState
 		infoLabel = new FlxText(leftW + 34, FlxG.height - 86, FlxG.width - leftW - 50, "", 11);
 		infoLabel.setFormat(null, 11, 0xFFB7C5D8, LEFT);
 		add(infoLabel);
-		status = new FlxText(14, FlxG.height - 28, FlxG.width - 28, "UP/DOWN Select  |  LEFT/RIGHT Scale  |  F Flip  |  BACK Return", 11);
+		status = new FlxText(14, FlxG.height - 28, FlxG.width - 28, "UP/DOWN Select  |  LEFT/RIGHT Scale  |  F Flip  |  S Save  |  BACK Return", 11);
 		status.setFormat(null, 11, 0xFF9EADC2, CENTER);
 		add(status);
 
@@ -125,7 +125,7 @@ class CharacterEditorState extends GameState
 			var y = 102 + (i - start) * rowH;
 			var row = new FlxSprite(16, y).makeGraphic(leftW - 12, 30, i == selected ? 0xFF315A7C : 0xFF243244);
 			fileRows.add(row);
-			var label = new FlxText(25, y + 7, leftW - 30, haxe.io.Path.withoutExtension(haxe.io.Path.withDirectory(pathToName(paths[i]))), 11);
+			var label = new FlxText(25, y + 7, leftW - 30, haxe.io.Path.withoutExtension(pathToName(paths[i])), 11);
 			label.setFormat(null, 11, FlxColor.WHITE, LEFT);
 			fileLabels.add(label);
 		}
@@ -151,7 +151,7 @@ class CharacterEditorState extends GameState
 			var characterName = Reflect.field(character, "charName");
 			nameLabel.text = characterName == null ? pathToName(paths[selected]) : Std.string(characterName);
 			var anims:Array<Dynamic> = cast Reflect.field(character, "anim");
-			infoLabel.text = "Character definition  |  " + (anims == null ? 0 : anims.length) + " animation entries\nPreview controls change only this workspace; animation setup is in Animation Editor.";
+			infoLabel.text = "Character definition  |  " + (anims == null ? 0 : anims.length) + " animation entries\nScale is editable here; animation timing and frames are in Animation Editor.";
 			refreshList();
 			status.text = "Loaded " + paths[selected];
 		}
@@ -204,7 +204,36 @@ class CharacterEditorState extends GameState
 	{
 		previewScale = Math.max(0.2, Math.min(3, previewScale + amount));
 		buildPreview();
-		status.text = "Preview scale: " + Std.int(previewScale * 100) + "% (not saved to character data)";
+		status.text = "Preview scale: " + Std.int(previewScale * 100) + "%";
+	}
+
+	private function saveCharacter():Void
+	{
+		#if sys
+		if (character == null || paths.length == 0)
+		{
+			status.text = "No character loaded.";
+			return;
+		}
+		try
+		{
+			var anims:Array<Dynamic> = cast Reflect.field(character, "anim");
+			if (anims == null || anims.length == 0)
+			{
+				status.text = "This character has no animation entry to store its scale.";
+				return;
+			}
+			var currentScale = Reflect.field(anims[0], "scale");
+			var baseScale = currentScale == null ? 1.0 : Std.parseFloat(Std.string(currentScale));
+			Reflect.setField(anims[0], "scale", baseScale * previewScale);
+			File.saveContent(paths[selected], haxe.Json.stringify(character, null, "\\t"));
+			status.text = "Saved character scale to " + pathToName(paths[selected]);
+		}
+		catch (e:Dynamic)
+		{
+			status.text = "Character save failed: " + Std.string(e);
+		}
+		#end
 	}
 
 	override public function update(elapsed:Float):Void
@@ -224,6 +253,7 @@ class CharacterEditorState extends GameState
 		if (controls.GAME_LEFT_P) adjustScale(-0.05);
 		else if (controls.GAME_RIGHT_P) adjustScale(0.05);
 		if (FlxG.keys.justPressed.F) { previewFlip = !previewFlip; buildPreview(); }
+		if (FlxG.keys.justPressed.S) saveCharacter();
 		if (controls.BACK) GameState.switchState(new EditorState());
 	}
 }
