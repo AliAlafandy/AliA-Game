@@ -2,13 +2,13 @@ package ui;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.group.FlxSpriteGroup;
+import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import mobile.TouchUtil;
 
 /** Draggable editor window. Add child controls with addContent(). */
-class AUIWindow extends FlxSpriteGroup
+class AUIWindow extends FlxGroup
 {
     public var background:FlxSprite;
     public var titleBar:FlxSprite;
@@ -23,20 +23,20 @@ class AUIWindow extends FlxSpriteGroup
 
     public function new(x:Float, y:Float, width:Int, height:Int, title:String = "Window")
     {
-        super(x, y);
+        super();
         this.title = title;
         windowWidth = width;
         windowHeight = height;
-        background = new FlxSprite().makeGraphic(width, height, 0xFF172332);
+        background = new FlxSprite(x, y).makeGraphic(width, height, 0xFF172332);
         add(background);
-        titleBar = new FlxSprite(0, 0).makeGraphic(width, 30, 0xFF26394D);
+        titleBar = new FlxSprite(x, y).makeGraphic(width, 30, 0xFF26394D);
         add(titleBar);
-        titleText = new FlxText(10, 8, width - 20, title, 12);
+        titleText = new FlxText(x + 10, y + 8, width - 20, title, 12);
         titleText.setFormat(null, 12, FlxColor.WHITE, LEFT);
         add(titleText);
     }
 
-    public function addContent(item:flixel.FlxSprite):Void add(item);
+    public function addContent(item:flixel.FlxBasic):Void add(item);
 
     override public function update(elapsed:Float):Void
     {
@@ -45,14 +45,19 @@ class AUIWindow extends FlxSpriteGroup
         if (FlxG.mouse.justPressed && (FlxG.mouse.overlaps(titleBar) || TouchUtil.justPressedOn(titleBar)))
         {
             dragging = true;
-            dragOffsetX = FlxG.mouse.x - x;
-            dragOffsetY = FlxG.mouse.y - y;
+            dragOffsetX = FlxG.mouse.x - background.x;
+            dragOffsetY = FlxG.mouse.y - background.y;
         }
         if (FlxG.mouse.justReleased) dragging = false;
         if (dragging)
         {
-            x = FlxG.mouse.x - dragOffsetX;
-            y = FlxG.mouse.y - dragOffsetY;
+            var nextX = FlxG.mouse.x - dragOffsetX;
+            var nextY = FlxG.mouse.y - dragOffsetY;
+            var dx = nextX - background.x;
+            var dy = nextY - background.y;
+            background.x += dx; background.y += dy;
+            titleBar.x += dx; titleBar.y += dy;
+            titleText.x += dx; titleText.y += dy;
         }
     }
 }
