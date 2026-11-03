@@ -172,8 +172,8 @@ class StageData
 						groundSprite = sprite;
 						floorCollider = new FlxSprite(0, sprite.y);
 						floorCollider.makeGraphic(1, 12, 0x00000000);
-						floorCollider.setSize(bitmap.width * 8, 12);
 						floorCollider.updateHitbox();
+						floorCollider.setSize(bitmap.width * 8, 12);
 						floorCollider.visible = false;
 						floorCollider.immovable = true;
 						floorCollider.allowCollisions = flixel.util.FlxDirectionFlags.UP;
