@@ -116,6 +116,11 @@ class ScriptEditorState extends GameState
         addEditorButton(102, FlxG.height - 66, "SAVE", saveFile);
         addEditorButton(192, FlxG.height - 66, "NEW", createScript);
         addEditorButton(282, FlxG.height - 66, "BACK", function() GameState.switchState(new EditorState()));
+
+        #if mobile
+        addCustomDPad("NONE", "BACK");
+        addCustomDPadCam();
+        #end
     }
 
     private function addEditorButton(x:Float, y:Float, label:String, callback:Void->Void):Void
