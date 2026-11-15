@@ -506,10 +506,12 @@ class PlayState extends GameState
 			return;
 		}
 
+		/*
 		if (FlxG.keys.justPressed.E #if mobile || customDPad.powerButton.justPressed #end)
 		{
 				GameState.switchState(new TestState());
 		}
+		*/
 
 		super.update(elapsed);
 	}
