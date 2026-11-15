@@ -167,13 +167,15 @@ class PlayState extends GameState
 		add(groundSegments);
 		if (packedFloor != null)
 		{
+			packedFloor.immovable = true;
+			packedFloor.allowCollisions = FlxDirectionFlags.ANY; 
+			
 			groundSegments.add(packedFloor);
 			testGround = packedFloor;
 			worldWidth = Math.max(worldWidth, packedFloor.width);
 		}
 		else
 		{
-			// Collision-only fallback for an editor-created BIN without floor art.
 			var floor = new FlxSprite(0, groundY);
 			floor.makeGraphic(Std.int(worldWidth), 24, FlxColor.TRANSPARENT);
 			floor.immovable = true;
@@ -459,6 +461,18 @@ class PlayState extends GameState
 		elapsedTime += elapsed;
 		rpcTimer += elapsed;
 
+		if (!paused && player != null)
+		{
+			handleInput();
+			
+			if (partner != null)
+			{
+				partner.updatePartnerAI(elapsed);
+			}
+		}
+
+		super.update(elapsed);
+		
 		if (!paused && player != null && testGround != null)
 		{
 			FlxG.collide(player, groundSegments);
@@ -468,7 +482,6 @@ class PlayState extends GameState
 			{
 				FlxG.collide(partner, groundSegments);
 				partner.updateGroundState();
-				partner.updatePartnerAI(elapsed);
 			}
 		}
 
@@ -512,8 +525,6 @@ class PlayState extends GameState
 				GameState.switchState(new TestState());
 		}
 		*/
-
-		super.update(elapsed);
 	}
 
 	private function handleInput():Void
