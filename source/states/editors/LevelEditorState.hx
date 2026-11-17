@@ -238,9 +238,13 @@ class LevelEditorState extends GameState
 			art.scrollFactor.set(0, 0);
 			art.updateHitbox();
 		}
-		groundMarker = new FlxSprite(canvasX, canvasY + level.groundY * canvasScale);
-		groundMarker.makeGraphic(Std.int(Math.min(FlxG.width * 0.62, level.worldWidth * canvasScale)), 12, 0xFF777777);
-		preview.add(groundMarker);
+		groundMarker = null;
+		if (preview.members.length == 0)
+		{
+			groundMarker = new FlxSprite(canvasX, canvasY + level.groundY * canvasScale);
+			groundMarker.makeGraphic(Std.int(Math.min(FlxG.width * 0.62, level.worldWidth * canvasScale)), 12, 0xFF777777);
+			preview.add(groundMarker);
+		}
 
 		for (bg in level.backgrounds)
 		{
