@@ -120,6 +120,10 @@ class LevelEditorState extends GameState
 		addButton(8, "Y+", function() adjust(0, 16));
 		addButton(9, "SAVE BIN", saveLevel);
 		addButton(10, "LOAD BIN", loadLevel);
+		addButton(12, "CAM +", function() { level.cameraZoom += 100; refreshUI(); });
+		addButton(13, "CAM -", function() { level.cameraZoom = Std.int(Math.max(100, level.cameraZoom - 100)); refreshUI(); });
+		addButton(14, "WIDTH +", function() { level.worldWidth += 320; refreshUI(); });
+		addButton(15, "WIDTH -", function() { level.worldWidth = Std.int(Math.max(640, level.worldWidth - 320)); refreshUI(); });
 		rebuildPreview();
 		refreshUI();
 
@@ -204,7 +208,7 @@ class LevelEditorState extends GameState
 
 		var px = selectedKind == 0 ? level.playerX : selectedKind == 1 && selectedIndex < level.backgrounds.length ? level.backgrounds[selectedIndex].x : selectedKind == 2 && selectedIndex < level.flashes.length ? level.flashes[selectedIndex].x : 0;
 		var py = selectedKind == 0 ? level.playerY : selectedKind == 1 && selectedIndex < level.backgrounds.length ? level.backgrounds[selectedIndex].y : selectedKind == 2 && selectedIndex < level.flashes.length ? level.flashes[selectedIndex].y : 0;
-		properties.text = "PROPERTIES\n----------------\nType: " + (selectedKind == 0 ? "Player Spawn" : selectedKind == 1 ? "Background Layer" : "Flash Collectible") + "\nX: " + px + "\nY: " + py + "\n\nMusic: " + level.music;
+		properties.text = "PROPERTIES\n----------------\nType: " + (selectedKind == 0 ? "Player Spawn" : selectedKind == 1 ? "Background Layer" : "Flash Item") + "\nX: " + px + "\nY: " + py + "\n\nWorld Width: " + level.worldWidth + "\nGround Y: " + level.groundY + "\nCamera Zoom: " + (level.cameraZoom / 1000) + "\nDeadzone: " + level.cameraDeadzoneWidth + " x " + level.cameraDeadzoneHeight + "\nMusic: " + level.music;
 
 		updatePreview();
 		status.text = "Select objects in the list. Use X/Y controls to position. SAVE BIN writes binary ${levelName}.bin.";
