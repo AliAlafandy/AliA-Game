@@ -359,6 +359,9 @@ class LevelBin
 			if (packedImage != null) sprite.loadGraphic(packedImage);
 			else sprite.loadGraphic(Paths.image(data.image));
 			sprite.scrollFactor.set(data.scrollX / 1000, data.scrollY / 1000);
+			sprite.scale.set(Math.max(0.01, data.scaleX / 1000), Math.max(0.01, data.scaleY / 1000));
+			sprite.updateHitbox();
+			sprite.allowCollisions = flixel.util.FlxDirectionFlags.NONE;
 			group.add(sprite);
 		}
 	}
