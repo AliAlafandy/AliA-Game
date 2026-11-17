@@ -160,7 +160,7 @@ class PlayState extends GameState
 		}
 
 		// Load the actual artwork from the selected stage's named BIN file.
-		var packedFloor = StageData.addLevelImages(curStage, backgroundLayers);
+		var packedFloor = StageData.addLevelImages(curStage, backgroundLayers, levelData);
 		if (packedFloor == null) levelData.addBackgrounds(backgroundLayers);
 
 		worldWidth = levelData.worldWidth > 0 ? levelData.worldWidth : 1920;
@@ -176,8 +176,9 @@ class PlayState extends GameState
 			testGround = packedFloor;
 			worldWidth = Math.max(worldWidth, packedFloor.width);
 		}
-		else
+		else if (!StageData.hasPackedLevelAssets)
 		{
+			// Legacy/data-only stages without a packed image archive retain one simple floor.
 			var floor = new FlxSprite(0, groundY);
 			floor.makeGraphic(Std.int(worldWidth), 24, FlxColor.TRANSPARENT);
 			floor.immovable = true;
