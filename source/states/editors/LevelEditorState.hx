@@ -130,6 +130,9 @@ class LevelEditorState extends GameState
 		addButton(17, "DZ -", function() { level.cameraDeadzoneWidth = Std.int(Math.max(40, level.cameraDeadzoneWidth - 20)); level.cameraDeadzoneHeight = Std.int(Math.max(40, level.cameraDeadzoneHeight - 20)); refreshUI(); });
 		addButton(18, "GROUND +", function() { level.groundY += 16; refreshUI(); });
 		addButton(19, "GROUND -", function() { level.groundY = Std.int(Math.max(0, level.groundY - 16)); refreshUI(); });
+		addButton(20, "TOGGLE GROUND", toggleGroundLayer);
+		addButton(21, "SCALE +", function() { adjustLayerScale(100); });
+		addButton(22, "SCALE -", function() { adjustLayerScale(-100); });
 		rebuildPreview();
 		refreshUI();
 
@@ -152,7 +155,7 @@ class LevelEditorState extends GameState
 	}
 	private function addBackground():Void
 	{
-		level.backgrounds.push({image: "levels/" + levelName + "/background", x: 0, y: 0, scrollX: 1000, scrollY: 1000});
+		level.backgrounds.push({image: "levels/" + levelName + "/background", x: 0, y: 0, scrollX: 1000, scrollY: 1000, scaleX: 1000, scaleY: 1000, isGround: false});
 		selectedKind = 1;
 		selectedIndex = level.backgrounds.length - 1;
 		rebuildPreview();
@@ -253,7 +256,7 @@ class LevelEditorState extends GameState
 			try
 			{
 				layer.loadGraphic(Paths.image(bg.image));
-				layer.scale.set(canvasScale, canvasScale);
+				layer.scale.set(canvasScale * bg.scaleX / 1000, canvasScale * bg.scaleY / 1000);
 				layer.updateHitbox();
 			}
 			catch (e:Dynamic)
@@ -290,6 +293,8 @@ class LevelEditorState extends GameState
 			var bg = level.backgrounds[i];
 			var marker = backgroundMarkers[i];
 			marker.setPosition(canvasX + bg.x * canvasScale, canvasY + bg.y * canvasScale);
+			marker.scale.set(canvasScale * bg.scaleX / 1000, canvasScale * bg.scaleY / 1000);
+			marker.updateHitbox();
 			marker.alpha = selectedKind == 1 && selectedIndex == i ? 0.95 : 0.45;
 		}
 		if (playerMarker != null)
