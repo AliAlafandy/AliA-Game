@@ -45,6 +45,13 @@ class AUIButton extends FlxSpriteGroup
 
     public function setLabel(value:String):Void caption.text = value;
 
+    override public function destroy():Void
+    {
+        if (hitArea != null) hitArea.destroy();
+        hitArea = null;
+        super.destroy();
+    }
+
     public function setEnabled(value:Bool):Void
     {
         enabled = value;
