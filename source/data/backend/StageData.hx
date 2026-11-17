@@ -5,6 +5,7 @@ import bin.BINValue;
 import bin.BINObject;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import openfl.display.BitmapData;
 import openfl.utils.Assets;
@@ -334,7 +335,7 @@ class LevelBin
 				if (item == null) continue;
 				var image = item.get("image").asString("");
 				if (image == "") continue;
-				result.backgrounds.push({image:image, x:item.get("x").asInt(0), y:item.get("y").asInt(0), scrollX:item.get("scrollX").asInt(1000), scrollY:item.get("scrollY").asInt(1000), scaleX:item.get("scaleX").asInt(1000), scaleY:item.get("scaleY").asInt(1000), isGround:item.get("isGround").asBool(false)});
+				result.backgrounds.push({image:image, x:item.get("x").asInt(0), y:item.get("y").asInt(0), scrollX:item.get("scrollX").asInt(1000), scrollY:item.get("scrollY").asInt(1000), scaleX:item.get("scaleX").asInt(1000), scaleY:item.get("scaleY").asInt(1000), isGround:item.get("isGround").asInt(0) != 0});
 			}
 			var flashArray = root.get("flashes").asArray();
 			if (flashArray != null) for (i in 0...flashArray.length)
