@@ -240,6 +240,10 @@ class LevelBin
 	public var music:String = "";
 	public var playerX:Int = 500;
 	public var playerY:Int = -1;
+	public var cameraZoom:Int = 1000;
+	public var cameraDeadzoneWidth:Int = 200;
+	public var cameraDeadzoneHeight:Int = 200;
+	public var nextStage:String = "";
 	public var backgrounds:Array<LevelBackgroundData> = [];
 	public var flashes:Array<LevelFlashData> = [];
 
@@ -258,9 +262,22 @@ class LevelBin
 			#end
 			if (bytes == null && Assets.exists(path)) bytes = Assets.getBytes(path);
 			if (bytes == null) { trace("[LevelBin] Missing " + relative); return null; }
-			// Packed image archives are valid stage BIN files too.
-			var header = bytes.toString().split("\n")[0].trim();
-			if (header == "LEVELASSETS|1") return result;
+			// Keep packed artwork and embed editable level data in the same BIN.
+			var archiveLines = bytes.toString().split("\n");
+			if (archiveLines.length > 0 && archiveLines[0].trim() == "LEVELASSETS|1")
+			{
+				var levelDataBytes:Bytes = null;
+				for (line in archiveLines)
+				{
+					if (line.startsWith("LEVELDATA|"))
+					{
+						levelDataBytes = Base64.decode(line.substr("LEVELDATA|".length));
+						break;
+					}
+				}
+				if (levelDataBytes == null) return result;
+				bytes = levelDataBytes;
+			}
 			var parsed = BIN.parse(bytes);
 			if (parsed == null || !parsed.isObject()) throw "Unsupported stage BIN format";
 			var root = parsed.asObject();
@@ -270,6 +287,10 @@ class LevelBin
 			result.groundY = root.get("groundY").asInt(result.groundY);
 			if (result.worldWidth < 640) result.worldWidth = 1920;
 			result.music = root.get("music").asString("");
+			result.cameraZoom = root.get("cameraZoom").asInt(1000);
+			result.cameraDeadzoneWidth = root.get("cameraDeadzoneWidth").asInt(200);
+			result.cameraDeadzoneHeight = root.get("cameraDeadzoneHeight").asInt(200);
+			result.nextStage = root.get("nextStage").asString("");
 			var player = root.get("player").asObject();
 			if (player != null) { result.playerX = player.get("x").asInt(result.playerX); result.playerY = player.get("y").asInt(result.playerY); }
 			var backgroundArray = root.get("backgrounds").asArray();
