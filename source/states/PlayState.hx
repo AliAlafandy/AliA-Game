@@ -93,6 +93,7 @@ class PlayState extends GameState
 	private var levelData:LevelBin;
 	private var flashCount:Int = 0;
 	private var stageCompletionStarted:Bool = false;
+	private var worldWidth:Float = 1920;
 
 	public var timer:FlxText;
 	public var score:FlxText;
@@ -162,7 +163,7 @@ class PlayState extends GameState
 		var packedFloor = StageData.addLevelImages(curStage, backgroundLayers);
 		if (packedFloor == null) levelData.addBackgrounds(backgroundLayers);
 
-		var worldWidth:Float = levelData.worldWidth > 0 ? levelData.worldWidth : 1920;
+		worldWidth = levelData.worldWidth > 0 ? levelData.worldWidth : 1920;
 		var groundY:Float = packedFloor != null ? packedFloor.y : levelData.groundY;
 		groundSegments = new FlxTypedGroup<FlxSprite>();
 		add(groundSegments);
