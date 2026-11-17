@@ -275,7 +275,11 @@ class LevelEditorState extends GameState
 	private function updatePreview():Void
 	{
 		if (level == null || preview == null) return;
-		if (groundMarker != null) groundMarker.y = canvasY + level.groundY * canvasScale;
+		if (groundMarker != null)
+		{
+			groundMarker.y = canvasY + level.groundY * canvasScale;
+			groundMarker.makeGraphic(Std.int(Math.min(FlxG.width * 0.62, level.worldWidth * canvasScale)), 12, 0xFF777777);
+		}
 		for (i in 0...backgroundMarkers.length)
 		{
 			var bg = level.backgrounds[i];
