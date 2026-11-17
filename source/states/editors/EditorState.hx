@@ -4,6 +4,8 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.ui.AUIBox;
 import flixel.ui.AUIButton;
@@ -128,9 +130,21 @@ class EditorState extends GameState
 			// Card titles are rendered as standalone FlxText objects; the AUIButton
 			// captions stay hidden and are used only for click/touch hit testing.
 			if (optionLabels[i] != null)
+			{
 				optionLabels[i].color = active ? FlxColor.YELLOW : FlxColor.WHITE;
+				FlxTween.cancelTweensOf(optionLabels[i]);
+				FlxTween.tween(optionLabels[i], {x: active ? 46 : 40, alpha: active ? 1 : 0.78}, 0.16, {ease: FlxEase.quadOut});
+			}
 			if (descriptions.members[i] != null)
+			{
 				descriptions.members[i].color = active ? FlxColor.WHITE : 0xFF9EADC2;
+				FlxTween.cancelTweensOf(descriptions.members[i]);
+				FlxTween.tween(descriptions.members[i], {x: active ? 46 : 40, alpha: active ? 1 : 0.68}, 0.16, {ease: FlxEase.quadOut});
+			}
+			FlxTween.cancelTweensOf(optionButtons[i]);
+			FlxTween.tween(optionButtons[i], {x: active ? 28 : 22}, 0.16, {ease: FlxEase.quadOut});
+			FlxTween.cancelTweensOf(optionButtons[i].background);
+			FlxTween.tween(optionButtons[i].background, {alpha: active ? 0.95 : 0.55}, 0.16, {ease: FlxEase.quadOut});
 		}
 	}
 
