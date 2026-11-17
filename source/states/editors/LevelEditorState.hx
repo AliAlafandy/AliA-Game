@@ -45,6 +45,7 @@ class LevelEditorState extends GameState
 	private var selectedKind:Int = 0;
 	private var selectedIndex:Int = 0;
 	private var playerMarker:FlxSprite;
+	private var groundMarker:FlxSprite;
 	private var backgroundMarkers:Array<FlxSprite> = [];
 	private var flashMarkers:Array<FlxSprite> = [];
 	private var canvasX:Float = 12;
@@ -105,7 +106,7 @@ class LevelEditorState extends GameState
 		properties = new AUILabel(inspectorX + 10, canvasY + 184, inspectorW - 20, "", 11, FlxColor.CYAN);
 		add(properties);
 
-		status = new FlxText(12, FlxG.height - 62, FlxG.width - 24, "", 12);
+		status = new FlxText(12, FlxG.height - 20, FlxG.width - 24, "", 10);
 		status.setFormat(null, 12, FlxColor.LIME, LEFT);
 		add(status);
 
@@ -135,7 +136,7 @@ class LevelEditorState extends GameState
 
 	private function addButton(slot:Int, label:String, callback:Void->Void):Void
 	{
-		var columns = 6;
+		var columns = 8;
 		var row = Std.int((slot - 1) / columns);
 		var col = (slot - 1) % columns;
 		var w = Std.int((FlxG.width - 16) / columns);
@@ -221,6 +222,9 @@ class LevelEditorState extends GameState
 		preview.clear();
 		backgroundMarkers = [];
 		flashMarkers = [];
+		groundMarker = new FlxSprite(canvasX, canvasY + level.groundY * canvasScale);
+		groundMarker.makeGraphic(Std.int(Math.min(FlxG.width * 0.62, level.worldWidth * canvasScale)), 12, 0xFF777777);
+		preview.add(groundMarker);
 
 		for (bg in level.backgrounds)
 		{
@@ -255,6 +259,7 @@ class LevelEditorState extends GameState
 	private function updatePreview():Void
 	{
 		if (level == null || preview == null) return;
+		if (groundMarker != null) groundMarker.y = canvasY + level.groundY * canvasScale;
 		for (i in 0...backgroundMarkers.length)
 		{
 			var bg = level.backgrounds[i];
@@ -484,7 +489,7 @@ status.text = "Saved level BIN: " + outputPath;
 		if (controls.GAME_RIGHT_P) adjust(16, 0);
 		if (controls.GAME_UP_P) adjust(0, -16);
 		if (controls.GAME_DOWN_P) adjust(0, 16);
-		if (playerMarker != null && TouchUtil.justPressedOn(playerMarker))
+		if (playerMarker != null && ((FlxG.mouse.justPressed && FlxG.mouse.overlaps(playerMarker)) || TouchUtil.justPressedOn(playerMarker)))
 		{
 			selectedKind = 0;
 			selectedIndex = 0;
@@ -493,7 +498,7 @@ status.text = "Saved level BIN: " + outputPath;
 		}
 		for (i in 0...backgroundMarkers.length)
 		{
-			if (TouchUtil.justPressedOn(backgroundMarkers[i]))
+			if ((FlxG.mouse.justPressed && FlxG.mouse.overlaps(backgroundMarkers[i])) || TouchUtil.justPressedOn(backgroundMarkers[i]))
 			{
 				selectedKind = 1;
 				selectedIndex = i;
@@ -503,7 +508,7 @@ status.text = "Saved level BIN: " + outputPath;
 		}
 		for (i in 0...flashMarkers.length)
 		{
-			if (TouchUtil.justPressedOn(flashMarkers[i]))
+			if ((FlxG.mouse.justPressed && FlxG.mouse.overlaps(flashMarkers[i])) || TouchUtil.justPressedOn(flashMarkers[i]))
 			{
 				selectedKind = 2;
 				selectedIndex = i;
