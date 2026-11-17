@@ -185,7 +185,7 @@ class LevelEditorState extends GameState
 	{
 		switch (selectedKind)
 		{
-			case 0: level.playerX += dx; level.playerY += dy;
+			case 0: level.playerX += dx; if (level.playerY < 0) level.playerY = level.groundY - 24; level.playerY += dy;
 			case 1:
 				if (selectedIndex >= 0 && selectedIndex < level.backgrounds.length)
 				{
@@ -213,7 +213,7 @@ class LevelEditorState extends GameState
 		objectList.text = lines.join("\n");
 
 		var px = selectedKind == 0 ? level.playerX : selectedKind == 1 && selectedIndex < level.backgrounds.length ? level.backgrounds[selectedIndex].x : selectedKind == 2 && selectedIndex < level.flashes.length ? level.flashes[selectedIndex].x : 0;
-		var py = selectedKind == 0 ? level.playerY : selectedKind == 1 && selectedIndex < level.backgrounds.length ? level.backgrounds[selectedIndex].y : selectedKind == 2 && selectedIndex < level.flashes.length ? level.flashes[selectedIndex].y : 0;
+		var py = selectedKind == 0 ? (level.playerY >= 0 ? level.playerY : level.groundY - 24) : selectedKind == 1 && selectedIndex < level.backgrounds.length ? level.backgrounds[selectedIndex].y : selectedKind == 2 && selectedIndex < level.flashes.length ? level.flashes[selectedIndex].y : 0;
 		properties.text = "PROPERTIES\n----------------\nType: " + (selectedKind == 0 ? "Player Spawn" : selectedKind == 1 ? "Background Layer" : "Flash Item") + "\nX: " + px + "\nY: " + py + "\n\nWorld Width: " + level.worldWidth + "\nGround Y: " + level.groundY + "\nCamera Zoom: " + (level.cameraZoom / 1000) + "\nDeadzone: " + level.cameraDeadzoneWidth + " x " + level.cameraDeadzoneHeight + "\nMusic: " + level.music;
 
 		updatePreview();
