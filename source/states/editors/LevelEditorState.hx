@@ -173,6 +173,35 @@ class LevelEditorState extends GameState
 		status.text = "Collectible added to the level.";
 	}
 
+	private function toggleGroundLayer():Void
+	{
+		if (selectedKind != 1 || selectedIndex < 0 || selectedIndex >= level.backgrounds.length)
+		{
+			status.text = "Select a background layer before toggling its ground collider.";
+			return;
+		}
+		var selected = level.backgrounds[selectedIndex];
+		selected.isGround = !selected.isGround;
+		if (selected.isGround)
+			for (i in 0...level.backgrounds.length)
+				if (i != selectedIndex) level.backgrounds[i].isGround = false;
+		refreshUI();
+		status.text = selected.isGround ? "This layer is the level's only ground collider." : "Ground collider disabled for this layer.";
+	}
+
+	private function adjustLayerScale(amount:Int):Void
+	{
+		if (selectedKind != 1 || selectedIndex < 0 || selectedIndex >= level.backgrounds.length)
+		{
+			status.text = "Select a background layer to scale it.";
+			return;
+		}
+		var layer = level.backgrounds[selectedIndex];
+		layer.scaleX = Std.int(Math.max(100, Math.min(5000, layer.scaleX + amount)));
+		layer.scaleY = Std.int(Math.max(100, Math.min(5000, layer.scaleY + amount)));
+		updatePreview();
+		refreshUI();
+	}
 	private function removeSelected():Void
 	{
 		if (selectedKind == 1 && level.backgrounds.length > 0)
@@ -423,7 +452,10 @@ status.text = "Saved level BIN: " + outputPath;
 						x: bgObj.get("x").asInt(0),
 						y: bgObj.get("y").asInt(0),
 						scrollX: bgObj.get("scrollX").asInt(350),
-						scrollY: bgObj.get("scrollY").asInt(350)
+						scrollY: bgObj.get("scrollY").asInt(350),
+						scaleX: bgObj.get("scaleX").asInt(1000),
+						scaleY: bgObj.get("scaleY").asInt(1000),
+						isGround: bgObj.get("isGround").asInt(0) != 0
 					});
 				}
 			}
@@ -457,6 +489,9 @@ status.text = "Saved level BIN: " + outputPath;
 			bg.set("y", BINValue.int(item.y));
 			bg.set("scrollX", BINValue.int(item.scrollX));
 			bg.set("scrollY", BINValue.int(item.scrollY));
+			bg.set("scaleX", BINValue.int(item.scaleX));
+			bg.set("scaleY", BINValue.int(item.scaleY));
+			bg.set("isGround", BINValue.int(item.isGround ? 1 : 0));
 			backgrounds.push(BINValue.object(bg));
 		}
 		
