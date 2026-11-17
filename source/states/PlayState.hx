@@ -92,6 +92,7 @@ class PlayState extends GameState
 	private var flashGroup:FlxTypedGroup<FlxSprite>;
 	private var levelData:LevelBin;
 	private var flashCount:Int = 0;
+	private var stageCompletionStarted:Bool = false;
 
 	public var timer:FlxText;
 	public var score:FlxText;
@@ -226,14 +227,15 @@ class PlayState extends GameState
 		}
 
 		FlxG.camera.follow(player, LOCKON, 0.05);
-
 		FlxG.camera.setScrollBounds(0, worldWidth, 0, FlxG.height);
-
+		FlxG.camera.zoom = levelData.cameraZoom / 1000;
+		var deadzoneWidth = levelData.cameraDeadzoneWidth > 0 ? levelData.cameraDeadzoneWidth : 200;
+		var deadzoneHeight = levelData.cameraDeadzoneHeight > 0 ? levelData.cameraDeadzoneHeight : 200;
 		FlxG.camera.deadzone = new flixel.math.FlxRect(
-			(FlxG.width / 2) - 100, 
-			(FlxG.height / 2) - 100, 
-			200, 
-			200
+			(FlxG.width / 2) - (deadzoneWidth / 2),
+			(FlxG.height / 2) - (deadzoneHeight / 2),
+			deadzoneWidth,
+			deadzoneHeight
 		);
 
 		var spaceY:Float = 40;
@@ -349,6 +351,27 @@ class PlayState extends GameState
 		#end
 	}
 
+	private function completeCurrentAct():Void
+	{
+		stageCompletionStarted = true;
+		var nextAct = StageData.currentAct + 1;
+		if (StageData.getStageFile(curStage, nextAct) != null)
+		{
+			StageData.currentAct = nextAct;
+			StageData.loadDirectory(curStage, nextAct);
+			FlxG.switchState(new PlayState());
+			return;
+		}
+		var nextName = levelData != null ? levelData.nextStage : "";
+		if (nextName == null || nextName.length == 0) nextName = StageData.getNextStageName(curStage);
+		if (nextName != null && nextName.length > 0)
+		{
+			curStage = nextName;
+			StageData.currentAct = 1;
+			StageData.loadDirectory(curStage, 1);
+			FlxG.switchState(new PlayState());
+		}
+	}
 	private function collectFlash(playerSprite:FlxObject, flashSprite:FlxObject):Void
 	{
 		var item:FlxSprite = cast flashSprite;
@@ -487,6 +510,9 @@ class PlayState extends GameState
 
 		if (!paused && player != null && flashGroup != null)
 			FlxG.overlap(player, flashGroup, collectFlash);
+
+		if (!paused && player != null && !stageCompletionStarted && player.x >= (worldWidth - player.width - 8))
+			completeCurrentAct();
 
 		handleInput();
 
