@@ -114,7 +114,7 @@ class LevelEditorState extends GameState
 		addButton(11, "PLAYER", function() { selectedKind = 0; selectedIndex = 0; refreshUI(); });
 		addButton(1, "BACK", leaveEditor);
 		addButton(2, "ADD BG", addBackground);
-		addButton(3, "ADD FLASH", addFlash);
+		addButton(3, "ADD ITEM", addFlash);
 		addButton(4, "REMOVE", removeSelected);
 		addButton(5, "X-", function() adjust(-16, 0));
 		addButton(6, "X+", function() adjust(16, 0));
@@ -126,6 +126,10 @@ class LevelEditorState extends GameState
 		addButton(13, "CAM -", function() { level.cameraZoom = Std.int(Math.max(100, level.cameraZoom - 100)); refreshUI(); });
 		addButton(14, "WIDTH +", function() { level.worldWidth += 320; refreshUI(); });
 		addButton(15, "WIDTH -", function() { level.worldWidth = Std.int(Math.max(640, level.worldWidth - 320)); refreshUI(); });
+		addButton(16, "DZ +", function() { level.cameraDeadzoneWidth += 20; level.cameraDeadzoneHeight += 20; refreshUI(); });
+		addButton(17, "DZ -", function() { level.cameraDeadzoneWidth = Std.int(Math.max(40, level.cameraDeadzoneWidth - 20)); level.cameraDeadzoneHeight = Std.int(Math.max(40, level.cameraDeadzoneHeight - 20)); refreshUI(); });
+		addButton(18, "GROUND +", function() { level.groundY += 16; refreshUI(); });
+		addButton(19, "GROUND -", function() { level.groundY = Std.int(Math.max(0, level.groundY - 16)); refreshUI(); });
 		rebuildPreview();
 		refreshUI();
 
@@ -142,7 +146,7 @@ class LevelEditorState extends GameState
 		var col = (slot - 1) % columns;
 		var w = Std.int((FlxG.width - 16) / columns);
 		var x = 8 + col * w;
-		var y = FlxG.height - 112 + row * 34;
+		var y = FlxG.height - 132 + row * 34;
 		var button = new AUIButton(x, y, w - 3, 29, label, callback);
 		add(button);
 	}
@@ -204,7 +208,7 @@ class LevelEditorState extends GameState
 		title.text = "LEVEL EDITOR  /  " + level.name;
 		var lines = ["OBJECTS", "----------------", "PLAYER  " + (selectedKind == 0 ? "<" : ""), "BACKGROUNDS (" + level.backgrounds.length + ")"];
 		for (i in 0...level.backgrounds.length) lines.push("  BG " + i + (selectedKind == 1 && selectedIndex == i ? "  <" : ""));
-		lines.push("FLASHES (" + level.flashes.length + ")");
+		lines.push("ITEMS (" + level.flashes.length + ")");
 		for (i in 0...level.flashes.length) lines.push("  FLASH " + i + (selectedKind == 2 && selectedIndex == i ? "  <" : ""));
 		objectList.text = lines.join("\n");
 
