@@ -123,7 +123,7 @@ class StageData
 			#if sys
 			if (FileSystem.exists(path)) content = File.getContent(path);
 			#end
-			if (content == null && Assets.exists(path)) content = Assets.getText(path);
+			if (content == null && Assets.exists(path)) content = Assets.getBytes(path).toString();
 			if (content == null)
 			{
 				trace("[StageData] Packed level images not found: " + relative);
