@@ -170,7 +170,7 @@ class PlayState extends GameState
 		if (packedFloor != null)
 		{
 			packedFloor.immovable = true;
-			packedFloor.allowCollisions = FlxDirectionFlags.ANY; 
+			packedFloor.allowCollisions = FlxDirectionFlags.UP; 
 			
 			groundSegments.add(packedFloor);
 			testGround = packedFloor;
