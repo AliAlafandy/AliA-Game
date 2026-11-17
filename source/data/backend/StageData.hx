@@ -32,6 +32,7 @@ class StageData
 	public static var currentAct:Int = 1;
 	public static var groundSprite:FlxSprite = null;
 	public static var floorCollider:FlxSprite = null;
+	public static var hasPackedLevelAssets:Bool = false;
 	private static var decodedImages:Map<String, BitmapData> = new Map();
 
 	public static function loadDirectory(stageName:String, act:Int = 1):Void
@@ -108,10 +109,12 @@ class StageData
 	}
 
 	/** Load all image layers for a level from its single packed .bin file. */
-	public static function addLevelImages(stageName:String, group:FlxTypedGroup<FlxSprite>):FlxSprite
+	/** Load packed artwork and apply per-image position, scale and ground metadata from the level BIN. */
+	public static function addLevelImages(stageName:String, group:FlxTypedGroup<FlxSprite>, levelData:LevelBin = null):FlxSprite
 	{
 		groundSprite = null;
 		floorCollider = null;
+		hasPackedLevelAssets = false;
 		if (group == null) return null;
 
 		var relative = "levels/" + stageName + "/" + stageName + ".bin";
@@ -133,30 +136,40 @@ class StageData
 			var lines = content.split("\n");
 			if (lines.length == 0 || lines[0].trim() != "LEVELASSETS|1")
 				throw "Invalid packed level image archive header";
+			hasPackedLevelAssets = true;
 
 			for (lineIndex in 1...lines.length)
 			{
 				var line = lines[lineIndex].trim();
-				if (line.length == 0) continue;
+				if (line.length == 0 || line.startsWith("LEVELDATA|")) continue;
 				var separator = line.indexOf("|");
 				if (separator <= 0) continue;
-
 				var imageName = line.substr(0, separator);
 				var encoded = line.substr(separator + 1);
 				if (!imageName.toLowerCase().endsWith(".png")) continue;
-
 				var bitmap = BitmapData.fromBytes(Base64.decode(encoded));
 				if (bitmap == null) continue;
-				if (decodedImages.exists(stageName + "/" + imageName))
-					decodedImages.get(stageName + "/" + imageName).dispose();
-				decodedImages.set(stageName + "/" + imageName, bitmap);
+				var cacheKey = stageName + "/" + imageName;
+				if (decodedImages.exists(cacheKey)) decodedImages.get(cacheKey).dispose();
+				decodedImages.set(cacheKey, bitmap);
 			}
 
 			var order = ["sky.png", "sun.png", "clouds.png", "buildings.png", "sidewalk.png", "street.png"];
+			var groundCreated = false;
 			for (imageName in order)
 			{
 				var bitmap = decodedImages.get(stageName + "/" + imageName);
 				if (bitmap == null) continue;
+
+				var layerData:LevelBackgroundData = null;
+				if (levelData != null)
+				{
+					for (candidate in levelData.backgrounds)
+					{
+						var candidateName = candidate.image.split("/").pop();
+						if (candidateName == imageName) { layerData = candidate; break; }
+					}
+				}
 
 				var sprite = new FlxSprite();
 				sprite.loadGraphic(bitmap);
@@ -168,31 +181,40 @@ class StageData
 					case "clouds.png": sprite.y = 40; sprite.scrollFactor.set(0.25, 0.25);
 					case "buildings.png": sprite.y = 150; sprite.scrollFactor.set(0.25, 0.25);
 					case "sidewalk.png": sprite.y = FlxG.height - bitmap.height - 48; sprite.scrollFactor.set(0.25, 0.25);
-					case "street.png":
-						sprite.y = FlxG.height - bitmap.height;
-						sprite.scrollFactor.set(0.25, 0.25);
-						// The road image is also the physical floor.
-						groundSprite = sprite;
-						floorCollider = new FlxSprite(0, sprite.y);
-						floorCollider.makeGraphic(1, 12, 0x00000000);
-						floorCollider.updateHitbox();
-						floorCollider.setSize(bitmap.width * 8, 12);
-						floorCollider.visible = false;
-						floorCollider.immovable = true;
-						floorCollider.allowCollisions = flixel.util.FlxDirectionFlags.UP;
-						for (tile in 1...8)
-						{
-							var roadTile = new FlxSprite(tile * bitmap.width, sprite.y);
-							roadTile.loadGraphic(bitmap);
-							roadTile.scrollFactor.set(1, 1);
-							group.add(roadTile);
-						}
+					case "street.png": sprite.y = FlxG.height - bitmap.height; sprite.scrollFactor.set(1, 1);
 				}
+
+				if (layerData != null)
+				{
+					sprite.x = layerData.x;
+					sprite.y = layerData.y;
+					sprite.scrollFactor.set(layerData.scrollX / 1000, layerData.scrollY / 1000);
+					sprite.scale.set(Math.max(0.01, layerData.scaleX / 1000), Math.max(0.01, layerData.scaleY / 1000));
+				}
+				sprite.updateHitbox();
+				// Artwork is never a collider. Only the explicit BIN ground option creates one.
+				sprite.allowCollisions = flixel.util.FlxDirectionFlags.NONE;
 				group.add(sprite);
+
+				if (layerData != null && layerData.isGround && !groundCreated)
+				{
+					groundCreated = true;
+					groundSprite = sprite;
+					var groundWidth = sprite.width;
+					if (imageName == "street.png" && levelData != null)
+						groundWidth = Math.max(groundWidth, levelData.worldWidth);
+					floorCollider = new FlxSprite(sprite.x, sprite.y);
+					floorCollider.makeGraphic(1, 12, FlxColor.TRANSPARENT);
+					floorCollider.setSize(Std.int(Math.max(1, groundWidth)), 12);
+					floorCollider.visible = false;
+					floorCollider.immovable = true;
+					floorCollider.allowCollisions = flixel.util.FlxDirectionFlags.UP;
+				}
 			}
 		}
 		catch (e:Dynamic)
 		{
+			hasPackedLevelAssets = false;
 			trace("[StageData] Failed to load " + relative + ": " + Std.string(e));
 		}
 		return floorCollider;
@@ -216,6 +238,7 @@ class StageData
 		}
 		groundSprite = null;
 		floorCollider = null;
+		hasPackedLevelAssets = false;
 	}
 }
 
@@ -227,6 +250,9 @@ typedef LevelBackgroundData =
 	var y:Int;
 	var scrollX:Int;
 	var scrollY:Int;
+	var scaleX:Int;
+	var scaleY:Int;
+	var isGround:Bool;
 }
 
 typedef LevelFlashData =
@@ -308,7 +334,7 @@ class LevelBin
 				if (item == null) continue;
 				var image = item.get("image").asString("");
 				if (image == "") continue;
-				result.backgrounds.push({image:image, x:item.get("x").asInt(0), y:item.get("y").asInt(0), scrollX:item.get("scrollX").asInt(1000), scrollY:item.get("scrollY").asInt(1000)});
+				result.backgrounds.push({image:image, x:item.get("x").asInt(0), y:item.get("y").asInt(0), scrollX:item.get("scrollX").asInt(1000), scrollY:item.get("scrollY").asInt(1000), scaleX:item.get("scaleX").asInt(1000), scaleY:item.get("scaleY").asInt(1000), isGround:item.get("isGround").asBool(false)});
 			}
 			var flashArray = root.get("flashes").asArray();
 			if (flashArray != null) for (i in 0...flashArray.length)
