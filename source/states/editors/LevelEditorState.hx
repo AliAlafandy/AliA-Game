@@ -11,6 +11,7 @@ import flixel.ui.AUIButton;
 import flixel.ui.AUILabel;
 import mobile.TouchUtil;
 import haxe.io.Bytes;
+import haxe.crypto.Base64;
 import lime.utils.Resource;
 
 #if sys
@@ -328,7 +329,25 @@ class LevelEditorState extends GameState
 			if (!FileSystem.exists(directory)) FileSystem.createDirectory(directory);
 			#end
 			var root = buildBinRoot();
-			BIN.save(directory + "/" + level.name + ".bin", BINValue.object(root));
+			var outputPath = directory + "/" + level.name + ".bin";
+var encodedData = Base64.encode(BIN.write(BINValue.object(root)));
+var preservedArchive:String = null;
+if (FileSystem.exists(outputPath))
+{
+    var oldContent = File.getContent(outputPath);
+    var oldLines = oldContent.split("\n");
+    if (oldLines.length > 0 && oldLines[0].trim() == "LEVELASSETS|1")
+    {
+        var keptLines:Array<String> = [];
+        for (line in oldLines) if (!line.startsWith("LEVELDATA|")) keptLines.push(line);
+        preservedArchive = keptLines.join("\n");
+    }
+}
+if (preservedArchive != null)
+    File.saveContent(outputPath, preservedArchive + "\nLEVELDATA|" + encodedData + "\n");
+else
+    BIN.save(outputPath, BINValue.object(root));
+status.text = "Saved level BIN: " + outputPath;
 			status.text = "Saved binary " + directory + "/" + level.name + ".bin";
 			reloadEditor();
 		} catch (e:Dynamic) {
