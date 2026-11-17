@@ -72,6 +72,14 @@ class StageData
 		return Paths.getSharedPath(relative);
 	}
 
+	/** Stage progression order; a level's nextStage in its BIN can override this. */
+	public static function getNextStageName(stageName:String):String
+	{
+		var order = ["ATown", "Neon", "Nature", "Wet", "Water", "Desert", "Mountain", "Fire", "Air", "Space", "Doom", "Flash", "Special", "Test"];
+		var index = order.indexOf(stageName);
+		if (index < 0 || index + 1 >= order.length) return "";
+		return order[index + 1];
+	}
 	public static function getStageFile(stageName:String, act:Int):BINValue
 	{
 		var relative = "levels/" + stageName + "/Act" + act + ".bin";
