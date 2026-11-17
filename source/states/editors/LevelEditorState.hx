@@ -360,7 +360,11 @@ status.text = "Saved level BIN: " + outputPath;
 	{
 		var loaded = new LevelBin();
 		loaded.name = binObj.get("name").asString(levelName);
-		loaded.music = binObj.get("music").asString("levels/" + levelName + "/theme");
+		loaded.music = binObj.get("music").asString("");
+		loaded.cameraZoom = binObj.get("cameraZoom").asInt(1000);
+		loaded.cameraDeadzoneWidth = binObj.get("cameraDeadzoneWidth").asInt(200);
+		loaded.cameraDeadzoneHeight = binObj.get("cameraDeadzoneHeight").asInt(200);
+		loaded.nextStage = binObj.get("nextStage").asString("");
 		loaded.groundY = binObj.get("groundY").asInt(520);
 		loaded.worldWidth = binObj.get("worldWidth").asInt(1920);
 		
@@ -437,6 +441,10 @@ status.text = "Saved level BIN: " + outputPath;
 		root.set("groundY", BINValue.int(level.groundY));
 		root.set("worldWidth", BINValue.int(level.worldWidth));
 		root.set("music", BINValue.string(level.music));
+		root.set("cameraZoom", BINValue.int(level.cameraZoom));
+		root.set("cameraDeadzoneWidth", BINValue.int(level.cameraDeadzoneWidth));
+		root.set("cameraDeadzoneHeight", BINValue.int(level.cameraDeadzoneHeight));
+		root.set("nextStage", BINValue.string(level.nextStage));
 		root.set("player", BINValue.object(player));
 		root.set("backgrounds", BINValue.array(backgrounds));
 		root.set("flashes", BINValue.array(flashes));
