@@ -292,7 +292,7 @@ class LevelEditorState extends GameState
 			marker.alpha = selectedKind == 1 && selectedIndex == i ? 0.95 : 0.45;
 		}
 		if (playerMarker != null)
-			playerMarker.setPosition(canvasX + level.playerX * canvasScale, canvasY + level.playerY * canvasScale);
+			playerMarker.setPosition(canvasX + level.playerX * canvasScale, canvasY + (level.playerY >= 0 ? level.playerY : level.groundY - 24) * canvasScale);
 		for (i in 0...flashMarkers.length)
 		{
 			var flash = level.flashes[i];
