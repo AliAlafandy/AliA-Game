@@ -6,6 +6,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import data.backend.StageData.LevelBin;
+import data.backend.StageData;
 import flixel.ui.AUIBox;
 import flixel.ui.AUIButton;
 import flixel.ui.AUILabel;
@@ -222,6 +223,17 @@ class LevelEditorState extends GameState
 		preview.clear();
 		backgroundMarkers = [];
 		flashMarkers = [];
+		var packedFloor = StageData.addLevelImages(levelName, preview);
+		if (preview.members.length == 0) level.addBackgrounds(preview);
+		for (art in preview.members)
+		{
+			if (art == null) continue;
+			art.x = canvasX + art.x * canvasScale;
+			art.y = canvasY + art.y * canvasScale;
+			art.scale.set(canvasScale, canvasScale);
+			art.scrollFactor.set(0, 0);
+			art.updateHitbox();
+		}
 		groundMarker = new FlxSprite(canvasX, canvasY + level.groundY * canvasScale);
 		groundMarker.makeGraphic(Std.int(Math.min(FlxG.width * 0.62, level.worldWidth * canvasScale)), 12, 0xFF777777);
 		preview.add(groundMarker);
