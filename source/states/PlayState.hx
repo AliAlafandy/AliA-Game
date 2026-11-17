@@ -355,11 +355,13 @@ class PlayState extends GameState
 	private function completeCurrentAct():Void
 	{
 		stageCompletionStarted = true;
-		var nextAct = StageData.currentAct + 1;
-		if (StageData.getStageFile(curStage, nextAct) != null)
+		if (StageData.currentAct == 1)
 		{
-			StageData.currentAct = nextAct;
-			StageData.loadDirectory(curStage, nextAct);
+			// Act 2 is the second half of the same level. If Act2.bin exists,
+			// StageData loads its directory metadata; otherwise the main level
+			// BIN remains the shared visual layout.
+			StageData.currentAct = 2;
+			StageData.loadDirectory(curStage, 2);
 			FlxG.switchState(new PlayState());
 			return;
 		}
@@ -373,6 +375,7 @@ class PlayState extends GameState
 			FlxG.switchState(new PlayState());
 		}
 	}
+
 	private function collectFlash(playerSprite:FlxObject, flashSprite:FlxObject):Void
 	{
 		var item:FlxSprite = cast flashSprite;
