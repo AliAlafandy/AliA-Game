@@ -91,7 +91,7 @@ class LevelEditorState extends GameState
 		this.canvasY = canvasY;
 		var canvasW = Std.int(FlxG.width * 0.62);
 		var canvasH = FlxG.height - 160;
-		var canvas = new FlxSprite(canvasX, canvasY).makeGraphic(canvasW, canvasH, 0xFF182331);
+		var canvas = new FlxSprite(canvasX, canvasY).makeGraphic(canvasW, canvasH, FlxColor.BLACK);
 		add(canvas);
 		preview = new FlxTypedGroup<FlxSprite>();
 		add(preview);
