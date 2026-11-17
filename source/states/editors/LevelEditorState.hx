@@ -228,6 +228,7 @@ class LevelEditorState extends GameState
 		backgroundMarkers = [];
 		flashMarkers = [];
 		var packedFloor = StageData.addLevelImages(levelName, preview);
+		if (packedFloor != null) packedFloor.destroy();
 		if (preview.members.length == 0) level.addBackgrounds(preview);
 		for (art in preview.members)
 		{
