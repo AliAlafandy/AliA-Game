@@ -150,19 +150,14 @@ class PlayState extends GameState
 
 		if (levelData == null)
 		{
-			// Keep the game playable if a new stage has not been authored yet;
-			// this is data-only fallback, not generated test scenery.
-			levelData = new LevelBin();
-			levelData.name = curStage;
-			levelData.stage = curStage;
-			levelData.groundY = 520;
-			levelData.worldWidth = 1920;
+			trace("[PlayState] Missing level file: levels/" + curStage + "/" + curStage + ".ellawy (or legacy .bin). Returning to menu.");
+			GameState.switchState(new MenuState());
+			return;
 		}
 
-		// Load the actual artwork from the selected stage's named BIN file.
+		// Load external image files referenced by the selected Ellawy level.
 		var packedFloor = StageData.addLevelImages(curStage, backgroundLayers, levelData);
-		if (packedFloor == null) levelData.addBackgrounds(backgroundLayers);
-
+		if (!StageData.hasLoadedLevelImages) levelData.addBackgrounds(backgroundLayers);
 		worldWidth = levelData.worldWidth > 0 ? levelData.worldWidth : 1920;
 		var groundY:Float = packedFloor != null ? packedFloor.y : levelData.groundY;
 		groundSegments = new FlxTypedGroup<FlxSprite>();
@@ -176,7 +171,7 @@ class PlayState extends GameState
 			testGround = packedFloor;
 			worldWidth = Math.max(worldWidth, packedFloor.width);
 		}
-		else if (!StageData.hasPackedLevelAssets)
+		else if (!StageData.loadedFromEllawy)
 		{
 			// Legacy/data-only stages without a packed image archive retain one simple floor.
 			var floor = new FlxSprite(0, groundY);
