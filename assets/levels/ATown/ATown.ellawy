@@ -21,4 +21,4 @@ local level = {
     { image: "levels/ATown/street", x: 0, y: 520, scrollX: 1000, scrollY: 1000, scaleX: 1000, scaleY: 1000, isGround: true }
   ],
   items: []
-}
+};
