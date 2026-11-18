@@ -85,7 +85,7 @@
 			"name": "down",
 			"image": "Hamedo",
 			"prefix": "Hamedo Under0",
-			"offsets": [192, 180],
+			"offsets": [192, 126],
 			"loop": false,
 			"scale": 0.4,
 			"fps": 24,
