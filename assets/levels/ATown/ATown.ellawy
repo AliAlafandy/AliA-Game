@@ -13,7 +13,7 @@ local level = {
   player: { x: 160, y: -1 },
   backgrounds: [
     { image: "levels/ATown/sky", x: 0, y: 0, scrollX: 50, scrollY: 50, scaleX: 500, scaleY: 700, isGround: false, isMultiple: true },
-    { image: "levels/ATown/sun", x: 1100, y: 20, scrollX: 0, scrollY: 0, scaleX: 500, scaleY: 500, isGround: false },
+    { image: "levels/ATown/sun", x: 1100, y: 20, scrollX: 0, scrollY: 0, scaleX: 500, scaleY: 500, isGround: false, isMultiple: false },
     { image: "levels/ATown/clouds", x: 310, y: 40, scrollX: 250, scrollY: 250, scaleX: 500, scaleY: 500, isGround: false, isMultiple: true },
     { image: "levels/ATown/buildings", x: 0, y: 230, scrollX: 250, scrollY: 250, scaleX: 500, scaleY: 500, isGround: false, isMultiple: true },
     { image: "levels/ATown/sidewalk", x: 0, y: 230, scrollX: 1000, scrollY: 1000, scaleX: 500, scaleY: 500, isGround: false, isMultiple: true },
