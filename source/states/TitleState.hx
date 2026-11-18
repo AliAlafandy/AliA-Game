@@ -10,11 +10,6 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import states.MenuState;
 import openfl.utils.Assets as OpenFlAssets;
-
-#if sys
-import sys.FileSystem;
-import sys.io.File;
-#end
 import lime.system.System;
 
 #if VIDEOS_ALLOWED
@@ -87,44 +82,23 @@ class TitleState extends GameState
     }
 
     public function startVideo(name:String, canSkip:Bool = true, loop:Bool = false):Void
-    {
-        var fileName:String = Paths.video(name);
-        trace('[TitleState] startVideo("$name") -> $fileName');
+	{
+		#if VIDEOS_ALLOWED
+		if (introStarted || titleReady || videoCutscene != null) return;
 
-        #if VIDEOS_ALLOWED
-        trace('[TitleState] VIDEOS_ALLOWED: ON');
-        #else
-        trace('[TitleState] VIDEOS_ALLOWED: OFF -> video code compiled out, fix Project.xml');
-        #end
-        #if hxvlc
-        trace('[TitleState] hxvlc: ON');
-        #else
-        trace('[TitleState] hxvlc: OFF -> hxvlc haxelib not linked');
-        #end
-        #if sys
-        trace('[TitleState] exists on disk: ' + FileSystem.exists(fileName));
-        #end
-        trace('[TitleState] exists as asset: ' + OpenFlAssets.exists(fileName));
+		var source:String = Paths.videoFile(name);
+		trace('[TitleState] VLC source: $source');
+		if (source == null)
+		{
+			trace('[TitleState] video assets: ' + OpenFlAssets.list().filter(
+				f -> f.toLowerCase().indexOf(name.toLowerCase()) != -1));
+			startIntro();
+			return;
+		}
 
-        #if VIDEOS_ALLOWED
-        if (introStarted || titleReady || videoCutscene != null)
-        {
-            trace('[TitleState] aborted: introStarted=$introStarted titleReady=$titleReady');
-            return;
-        }
-
-        var source:String = resolveVideoSource(fileName);
-        trace('[TitleState] VLC source: $source');
-        if (source == null)
-        {
-            trace('[TitleState] no playable source -> skipping video');
-            startIntro();
-            return;
-        }
-
-        try
-        {
-            videoCutscene = new VideoSprite(source, false, canSkip, loop);
+		try
+		{
+			videoCutscene = new VideoSprite(source, false, canSkip, loop);
             videoCutscene.finishCallback = onVideoEnd;
             videoCutscene.onSkip = onVideoEnd;
             add(videoCutscene);
@@ -170,40 +144,6 @@ class TitleState extends GameState
     {
         videoCutscene = null;
         startIntro();
-    }
-
-    private function resolveVideoSource(fileName:String):String
-    {
-        #if sys
-        if (FileSystem.exists(fileName)) return fileName;
-        #end
-
-        if (!OpenFlAssets.exists(fileName)) return null;
-
-        #if sys
-        try
-        {
-            var bytes = OpenFlAssets.getBytes(fileName);
-            if (bytes == null || bytes.length == 0) return null;
-
-            var dir:String = System.applicationStorageDirectory;
-            if (!FileSystem.exists(dir)) FileSystem.createDirectory(dir);
-
-            var cachePath:String = haxe.io.Path.join([dir, haxe.io.Path.withoutDirectory(fileName)]);
-            if (!FileSystem.exists(cachePath) || FileSystem.stat(cachePath).size != bytes.length)
-                File.saveBytes(cachePath, bytes);
-
-            FlxG.log.notice("[TitleState] Intro cached at: " + cachePath);
-            return cachePath;
-        }
-        catch (e:Dynamic)
-        {
-            FlxG.log.error("[TitleState] Could not cache intro video: " + Std.string(e));
-            return null;
-        }
-        #else
-        return null;
-        #end
     }
     #end
 
