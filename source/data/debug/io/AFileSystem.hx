@@ -18,7 +18,7 @@ class AFileSystem
 		/*#if android
 			return StorageUtil.getExternalStorageDirectory();
 			#else */
-		if (path.startsWith(Sys.getCwd()) /*|| path.startsWith(Paths.mods())*/)
+		if (path.startsWith(Sys.getCwd()) || haxe.io.Path.isAbsolute(path))
 			return path;
 		else
 			return Sys.getCwd() + path;
@@ -37,13 +37,22 @@ class AFileSystem
 		return path;
 	}
 
-	public static function exists(path:String):Bool
+	public static function existsOnDisk(path:String):Bool
 	{
 		#if sys
-		if (FileSystem.exists(cwd(path)))
-			return true;
+		return FileSystem.exists(cwd(path));
+		#else
+		return false;
 		#end
-		return Assets.exists(openflcwd(path));
+	}
+
+	public static function realPath(path:String):String
+	{
+		#if sys
+		return FileSystem.absolutePath(cwd(path));
+		#else
+		return path;
+		#end
 	}
 
 	public static function rename(path:String, newPath:String):Void
