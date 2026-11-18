@@ -67,7 +67,7 @@
 			"prefix": "Hamedo Spinning0",
 			"offsets": [192, 180],
 			"loop": true,
-			"scale": 0.6,
+			"scale": 0.5,
 			"fps": 24,
 			"indices": []
 		},
