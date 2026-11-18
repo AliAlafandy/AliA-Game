@@ -142,8 +142,7 @@ class PlayState extends GameState
 
 		levelData = LevelBin.load(curStage);
 
-		// Load all stage configuration from the single
-		// assets/levels/<stage>/<stage>.bin file via LevelBin.load().
+		// Load the selected level from .ellawy; .bin is only a legacy fallback.
 		FlxG.camera.bgColor = FlxColor.BLACK;
 		backgroundLayers = new FlxTypedGroup<FlxSprite>();
 		add(backgroundLayers);
@@ -157,7 +156,6 @@ class PlayState extends GameState
 
 		// Load external image files referenced by the selected Ellawy level.
 		var packedFloor = StageData.addLevelImages(curStage, backgroundLayers, levelData);
-		if (!StageData.hasLoadedLevelImages) levelData.addBackgrounds(backgroundLayers);
 		worldWidth = levelData.worldWidth > 0 ? levelData.worldWidth : 1920;
 		var groundY:Float = packedFloor != null ? packedFloor.y : levelData.groundY;
 		groundSegments = new FlxTypedGroup<FlxSprite>();
@@ -173,7 +171,7 @@ class PlayState extends GameState
 		}
 		else if (!StageData.loadedFromEllawy)
 		{
-			// Legacy/data-only stages without a packed image archive retain one simple floor.
+			// Legacy BIN levels without an explicit ground layer retain their old floor.
 			var floor = new FlxSprite(0, groundY);
 			floor.makeGraphic(Std.int(worldWidth), 24, FlxColor.TRANSPARENT);
 			floor.immovable = true;
