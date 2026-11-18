@@ -44,6 +44,11 @@ class Player extends FlxSprite
 
 	public var isPartner:Bool = false;
 	public var followTarget:Player = null;
+	public var partnerFlipDeadzone:Float = 12;
+	public var partnerFollowDistance:Float = 50;
+	public var partnerJumpCooldown:Float = 0;
+	public var bodyWidth:Float = 0;
+	public var bodyHeight:Float = 0;
 	public var debugMode:Bool = ClientPrefs.getGameplaySetting("debugMode");
 
 	public var moveSpeed:Float = 260;
@@ -382,20 +387,34 @@ class Player extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-	    if (!animation.exists(AnimName)) return;
-	
-	    animation.play(AnimName, Force, Reversed, Frame);
-	
-	    if (animScales.exists(AnimName))
-	    {
-	        scale.set(animScales.get(AnimName), animScales.get(AnimName));
-	        updateHitbox();
-	    }
-	
-	    if (animOffsets.exists(AnimName))
-	        offset.set(animOffsets.get(AnimName)[0], animOffsets.get(AnimName)[1]);
-	    else
-	        offset.set(0, 0);
+		if (!animation.exists(AnimName)) return;
+
+		animation.play(AnimName, Force, Reversed, Frame);
+
+		if (animScales.exists(AnimName))
+		{
+			var s:Float = animScales.get(AnimName);
+			scale.set(s, s);
+		}
+
+		if (bodyWidth <= 0 || bodyHeight <= 0)
+		{
+			updateHitbox();
+			bodyWidth = width;
+			bodyHeight = height;
+		}
+		else
+		{
+			width = bodyWidth;
+			height = bodyHeight;
+		}
+
+		origin.set(frameWidth * 0.5, frameHeight * 0.5);
+
+		if (animOffsets.exists(AnimName))
+			offset.set(animOffsets.get(AnimName)[0], animOffsets.get(AnimName)[1]);
+		else
+			offset.set(0, 0);
 	}
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0):Void
@@ -406,6 +425,11 @@ class Player extends FlxSprite
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+		if (bodyWidth > 0 && bodyHeight > 0 && (width != bodyWidth || height != bodyHeight))
+		{
+			width = bodyWidth;
+			height = bodyHeight;
+		}
 
 		if (velocity.y > maxFallSpeed) velocity.y = maxFallSpeed;
 		if (Math.abs(velocity.x) <= 10 && (grounded || isTouching(FlxDirectionFlags.FLOOR)))
@@ -414,35 +438,63 @@ class Player extends FlxSprite
 			idleTimer = 0;
 	}
 
+	public function snapToFloorTop(floor:FlxSprite):Void
+	{
+		if (floor == null || !floor.exists || velocity.y < 0) return;
+		if (x + width <= floor.x || x >= floor.x + floor.width) return;
+
+		var top:Float = floor.y;
+		var feet:Float = y + height;
+		var prevFeet:Float = last.y + height;
+
+		if (feet > top && prevFeet <= top + 2)
+		{
+			y = top - height;
+			velocity.y = 0;
+			touching |= FlxDirectionFlags.FLOOR;
+		}
+	}
+
 	public function updatePartnerAI(elapsed:Float):Void
 	{
 		if (followTarget == null) return;
 
-		var distX = followTarget.x - x;
-		var distY = followTarget.y - y;
-		var targetOffsetX = 50 * (followTarget.flipX ? -1 : 1);
-		var idealX = followTarget.x + targetOffsetX;
-		var idealY = followTarget.y;
-		var diffX = idealX - x;
-		var diffY = idealY - y;
+		if (partnerJumpCooldown > 0) partnerJumpCooldown -= elapsed;
 
-		flipX = followTarget.flipX;
-		var isOnGround = grounded || isTouching(FlxDirectionFlags.FLOOR);
+		var myCenterX:Float = x + width * 0.5;
+		var targetCenterX:Float = followTarget.x + followTarget.width * 0.5;
+		var sideDiff:Float = targetCenterX - myCenterX;
+		if (sideDiff < -partnerFlipDeadzone)
+			flipX = true;
+		else if (sideDiff > partnerFlipDeadzone)
+			flipX = false;
 
-		if (followTarget.hasJumped && isOnGround && Math.abs(distX) < 200 && Math.abs(distY) < 150)
+		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR);
+		var idealX:Float = followTarget.x + partnerFollowDistance * (followTarget.flipX ? -1 : 1);
+		var diffX:Float = idealX - x;
+		var heightDiff:Float = y - followTarget.y;
+		var targetInAir:Bool = followTarget.hasJumped && !followTarget.grounded
+			&& !followTarget.isTouching(FlxDirectionFlags.FLOOR);
+
+		if (isOnGround && partnerJumpCooldown <= 0 && targetInAir
+			&& Math.abs(sideDiff) < 220 && heightDiff > -40 && heightDiff < 170)
 		{
 			velocity.y = -jumpSpeed * 0.95;
 			grounded = false;
 			isJumping = true;
 			hasJumped = true;
+			partnerJumpCooldown = 0.35;
 		}
 
-		if (Math.abs(diffX) > 30 || Math.abs(diffY) > 30)
+		if (Math.abs(diffX) > 30)
 		{
-			var dir = diffX > 0 ? 1 : -1;
+			var dir:Int = diffX > 0 ? 1 : -1;
+			moveDirection = dir;
 			var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * elapsed / Math.max(moveSpeed, 1));
 			velocity.x = FlxMath.lerp(velocity.x, dir * (moveSpeed * 0.9), accelerationBlend);
-		} else {
+		}
+		else
+		{
 			if (velocity.x > 0) {
 				velocity.x -= moveFriction * elapsed;
 				if (velocity.x < 0) velocity.x = 0;
@@ -452,15 +504,6 @@ class Player extends FlxSprite
 			}
 		}
 
-		if (isOnGround && Math.abs(velocity.x) > moveSpeed) {
-			playMovementAnimation('spinning', 'idle');
-		} else if (!isOnGround) {
-			if (isJumping || hasJumped) playMovementAnimation('spinning', 'jump');
-			else playMovementAnimation('fall', 'idle');
-		} else if (Math.abs(velocity.x) > 10) {
-			playMovementAnimation('walking', 'walk');
-		} else {
-			playMovementAnimation('idle', 'waiting');
-		}
+		updateMovementAnimation(false, false, false);
 	}
 }
