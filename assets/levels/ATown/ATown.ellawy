@@ -13,12 +13,12 @@ local level = {
   nextStage: "",
   player: { x: 160, y: -1 },
   backgrounds: [
-    { image: "levels/ATown/sky", x: 0, y: 0, scrollX: 50, scrollY: 50, scaleX: 1000, scaleY: 1000, isGround: false },
+    { image: "levels/ATown/sky", x: 0, y: 0, scrollX: 50, scrollY: 50, scaleX: 1000, scaleY: 1000, isGround: false, isMultiple: true },
     { image: "levels/ATown/sun", x: 1100, y: 20, scrollX: 250, scrollY: 250, scaleX: 1000, scaleY: 1000, isGround: false },
-    { image: "levels/ATown/clouds", x: 0, y: 40, scrollX: 250, scrollY: 250, scaleX: 1000, scaleY: 1000, isGround: false },
-    { image: "levels/ATown/buildings", x: 0, y: 150, scrollX: 250, scrollY: 250, scaleX: 1000, scaleY: 1000, isGround: false },
-    { image: "levels/ATown/sidewalk", x: 0, y: 420, scrollX: 250, scrollY: 250, scaleX: 1000, scaleY: 1000, isGround: false },
-    { image: "levels/ATown/street", x: 0, y: 520, scrollX: 1000, scrollY: 1000, scaleX: 1000, scaleY: 1000, isGround: true }
+    { image: "levels/ATown/clouds", x: 0, y: 40, scrollX: 250, scrollY: 250, scaleX: 1000, scaleY: 1000, isGround: false, isMultiple: true },
+    { image: "levels/ATown/buildings", x: 0, y: 150, scrollX: 250, scrollY: 250, scaleX: 1000, scaleY: 1000, isGround: false, isMultiple: true },
+    { image: "levels/ATown/sidewalk", x: 0, y: 420, scrollX: 250, scrollY: 250, scaleX: 1000, scaleY: 1000, isGround: false, isMultiple: true },
+    { image: "levels/ATown/street", x: 0, y: 520, scrollX: 1000, scrollY: 1000, scaleX: 1000, scaleY: 1000, isGround: true, isMultiple: true }
   ],
   items: []
 };
