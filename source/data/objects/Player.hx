@@ -118,8 +118,7 @@ class Player extends FlxSprite
 		var jsonKey:String = 'characters/$curCharacter/$curCharacter.json';
 		var loaded:Bool = false;
 
-		try
-		{
+		try {
 			var jsonText:String = Paths.getTextFromFile(jsonKey, false);
 			if (jsonText != null)
 			{
@@ -143,8 +142,7 @@ class Player extends FlxSprite
 			trace('[Player] Could not parse character "$curCharacter": $e');
 		}
 
-		if (!loaded)
-		{
+		if (!loaded) {
 			trace('[Player] Character JSON not found for: $curCharacter');
 		}
 
@@ -166,8 +164,7 @@ class Player extends FlxSprite
 
 	public function loadCharacterFile(json:CharacterFile):Void
 	{
-		if (json == null)
-		{
+		if (json == null) {
 			trace('[Player] loadCharacterFile received null JSON');
 			return;
 		}
@@ -199,10 +196,8 @@ class Player extends FlxSprite
 		    var assetKey:String = '$curCharacter/$imageName';
 		    trace('[Player] Requesting Atlas for assetKey: "$assetKey"');
 		
-		    try
-		    {
-		        if (frames == null)
-		        {
+		    try {
+		        if (frames == null) {
 		            var spriteMap:FlxAtlasFrames = Paths.getCharacterSparrowAtlas(assetKey, false);
 		            if (spriteMap != null) {
 		                frames = spriteMap;
@@ -211,9 +206,7 @@ class Player extends FlxSprite
 		                trace('[Player] FAILED: Atlas returned null for "$assetKey"');
 		            }
 		        }
-		    }
-		    catch (e:Dynamic) 
-		    {
+		    } catch (e:Dynamic) {
 		        trace('[Player] EXCEPTION loading Atlas for "$assetKey": $e');
 		    }
 		
@@ -239,7 +232,7 @@ class Player extends FlxSprite
 		allowCollisions = FlxDirectionFlags.ANY;
 	}
 
-	public function moveCharacter(direction:Float, jumpPressed:Bool, upPressed:Bool, downPressed:Bool, boostPressed:Bool = false):Void
+	public function moveCharacter(direction:Float, jumpPressed:Bool, upPressed:Bool, downPressed:Bool, powerPressed:Bool):Void
 	{
 		if (!canMove)
 		{
@@ -247,11 +240,11 @@ class Player extends FlxSprite
 			boostEnergy = Math.min(maxBoostEnergy, boostEnergy + boostRechargeRate * FlxG.elapsed);
 			maxVelocity.x = maxMoveSpeed;
 			stopHorizontalMovement();
-			updateMovementAnimation(upPressed, downPressed, jumpPressed);
+			updateMovementAnimation(upPressed, downPressed, jumpPressed, powerPressed);
 			return;
 		}
 
-		if (direction != 0 || jumpPressed || upPressed || downPressed)
+		if (direction != 0 || jumpPressed || upPressed || downPressed || powerPressed)
 			idleTimer = 0;
 
 		if (direction < -1) direction = -1;
@@ -271,8 +264,7 @@ class Player extends FlxSprite
 		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR);
 		if (isOnGround && Math.abs(velocity.x) <= 20)
 		{
-			if (downPressed && jumpPressed)
-			{
+			if (downPressed && jumpPressed) {
 				isSpindashing = true;
 				velocity.x = 0;
 			} else if (isSpindashing && jumpPressed) {
@@ -305,8 +297,7 @@ class Player extends FlxSprite
 
 		if (!isSpindashing)
 		{
-			if (direction != 0)
-			{
+			if (direction != 0) {
 				var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * FlxG.elapsed / Math.max(targetMoveSpeed, 1));
 				velocity.x = FlxMath.lerp(velocity.x, direction * targetMoveSpeed, accelerationBlend);
 			} else {
@@ -320,12 +311,15 @@ class Player extends FlxSprite
 			}
 		}
 
-		updateMovementAnimation(upPressed, downPressed, jumpPressed);
+		updateMovementAnimation(upPressed, downPressed, jumpPressed, powerPressed);
 	}
 
 	private function stopHorizontalMovement():Void
 	{
-		if (Math.abs(velocity.x) < 10) { velocity.x = 0; return; }
+		if (Math.abs(velocity.x) < 10) {
+			velocity.x = 0;
+			return;
+		}
 
 		if (velocity.x > 0) {
 			velocity.x -= moveFriction * FlxG.elapsed;
@@ -336,7 +330,7 @@ class Player extends FlxSprite
 		}
 	}
 
-	public function updateMovementAnimation(upPressed:Bool, downPressed:Bool, jumpPressed:Bool):Void
+	public function updateMovementAnimation(upPressed:Bool, downPressed:Bool, jumpPressed:Bool, powerPressed:Bool):Void
 	{
 		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR);
 	
@@ -348,8 +342,7 @@ class Player extends FlxSprite
 
 		if (!isOnGround)
 		{
-			if (isJumping || hasJumped)
-			{
+			if (isJumping || hasJumped) {
 				playMovementAnimation('spinning', 'jump');
 			} else {
 				playMovementAnimation('fall', 'idle');
@@ -367,6 +360,9 @@ class Player extends FlxSprite
 				playMovementAnimation('down', 'idle');
 				return;
 			}
+			if (powerPressed) {
+				playMovementAnimation('power', 'running');
+			}
 		}
 	
 		if (isOnGround && Math.abs(velocity.x) > moveSpeed * 0.75)
@@ -383,8 +379,7 @@ class Player extends FlxSprite
 			return;
 		}
 		
-		if (isOnGround)
-		{
+		if (isOnGround) {
 			playMovementAnimation('idle', 'waiting');
 		}
 	}
@@ -404,9 +399,7 @@ class Player extends FlxSprite
 	public function updateGroundState():Void
 	{
 		grounded = isTouching(FlxDirectionFlags.FLOOR) || touching.has(FlxDirectionFlags.FLOOR);
-		
-		if (grounded)
-		{
+		if (grounded) {
 			isJumping = false;
 			hasJumped = false;
 		}
@@ -415,23 +408,18 @@ class Player extends FlxSprite
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
 		if (!animation.exists(AnimName)) return;
-
 		animation.play(AnimName, Force, Reversed, Frame);
 
-		if (animScales.exists(AnimName))
-		{
+		if (animScales.exists(AnimName)) {
 			var s:Float = animScales.get(AnimName);
 			scale.set(s, s);
 		}
 
-		if (bodyWidth <= 0 || bodyHeight <= 0)
-		{
+		if (bodyWidth <= 0 || bodyHeight <= 0) {
 			updateHitbox();
 			bodyWidth = width;
 			bodyHeight = height;
-		}
-		else
-		{
+		} else {
 			width = bodyWidth;
 			height = bodyHeight;
 		}
@@ -452,6 +440,7 @@ class Player extends FlxSprite
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
 		if (bodyWidth > 0 && bodyHeight > 0 && (width != bodyWidth || height != bodyHeight))
 		{
 			width = bodyWidth;
@@ -485,7 +474,6 @@ class Player extends FlxSprite
 	public function updatePartnerAI(elapsed:Float):Void
 	{
 		if (followTarget == null) return;
-
 		if (partnerJumpCooldown > 0) partnerJumpCooldown -= elapsed;
 
 		var myCenterX:Float = x + width * 0.5;
@@ -519,9 +507,7 @@ class Player extends FlxSprite
 			moveDirection = dir;
 			var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * elapsed / Math.max(moveSpeed, 1));
 			velocity.x = FlxMath.lerp(velocity.x, dir * (moveSpeed * 0.9), accelerationBlend);
-		}
-		else
-		{
+		} else {
 			if (velocity.x > 0) {
 				velocity.x -= moveFriction * elapsed;
 				if (velocity.x < 0) velocity.x = 0;
@@ -531,6 +517,6 @@ class Player extends FlxSprite
 			}
 		}
 
-		updateMovementAnimation(false, false, false);
+		updateMovementAnimation(false, false, false, false);
 	}
 }
