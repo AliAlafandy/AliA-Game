@@ -259,34 +259,21 @@ class LevelEditorState extends GameState
 		preview.clear();
 		backgroundMarkers = [];
 		flashMarkers = [];
-		var packedFloor = StageData.addLevelImages(levelName, preview);
-		if (packedFloor != null) packedFloor.destroy();
-		if (preview.members.length == 0) level.addBackgrounds(preview);
-		for (art in preview.members)
-		{
-			if (art == null) continue;
-			art.x = canvasX + art.x * canvasScale;
-			art.y = canvasY + art.y * canvasScale;
-			art.scale.set(canvasScale, canvasScale);
-			art.scrollFactor.set(0, 0);
-			art.updateHitbox();
-		}
 		groundMarker = null;
-		if (preview.members.length == 0)
+		if (level.backgrounds.length == 0)
 		{
 			groundMarker = new FlxSprite(canvasX, canvasY + level.groundY * canvasScale);
 			groundMarker.makeGraphic(Std.int(Math.min(FlxG.width * 0.62, level.worldWidth * canvasScale)), 12, 0xFF777777);
 			preview.add(groundMarker);
 		}
-
 		for (bg in level.backgrounds)
 		{
 			var layer = new FlxSprite();
 			try
 			{
-				var packedLayer = StageData.getLevelImage(levelName, bg.image.split("/").pop());
-				if (packedLayer != null) layer.loadGraphic(packedLayer);
-				else layer.loadGraphic(Paths.image(bg.image));
+				var imageKey = bg.image;
+				if (imageKey.toLowerCase().endsWith(".png")) imageKey = imageKey.substr(0, imageKey.length - 4);
+				layer.loadGraphic(Paths.image(imageKey));
 				layer.scale.set(canvasScale * bg.scaleX / 1000, canvasScale * bg.scaleY / 1000);
 				layer.updateHitbox();
 			}
