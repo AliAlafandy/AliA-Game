@@ -98,6 +98,9 @@ class PlayState extends GameState
 	public var timer:FlxText;
 	public var score:FlxText;
 	public var flash:FlxText;
+	private var boostBarBack:FlxSprite;
+	private var boostBarFill:FlxSprite;
+	private var boostLabel:FlxText;
 
 	#if mobile
 	public var manager:MobileInputManager;
@@ -250,6 +253,27 @@ class PlayState extends GameState
 		flash.scrollFactor.set(0, 0);
 		debugGroup.add(flash);
 
+		// Sonic-inspired boost meter, fixed to the camera.
+		var boostX:Float = FlxG.width - 250;
+		boostBarBack = new FlxSprite(boostX, 28);
+		boostBarBack.makeGraphic(220, 22, 0xFF101820);
+		boostBarBack.scrollFactor.set(0, 0);
+		boostBarBack.cameras = [FlxG.camera];
+		add(boostBarBack);
+
+		boostBarFill = new FlxSprite(boostX + 4, 32);
+		boostBarFill.makeGraphic(212, 14, 0xFF00D9FF);
+		boostBarFill.scrollFactor.set(0, 0);
+		boostBarFill.cameras = [FlxG.camera];
+		add(boostBarFill);
+
+		boostLabel = new FlxText(boostX, 4, 220, "BOOST", 16);
+		boostLabel.setFormat(null, 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		boostLabel.scrollFactor.set(0, 0);
+		boostLabel.cameras = [FlxG.camera];
+		add(boostLabel);
+		updateBoostHud();
+
 		flashGroup = new FlxTypedGroup<FlxSprite>();
 		add(flashGroup);
 		if (levelData != null) levelData.addFlashes(flashGroup);
@@ -394,6 +418,16 @@ class PlayState extends GameState
 	{
 		if (flash != null) flash.text = 'FLASH: $flashCount';
 	}
+
+	private function updateBoostHud():Void
+	{
+		if (player == null || boostBarFill == null) return;
+		var amount:Float = Math.max(0, Math.min(1, player.boostEnergy / player.maxBoostEnergy));
+		boostBarFill.scale.x = amount;
+		boostBarFill.alpha = amount > 0.25 ? 1 : 0.65;
+		if (boostLabel != null)
+			boostLabel.text = player.isBoosting ? "BOOST!" : "BOOST";
+	}
 	private function setupOnlineMode():Void
 	{
 		ghostGroup = new FlxTypedGroup<RemotePlayerGhost>();
@@ -510,6 +544,7 @@ class PlayState extends GameState
 
 		// Clamp again after physics to prevent tunnelling through the level edges.
 		clampPlayerToWorld();
+		updateBoostHud();
 
 		if (!paused && player != null && groundSegments != null)
 		{
@@ -595,7 +630,7 @@ class PlayState extends GameState
 		var rightPressed:Bool = FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D;
 		
 		var jumpPressed:Bool = FlxG.keys.justPressed.SPACE || FlxG.keys.justPressed.Z;
-		var powerPressed:Bool = FlxG.keys.justPressed.X;
+		var powerPressed:Bool = FlxG.keys.pressed.X || FlxG.keys.pressed.SHIFT;
 		
 		var upPressed:Bool = FlxG.keys.pressed.UP || FlxG.keys.pressed.W;
 		var downPressed:Bool = FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S;
@@ -639,7 +674,7 @@ class PlayState extends GameState
 			FlxG.camera.follow(player, LOCKON, 0.05);
 		}
 
-		player.moveCharacter(direction, jumpPressed, upPressed, downPressed);
+		player.moveCharacter(direction, jumpPressed, upPressed, downPressed, powerPressed);
 	}
 
 	private function updateOnlineMode(elapsed:Float):Void
