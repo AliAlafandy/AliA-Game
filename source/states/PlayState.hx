@@ -198,7 +198,7 @@ class PlayState extends GameState
 		var hasCustomSpawn:Bool = levelData != null && levelData.playerY >= 0;
 		var spawnY:Float = hasCustomSpawn ? levelData.playerY : groundY;
 		player = new Player(spawnX, spawnY, mainChar, false);
-		player.updateHitbox();
+		//player.updateHitbox();
 		if (!hasCustomSpawn) player.y = groundY - player.height;
 		player.velocity.set(0, 0);
 		player.grounded = !hasCustomSpawn;
@@ -209,14 +209,15 @@ class PlayState extends GameState
 		{
 			partner = new Player(450, 130, partnerChar, true);
 			partner.followTarget = player;
-			partner.updateHitbox();
+			//partner.updateHitbox();
 			partner.y = groundY - partner.height;
 			partner.velocity.set(0, 0);
 			partner.grounded = true;
 			partner.touching = FlxDirectionFlags.FLOOR;
 			
-			partner.moveSpeed *= 0.85;
-			partner.maxMoveSpeed *= 0.85;
+			partner.moveSpeed *= 1.5;
+			partner.maxMoveSpeed *= 2;
+			partner.maxVelocity.x = partner.maxMoveSpeed;
 			
 			add(partner);
 		}
@@ -327,13 +328,14 @@ class PlayState extends GameState
 					partner.destroy();
 					partner = new Player(450, 130, partnerName, true);
 					partner.followTarget = player;
-					partner.updateHitbox();
+					//partner.updateHitbox();
 					partner.y = groundY - partner.height;
 					partner.velocity.set(0, 0);
 					partner.grounded = true;
 					partner.touching = FlxDirectionFlags.FLOOR;
-					partner.moveSpeed *= 0.85;
-					partner.maxMoveSpeed *= 0.85;
+					partner.moveSpeed *= 1.5;
+					partner.maxMoveSpeed *= 2;
+					partner.maxVelocity.x = partner.maxMoveSpeed;
 					add(partner);
 					addTextToDebug("Ellawy selected partner: " + partnerName, FlxColor.GREEN);
 				}
@@ -367,6 +369,15 @@ class PlayState extends GameState
 			StageData.currentAct = 1;
 			StageData.loadDirectory(curStage, 1);
 			FlxG.switchState(new PlayState());
+		}
+	}
+
+	private function snapToGround(char:Player):Void
+	{
+		if (char == null || groundSegments == null) return;
+		for (floor in groundSegments.members)
+		{
+			if (floor != null && floor.exists) char.snapToFloorTop(floor);
 		}
 	}
 
@@ -489,23 +500,21 @@ class PlayState extends GameState
 		if (!paused && player != null)
 		{
 			handleInput();
-			
-			if (partner != null)
-			{
-				partner.updatePartnerAI(elapsed);
-			}
+			if (partner != null) partner.updatePartnerAI(elapsed);
 		}
 
 		super.update(elapsed);
-		
-		if (!paused && player != null && testGround != null)
+
+		if (!paused && player != null && groundSegments != null)
 		{
 			FlxG.collide(player, groundSegments);
+			snapToGround(player);
 			player.updateGroundState();
-			
+
 			if (partner != null)
 			{
 				FlxG.collide(partner, groundSegments);
+				snapToGround(partner);
 				partner.updateGroundState();
 			}
 		}
@@ -515,8 +524,6 @@ class PlayState extends GameState
 
 		if (!paused && player != null && !stageCompletionStarted && player.x >= (worldWidth - player.width - 8))
 			completeCurrentAct();
-
-		handleInput();
 
 		#if DISCORD_ALLOWED
 		if (rpcTimer >= 1)
