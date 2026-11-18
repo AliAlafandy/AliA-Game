@@ -497,6 +497,9 @@ class PlayState extends GameState
 		elapsedTime += elapsed;
 		rpcTimer += elapsed;
 
+		// Clamp before input/physics so the player cannot gain momentum outside the level.
+		clampPlayerToWorld();
+
 		if (!paused && player != null)
 		{
 			handleInput();
@@ -505,13 +508,8 @@ class PlayState extends GameState
 
 		super.update(elapsed);
 
-		// Keep the player inside the level's horizontal world bounds.
-		if (player != null)
-		{
-			if (player.x < 0) { player.x = 0; if (player.velocity.x < 0) player.velocity.x = 0; }
-			var rightLimit = Math.max(0, worldWidth - player.width);
-			if (player.x > rightLimit) { player.x = rightLimit; if (player.velocity.x > 0) player.velocity.x = 0; }
-		}
+		// Clamp again after physics to prevent tunnelling through the level edges.
+		clampPlayerToWorld();
 
 		if (!paused && player != null && groundSegments != null)
 		{
@@ -568,6 +566,22 @@ class PlayState extends GameState
 				GameState.switchState(new TestState());
 		}
 		*/
+	}
+
+	private function clampPlayerToWorld():Void
+	{
+		if (player == null) return;
+		var rightLimit:Float = Math.max(0, worldWidth - player.width);
+		if (player.x < 0)
+		{
+			player.x = 0;
+			if (player.velocity.x < 0) player.velocity.x = 0;
+		}
+		else if (player.x > rightLimit)
+		{
+			player.x = rightLimit;
+			if (player.velocity.x > 0) player.velocity.x = 0;
+		}
 	}
 
 	private function handleInput():Void
