@@ -139,7 +139,16 @@ class StageData
 			result.playerY = Std.int(field(player, "y", -1));
 			var backgrounds:Array<Dynamic> = cast field(raw, "backgrounds", []);
 			if (backgrounds != null) for (item in backgrounds)
-				result.backgrounds.push({image:Std.string(field(item, "image", "")), x:Std.int(field(item, "x", 0)), y:Std.int(field(item, "y", 0)), scrollX:Std.int(field(item, "scrollX", 1000)), scrollY:Std.int(field(item, "scrollY", 1000)), scaleX:Std.int(field(item, "scaleX", 1000)), scaleY:Std.int(field(item, "scaleY", 1000)), isGround:field(item, "isGround", false) == true});
+				result.backgrounds.push({
+					image:Std.string(field(item, "image", "")),
+					x:Std.int(field(item, "x", 0)), y:Std.int(field(item, "y", 0)),
+					scrollX:Std.int(field(item, "scrollX", 1000)), scrollY:Std.int(field(item, "scrollY", 1000)),
+					scaleX:Std.int(field(item, "scaleX", 1000)), scaleY:Std.int(field(item, "scaleY", 1000)),
+					isGround:field(item, "isGround", false) == true,
+					isMultiple:field(item, "isMultiple", false) == true,
+					multipleCount:Std.int(field(item, "multipleCount", 0))
+				});
+
 			var items:Array<Dynamic> = cast field(raw, "items", []);
 			if (items != null) for (item in items) result.flashes.push({x:Std.int(field(item, "x", 0)), y:Std.int(field(item, "y", 0)), value:Std.int(field(item, "value", 1))});
 			return result;
@@ -194,13 +203,32 @@ class StageData
 				sprite.allowCollisions = flixel.util.FlxDirectionFlags.NONE;
 				group.add(sprite);
 				hasLoadedLevelImages = true;
+
+				// Tile the same external image horizontally; no duplicate image data.
+				if (data.isMultiple && sprite.width > 1)
+				{
+					var tileWidth = sprite.width;
+					var copies = data.multipleCount > 0 ? data.multipleCount : Std.int(Math.ceil((levelData.worldWidth - data.x) / tileWidth));
+					for (copy in 1...copies)
+					{
+						var tile = new FlxSprite(data.x + copy * tileWidth, data.y);
+						tile.loadGraphic(Paths.image(imageKey));
+						tile.scrollFactor.set(data.scrollX / 1000, data.scrollY / 1000);
+						tile.scale.set(Math.max(0.01, data.scaleX / 1000), Math.max(0.01, data.scaleY / 1000));
+						tile.updateHitbox();
+						tile.allowCollisions = flixel.util.FlxDirectionFlags.NONE;
+						group.add(tile);
+					}
+				}
+
 				if (data.isGround && floorCollider == null)
 				{
 					groundSprite = sprite;
-					floorCollider = new FlxSprite(sprite.x, sprite.y);
-					floorCollider.makeGraphic(1, 12, FlxColor.TRANSPARENT);
-					floorCollider.setSize(Std.int(Math.max(1, sprite.width)), 12);
-					floorCollider.visible = false; floorCollider.immovable = true;
+					var floorWidth = Std.int(Math.max(levelData.worldWidth, data.x + sprite.width));
+					floorCollider = new FlxSprite(0, sprite.y);
+					floorCollider.makeGraphic(floorWidth, 16, FlxColor.TRANSPARENT);
+					floorCollider.visible = false;
+					floorCollider.immovable = true;
 					floorCollider.allowCollisions = flixel.util.FlxDirectionFlags.UP;
 				}
 			}
@@ -222,6 +250,8 @@ typedef LevelBackgroundData =
 	var scaleX:Int;
 	var scaleY:Int;
 	var isGround:Bool;
+	var isMultiple:Bool;
+	var multipleCount:Int;
 }
 
 typedef LevelFlashData =
@@ -295,7 +325,7 @@ class LevelBin
 				if (item == null) continue;
 				var image = item.get("image").asString("");
 				if (image == "") continue;
-				result.backgrounds.push({image:image, x:item.get("x").asInt(0), y:item.get("y").asInt(0), scrollX:item.get("scrollX").asInt(1000), scrollY:item.get("scrollY").asInt(1000), scaleX:item.get("scaleX").asInt(1000), scaleY:item.get("scaleY").asInt(1000), isGround:item.get("isGround").asInt(0) != 0});
+				result.backgrounds.push({image:image, x:item.get("x").asInt(0), y:item.get("y").asInt(0), scrollX:item.get("scrollX").asInt(1000), scrollY:item.get("scrollY").asInt(1000), scaleX:item.get("scaleX").asInt(1000), scaleY:item.get("scaleY").asInt(1000), isGround:item.get("isGround").asInt(0) != 0, isMultiple:item.get("isMultiple").asInt(0) != 0, multipleCount:item.get("multipleCount").asInt(0)});
 			}
 			var flashArray = root.get("flashes").asArray();
 			if (flashArray != null) for (i in 0...flashArray.length)
