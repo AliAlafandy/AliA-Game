@@ -23,15 +23,11 @@ import lime.ui.FileDialog;
 import lime.system.System;
 #end
 
-import bin.BIN;
-import bin.BINObject;
-import bin.BINArray;
-import bin.BINValue;
 
 /**
  * Visual level editor.
  * Level data is edited through scene objects and property controls.
- * <LevelName>.bin is read/written as binary using the same BIN API as LevelBin.
+ * <LevelName>.ellawy is the editable source of truth. Images stay in separate files.
  */
 class LevelEditorState extends GameState
 {
@@ -249,7 +245,7 @@ class LevelEditorState extends GameState
 		properties.text = "PROPERTIES\n----------------\nType: " + (selectedKind == 0 ? "Player Spawn" : selectedKind == 1 ? "Background Layer" : "Flash Item") + "\nX: " + px + "\nY: " + py + layerInfo + "\n\nWorld Width: " + level.worldWidth + "\nGround Y: " + level.groundY + "\nCamera Zoom: " + (level.cameraZoom / 1000) + "\nDeadzone: " + level.cameraDeadzoneWidth + " x " + level.cameraDeadzoneHeight + "\nMusic: " + level.music;
 
 		updatePreview();
-		status.text = "Select objects in the list. Use X/Y controls to position. SAVE ELLAWY writes ${levelName}.ellawy.";
+		status.text = "Select objects in the list. Use X/Y controls to position. SAVE ELLAWY writes "+ levelName +".ellawy.";
 	}
 
 	/** Rebuild only when the level's object collections change. */
@@ -386,7 +382,7 @@ class LevelEditorState extends GameState
 		#if ios
 		var dialog = new FileDialog();
 		dialog.onSave.add(function(path:String) {
-			if (path != null) { dialog.save(Bytes.ofString(source), "ellawy", path, "Save Ellawy Level"); status.text = "Saved " + path; }
+			if (path != null) { status.text = "Saved Ellawy level: " + path; reloadEditor(); }
 			else status.text = "Save cancelled.";
 		});
 		dialog.onCancel.add(function() status.text = "Save cancelled.");
@@ -408,112 +404,6 @@ class LevelEditorState extends GameState
 		catch (e:Dynamic) status.text = "Ellawy save failed: " + Std.string(e);
 		#end
 	}
-	private function loadLevelFromBinValue(binObj:BINObject):LevelBin
-	{
-		var loaded = new LevelBin();
-		loaded.name = binObj.get("name").asString(levelName);
-		loaded.music = binObj.get("music").asString("");
-		loaded.cameraZoom = binObj.get("cameraZoom").asInt(1000);
-		loaded.cameraDeadzoneWidth = binObj.get("cameraDeadzoneWidth").asInt(200);
-		loaded.cameraDeadzoneHeight = binObj.get("cameraDeadzoneHeight").asInt(200);
-		loaded.nextStage = binObj.get("nextStage").asString("");
-		loaded.groundY = binObj.get("groundY").asInt(520);
-		loaded.worldWidth = binObj.get("worldWidth").asInt(1920);
-		
-		var playerObj = binObj.get("player").asObject();
-		if (playerObj != null) {
-			loaded.playerX = playerObj.get("x").asInt(160);
-			loaded.playerY = playerObj.get("y").asInt(420);
-		}
-		
-		var bgArray = binObj.get("backgrounds").asArray();
-		if (bgArray != null) {
-			for (i in 0...bgArray.length) {
-				var bgObj = bgArray.get(i).asObject();
-				if (bgObj != null) {
-					loaded.backgrounds.push({
-						image: bgObj.get("image").asString("levels/" + levelName + "/background"),
-						x: bgObj.get("x").asInt(0),
-						y: bgObj.get("y").asInt(0),
-						scrollX: bgObj.get("scrollX").asInt(350),
-						scrollY: bgObj.get("scrollY").asInt(350),
-						scaleX: bgObj.get("scaleX").asInt(1000),
-						scaleY: bgObj.get("scaleY").asInt(1000),
-						isGround: bgObj.get("isGround").asInt(0) != 0
-					});
-				}
-			}
-		}
-		
-		var flashArray = binObj.get("flashes").asArray();
-		if (flashArray != null) {
-			for (i in 0...flashArray.length) {
-				var flashObj = flashArray.get(i).asObject();
-				if (flashObj != null) {
-					loaded.flashes.push({
-						x: flashObj.get("x").asInt(420),
-						y: flashObj.get("y").asInt(380),
-						value: flashObj.get("value").asInt(1)
-					});
-				}
-			}
-		}
-		
-		return loaded;
-	}
-
-	private function buildBinRoot():BINObject
-	{
-		var backgrounds = new BINArray();
-		for (item in level.backgrounds)
-		{
-			var bg = new BINObject();
-			bg.set("image", BINValue.string(item.image));
-			bg.set("x", BINValue.int(item.x));
-			bg.set("y", BINValue.int(item.y));
-			bg.set("scrollX", BINValue.int(item.scrollX));
-			bg.set("scrollY", BINValue.int(item.scrollY));
-			bg.set("scaleX", BINValue.int(item.scaleX));
-			bg.set("scaleY", BINValue.int(item.scaleY));
-			bg.set("isGround", BINValue.int(item.isGround ? 1 : 0));
-			backgrounds.push(BINValue.object(bg));
-		}
-		
-		var flashes = new BINArray();
-		for (item in level.flashes)
-		{
-			var flash = new BINObject();
-			flash.set("x", BINValue.int(item.x));
-			flash.set("y", BINValue.int(item.y));
-			flash.set("value", BINValue.int(item.value));
-			flashes.push(BINValue.object(flash));
-		}
-		
-		var player = new BINObject();
-		player.set("x", BINValue.int(level.playerX));
-		player.set("y", BINValue.int(level.playerY));
-		
-		var root = new BINObject();
-		root.set("name", BINValue.string(level.name));
-		root.set("stage", BINValue.string(level.stage));
-		root.set("groundY", BINValue.int(level.groundY));
-		root.set("worldWidth", BINValue.int(level.worldWidth));
-		root.set("music", BINValue.string(level.music));
-		root.set("cameraZoom", BINValue.int(level.cameraZoom));
-		root.set("cameraDeadzoneWidth", BINValue.int(level.cameraDeadzoneWidth));
-		root.set("cameraDeadzoneHeight", BINValue.int(level.cameraDeadzoneHeight));
-		root.set("nextStage", BINValue.string(level.nextStage));
-		root.set("cameraZoom", BINValue.int(level.cameraZoom));
-		root.set("cameraDeadzoneWidth", BINValue.int(level.cameraDeadzoneWidth));
-		root.set("cameraDeadzoneHeight", BINValue.int(level.cameraDeadzoneHeight));
-		root.set("nextStage", BINValue.string(level.nextStage));
-		root.set("player", BINValue.object(player));
-		root.set("backgrounds", BINValue.array(backgrounds));
-		root.set("flashes", BINValue.array(flashes));
-		
-		return root;
-	}
-
 	private function applyLoadedLevel(loaded:LevelBin):Void
 	{
 		level = loaded;
