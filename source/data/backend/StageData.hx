@@ -5,6 +5,8 @@ import bin.BINValue;
 import bin.BINObject;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.display.FlxBackdrop;
+import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import openfl.utils.Assets;
@@ -195,31 +197,27 @@ class StageData
 			if (imageKey.toLowerCase().endsWith(".png")) imageKey = imageKey.substr(0, imageKey.length - 4);
 			try
 			{
-				var sprite = new FlxSprite(data.x, data.y);
-				sprite.loadGraphic(Paths.image(imageKey));
+				var sprite:FlxSprite;
+				if (data.isMultiple)
+				{
+					// FlxBackdrop repeats horizontally forever; no copy count or world-width limit.
+					var backdrop = new FlxBackdrop();
+					backdrop.loadGraphic(Paths.image(imageKey));
+					backdrop.repeatAxes = FlxAxes.X;
+					sprite = backdrop;
+				}
+				else
+				{
+					sprite = new FlxSprite();
+					sprite.loadGraphic(Paths.image(imageKey));
+				}
+				sprite.setPosition(data.x, data.y);
 				sprite.scrollFactor.set(data.scrollX / 1000, data.scrollY / 1000);
 				sprite.scale.set(Math.max(0.01, data.scaleX / 1000), Math.max(0.01, data.scaleY / 1000));
 				sprite.updateHitbox();
 				sprite.allowCollisions = flixel.util.FlxDirectionFlags.NONE;
 				group.add(sprite);
 				hasLoadedLevelImages = true;
-
-				// Tile the same external image horizontally; no duplicate image data.
-				if (data.isMultiple && sprite.width > 1)
-				{
-					var tileWidth = sprite.width;
-					var copies = data.multipleCount > 0 ? data.multipleCount : Std.int(Math.ceil((levelData.worldWidth - data.x) / tileWidth));
-					for (copy in 1...copies)
-					{
-						var tile = new FlxSprite(data.x + copy * tileWidth, data.y);
-						tile.loadGraphic(Paths.image(imageKey));
-						tile.scrollFactor.set(data.scrollX / 1000, data.scrollY / 1000);
-						tile.scale.set(Math.max(0.01, data.scaleX / 1000), Math.max(0.01, data.scaleY / 1000));
-						tile.updateHitbox();
-						tile.allowCollisions = flixel.util.FlxDirectionFlags.NONE;
-						group.add(tile);
-					}
-				}
 
 				if (data.isGround && floorCollider == null)
 				{
