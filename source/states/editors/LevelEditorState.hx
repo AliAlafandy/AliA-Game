@@ -150,7 +150,7 @@ class LevelEditorState extends GameState
 	}
 	private function addBackground():Void
 	{
-		level.backgrounds.push({image: "street.png", x: 0, y: level.groundY, scrollX: 1000, scrollY: 1000, scaleX: 1000, scaleY: 1000, isGround: false});
+		level.backgrounds.push({image: "levels/" + levelName + "/background", x: 0, y: level.groundY, scrollX: 1000, scrollY: 1000, scaleX: 1000, scaleY: 1000, isGround: false});
 		selectedKind = 1;
 		selectedIndex = level.backgrounds.length - 1;
 		rebuildPreview();
