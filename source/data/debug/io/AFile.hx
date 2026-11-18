@@ -21,7 +21,7 @@ class AFile
 		/*#if android
 			return StorageUtil.getExternalStorageDirectory();
 			#else */
-		if (path.startsWith(Sys.getCwd()) /*|| path.startsWith(Paths.mods())*/)
+		if (path.startsWith(Sys.getCwd()) || haxe.io.Path.isAbsolute(path))
 			return path;
 		else
 			return Sys.getCwd() + path;
