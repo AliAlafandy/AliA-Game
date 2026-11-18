@@ -36,6 +36,14 @@ class TitleState extends GameState
     {
         super.create();
 
+		#if VIDEOS_ALLOWED
+        if (videoCutscene != null)
+        {
+            FlxG.camera.stopFade();
+            FlxG.camera.alpha = 1;
+        }
+        #end
+
         Paths.clearStoredMemory();
         ClientPrefs.loadPrefs();
 
