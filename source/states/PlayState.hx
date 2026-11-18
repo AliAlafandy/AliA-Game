@@ -153,8 +153,7 @@ class PlayState extends GameState
 		backgroundLayers = new FlxTypedGroup<FlxSprite>();
 		add(backgroundLayers);
 
-		if (levelData == null)
-		{
+		if (levelData == null) {
 			trace("[PlayState] Missing level file: levels/" + curStage + "/" + curStage + ".ellawy (or legacy .bin). Returning to menu.");
 			GameState.switchState(new MenuState());
 			return;
@@ -163,20 +162,19 @@ class PlayState extends GameState
 		// Load external image files referenced by the selected Ellawy level.
 		var packedFloor = StageData.addLevelImages(curStage, backgroundLayers, levelData);
 		worldWidth = levelData.worldWidth > 0 ? levelData.worldWidth : 1920;
+
 		var groundY:Float = packedFloor != null ? packedFloor.y : levelData.groundY;
 		groundSegments = new FlxTypedGroup<FlxSprite>();
 		add(groundSegments);
-		if (packedFloor != null)
-		{
+
+		if (packedFloor != null) {
 			packedFloor.immovable = true;
 			packedFloor.allowCollisions = FlxDirectionFlags.UP; 
 			
 			groundSegments.add(packedFloor);
 			testGround = packedFloor;
 			worldWidth = Math.max(worldWidth, packedFloor.width);
-		}
-		else if (!StageData.loadedFromEllawy)
-		{
+		} else if (!StageData.loadedFromEllawy) {
 			// Legacy BIN levels without an explicit ground layer retain their old floor.
 			var floor = new FlxSprite(0, groundY);
 			floor.makeGraphic(Std.int(worldWidth), 24, FlxColor.TRANSPARENT);
@@ -185,6 +183,7 @@ class PlayState extends GameState
 			groundSegments.add(floor);
 			testGround = floor;
 		}
+
 		var characterName:String = CharacterState.selectedCharacter;
 		if (characterName == null || characterName.length == 0)
 		{
@@ -194,8 +193,7 @@ class PlayState extends GameState
 		var mainChar:String = characterName;
 		var partnerChar:String = "";
 
-		if (characterName == "Ellawy+")
-		{
+		if (characterName == "Ellawy+") {
 			mainChar = "Ellawy";
 			partnerChar = "Hamedo";
 		}
@@ -211,8 +209,7 @@ class PlayState extends GameState
 		if (!hasCustomSpawn) player.touching = FlxDirectionFlags.FLOOR;
 		add(player);
 
-		if (partnerChar != "")
-		{
+		if (partnerChar != "") {
 			partner = new Player(450, 130, partnerChar, true);
 			partner.followTarget = player;
 			//partner.updateHitbox();
@@ -231,6 +228,7 @@ class PlayState extends GameState
 		FlxG.camera.follow(player, LOCKON, 0.05);
 		FlxG.camera.setScrollBounds(0, worldWidth, 0, FlxG.height);
 		FlxG.camera.zoom = levelData.cameraZoom / 1000;
+
 		var deadzoneWidth = levelData.cameraDeadzoneWidth > 0 ? levelData.cameraDeadzoneWidth : 200;
 		var deadzoneHeight = levelData.cameraDeadzoneHeight > 0 ? levelData.cameraDeadzoneHeight : 200;
 		FlxG.camera.deadzone = new flixel.math.FlxRect(
@@ -256,38 +254,37 @@ class PlayState extends GameState
 		timer.cameras = [FlxG.camera];
 		debugGroup.add(timer);
 
-		flash = new FlxText(hudX, hudY + hudLineHeight * 2, 150, "RINGS  0", 16);
+		flash = new FlxText(hudX, hudY + hudLineHeight * 2, 150, "FLASH:  0", 16);
 		flash.setFormat(null, 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		flash.scrollFactor.set(0, 0);
 		flash.cameras = [FlxG.camera];
 		debugGroup.add(flash);
 
-		// Sonic-style lives counter, anchored to the lower-left of the screen.
 		livesHud = new FlxText(16, FlxG.height - 28, 150, "LIVES  x 3", 14);
 		livesHud.setFormat(null, 14, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		livesHud.scrollFactor.set(0, 0);
 		livesHud.cameras = [FlxG.camera];
-		add(livesHud);
+		debugGroup.add(livesHud);
 
 		var boostX:Float = FlxG.width - 154;
 		boostBarBack = new FlxSprite(boostX, 25);
 		boostBarBack.makeGraphic(138, 14, 0xFF101820);
 		boostBarBack.scrollFactor.set(0, 0);
 		boostBarBack.cameras = [FlxG.camera];
-		add(boostBarBack);
+		debugGroup.add(boostBarBack);
 
 		boostBarFill = new FlxSprite(boostX + 2, 27);
 		boostBarFill.makeGraphic(134, 10, 0xFFFFD52A);
 		boostBarFill.scrollFactor.set(0, 0);
 		boostBarFill.cameras = [FlxG.camera];
-		add(boostBarFill);
+		debugGroup.add(boostBarFill);
 
 		boostLabel = new FlxText(boostX, 5, 138, "BOOST", 12);
 		boostLabel.setFormat(null, 12, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		boostLabel.scrollFactor.set(0, 0);
 		boostLabel.cameras = [FlxG.camera];
 		add(boostLabel);
-		updateBoostHud();
+		debugGroup.updateBoostHud();
 
 		flashGroup = new FlxTypedGroup<FlxSprite>();
 		add(flashGroup);
@@ -310,22 +307,17 @@ class PlayState extends GameState
 		#end
 
 		isOnlineMode = (MultiPlayer.instance != null && MultiPlayer.instance.isConnected());
-
-		if (isOnlineMode)
-			setupOnlineMode();
+		if (isOnlineMode) setupOnlineMode();
 
 		#if ELLAWY_ALLOWED
 		trace('Current mod directory: ${Mods.currentModDirectory}');
 		trace('Global mods: ${Mods.getGlobalMods()}');
 		trace('All mod directories: ${Mods.getModDirectories()}');
-		
-		// Run the selection callback after the default player and partner exist.
-		// "isPartner" is exposed to Ellawy so the same script can return a
-		// different character configuration for the main player and partner.
-		for (script in ellawyScripts)
-		{
+
+		for (script in ellawyScripts) {
 			if (script != null) script.set("isPartner", false);
 		}
+
 		var scriptResult:Dynamic = callOnEllawyScripts('onLoadGame', []);
 		if (scriptResult == null)
 			scriptResult = callOnEllawyScripts('onCreate', []);
@@ -350,12 +342,11 @@ class PlayState extends GameState
 			}
 		}
 
-		if (partner != null)
-		{
-			for (script in ellawyScripts)
-			{
+		if (partner != null) {
+			for (script in ellawyScripts) {
 				if (script != null) script.set("isPartner", true);
 			}
+
 			var partnerResult:Dynamic = callOnEllawyScripts('onLoadGame', []);
 			if (partnerResult != null && Reflect.hasField(partnerResult, "partnerLoad"))
 			{
@@ -380,8 +371,8 @@ class PlayState extends GameState
 				}
 			}
 		}
-		for (script in ellawyScripts)
-		{
+
+		for (script in ellawyScripts) {
 			if (script != null) script.set("isPartner", false);
 		}
 		#end
