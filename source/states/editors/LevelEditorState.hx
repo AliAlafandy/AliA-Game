@@ -150,7 +150,7 @@ class LevelEditorState extends GameState
 	}
 	private function addBackground():Void
 	{
-		level.backgrounds.push({image: "levels/" + levelName + "/background", x: 0, y: level.groundY, scrollX: 1000, scrollY: 1000, scaleX: 1000, scaleY: 1000, isGround: false});
+		level.backgrounds.push({image: "levels/" + levelName + "/background", x: 0, y: level.groundY, scrollX: 1000, scrollY: 1000, scaleX: 1000, scaleY: 1000, isGround: false, isMultiple: false, multipleCount: 0});
 		selectedKind = 1;
 		selectedIndex = level.backgrounds.length - 1;
 		rebuildPreview();
@@ -362,7 +362,7 @@ class LevelEditorState extends GameState
 		for (i in 0...level.backgrounds.length)
 		{
 			var item = level.backgrounds[i];
-			out.add("    { image: " + quoteEllawy(item.image) + ", x: " + item.x + ", y: " + item.y + ", scrollX: " + item.scrollX + ", scrollY: " + item.scrollY + ", scaleX: " + item.scaleX + ", scaleY: " + item.scaleY + ", isGround: " + (item.isGround ? "true" : "false") + " }");
+			out.add("    { image: " + quoteEllawy(item.image) + ", x: " + item.x + ", y: " + item.y + ", scrollX: " + item.scrollX + ", scrollY: " + item.scrollY + ", scaleX: " + item.scaleX + ", scaleY: " + item.scaleY + ", isGround: " + (item.isGround ? "true" : "false") + ", isMultiple: " + (item.isMultiple ? "true" : "false") + ", multipleCount: " + item.multipleCount + " }");
 			out.add(i + 1 < level.backgrounds.length ? ",\n" : "\n");
 		}
 		out.add("  ],\n  items: [\n");
