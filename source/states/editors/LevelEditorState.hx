@@ -12,7 +12,6 @@ import flixel.ui.AUIButton;
 import flixel.ui.AUILabel;
 import mobile.TouchUtil;
 import haxe.io.Bytes;
-import haxe.crypto.Base64;
 import lime.utils.Resource;
 
 #if sys
@@ -120,8 +119,8 @@ class LevelEditorState extends GameState
 		addButton(6, "X+", function() adjust(16, 0));
 		addButton(7, "Y-", function() adjust(0, -16));
 		addButton(8, "Y+", function() adjust(0, 16));
-		addButton(9, "SAVE BIN", saveLevel);
-		addButton(10, "LOAD BIN", loadLevel);
+		addButton(9, "SAVE ELLAWY", saveLevel);
+		addButton(10, "LOAD ELLAWY", loadLevel);
 		addButton(12, "CAM +", function() { level.cameraZoom += 100; refreshUI(); });
 		addButton(13, "CAM -", function() { level.cameraZoom = Std.int(Math.max(100, level.cameraZoom - 100)); refreshUI(); });
 		addButton(14, "WIDTH +", function() { level.worldWidth += 320; refreshUI(); });
@@ -250,7 +249,7 @@ class LevelEditorState extends GameState
 		properties.text = "PROPERTIES\n----------------\nType: " + (selectedKind == 0 ? "Player Spawn" : selectedKind == 1 ? "Background Layer" : "Flash Item") + "\nX: " + px + "\nY: " + py + layerInfo + "\n\nWorld Width: " + level.worldWidth + "\nGround Y: " + level.groundY + "\nCamera Zoom: " + (level.cameraZoom / 1000) + "\nDeadzone: " + level.cameraDeadzoneWidth + " x " + level.cameraDeadzoneHeight + "\nMusic: " + level.music;
 
 		updatePreview();
-		status.text = "Select objects in the list. Use X/Y controls to position. SAVE BIN writes binary ${levelName}.bin.";
+		status.text = "Select objects in the list. Use X/Y controls to position. SAVE ELLAWY writes ${levelName}.ellawy.";
 	}
 
 	/** Rebuild only when the level's object collections change. */
@@ -345,88 +344,83 @@ class LevelEditorState extends GameState
 		#if ios
 		var dialog = new FileDialog();
 		dialog.onOpen.add(function(res:Resource) {
-			try {
-				var bytes:Bytes = cast res;
-				var binValue = BIN.parse(bytes);
-				if (binValue.isObject()) {
-					var loaded = loadLevelFromBinValue(binValue.asObject());
-					applyLoadedLevel(loaded);
-				} else {
-					status.text = "Invalid .bin file format.";
-				}
-			} catch (e:Dynamic) {
-				status.text = "Binary load failed: " + Std.string(e);
-			}
+			var loaded = StageData.parseEllawyLevel(levelName, (cast res:Bytes).toString());
+			if (loaded != null) applyLoadedLevel(loaded); else status.text = "Invalid .ellawy level file.";
 		});
-		dialog.onCancel.add(function() {
-			status.text = "Load cancelled.";
-		});
-		dialog.open("bin", null, "Load Level");
+		dialog.onCancel.add(function() status.text = "Load cancelled.");
+		dialog.open("ellawy", null, "Load Ellawy Level");
 		#else
 		var loaded = LevelBin.load(levelName);
-		if (loaded == null)
-		{
-			status.text = "Could not load assets/levels/" + levelName + "/" + levelName + ".bin";
-			return;
-		}
+		if (loaded == null) { status.text = "Could not load .ellawy level: assets/levels/" + levelName + "/" + levelName + ".ellawy"; return; }
 		applyLoadedLevel(loaded);
 		#end
 	}
 
+	private function quoteEllawy(value:String):String
+	{
+		return haxe.Json.stringify(value == null ? "" : value);
+	}
+
+	private function buildEllawySource():String
+	{
+		var out = new StringBuf();
+		out.add("local level = {\n");
+		out.add("  name: " + quoteEllawy(level.name) + ",\n");
+		out.add("  stage: " + quoteEllawy(level.stage) + ",\n");
+		out.add("  worldWidth: " + level.worldWidth + ",\n");
+		out.add("  groundY: " + level.groundY + ",\n");
+		out.add("  music: " + quoteEllawy(level.music) + ",\n");
+		out.add("  cameraZoom: " + level.cameraZoom + ",\n");
+		out.add("  cameraDeadzoneWidth: " + level.cameraDeadzoneWidth + ",\n");
+		out.add("  cameraDeadzoneHeight: " + level.cameraDeadzoneHeight + ",\n");
+		out.add("  nextStage: " + quoteEllawy(level.nextStage) + ",\n");
+		out.add("  player: { x: " + level.playerX + ", y: " + level.playerY + " },\n");
+		out.add("  backgrounds: [\n");
+		for (i in 0...level.backgrounds.length)
+		{
+			var item = level.backgrounds[i];
+			out.add("    { image: " + quoteEllawy(item.image) + ", x: " + item.x + ", y: " + item.y + ", scrollX: " + item.scrollX + ", scrollY: " + item.scrollY + ", scaleX: " + item.scaleX + ", scaleY: " + item.scaleY + ", isGround: " + (item.isGround ? "true" : "false") + " }");
+			out.add(i + 1 < level.backgrounds.length ? ",\n" : "\n");
+		}
+		out.add("  ],\n  items: [\n");
+		for (i in 0...level.flashes.length)
+		{
+			var item = level.flashes[i];
+			out.add("    { x: " + item.x + ", y: " + item.y + ", value: " + item.value + " }");
+			out.add(i + 1 < level.flashes.length ? ",\n" : "\n");
+		}
+		out.add("  ]\n}\n");
+		return out.toString();
+	}
+
 	private function saveLevel():Void
 	{
+		var source = buildEllawySource();
 		#if ios
 		var dialog = new FileDialog();
 		dialog.onSave.add(function(path:String) {
-			if (path != null) {
-				status.text = "Saved binary to: " + path;
-				reloadEditor();
-			} else {
-				status.text = "Save cancelled.";
-			}
+			if (path != null) { dialog.save(Bytes.ofString(source), "ellawy", path, "Save Ellawy Level"); status.text = "Saved " + path; }
+			else status.text = "Save cancelled.";
 		});
-		dialog.onCancel.add(function() {
-			status.text = "Save cancelled.";
-		});
-		
-		var defaultName = level.name + ".bin";
-		var root = buildBinRoot();
-		var bytes:Bytes = BIN.write(BINValue.object(root));
-		dialog.save(bytes, "bin", System.documentsDirectory + "/" + defaultName, "Save Level");
+		dialog.onCancel.add(function() status.text = "Save cancelled.");
+		dialog.save(Bytes.ofString(source), "ellawy", System.documentsDirectory + "/" + level.name + ".ellawy", "Save Level");
 		#else
-		try {
+		try
+		{
 			var directory = "assets/levels/" + level.name;
 			#if sys
 			if (!FileSystem.exists(directory)) FileSystem.createDirectory(directory);
-			#end
-			var root = buildBinRoot();
-			var outputPath = directory + "/" + level.name + ".bin";
-var encodedData = Base64.encode(BIN.write(BINValue.object(root)));
-var preservedArchive:String = null;
-if (FileSystem.exists(outputPath))
-{
-    var oldContent = File.getContent(outputPath);
-    var oldLines = oldContent.split("\n");
-    if (oldLines.length > 0 && oldLines[0].trim() == "LEVELASSETS|1")
-    {
-        var keptLines:Array<String> = [];
-        for (line in oldLines) if (!line.startsWith("LEVELDATA|")) keptLines.push(line);
-        preservedArchive = keptLines.join("\n");
-    }
-}
-if (preservedArchive != null)
-    File.saveContent(outputPath, preservedArchive + "\nLEVELDATA|" + encodedData + "\n");
-else
-    BIN.save(outputPath, BINValue.object(root));
-status.text = "Saved level BIN: " + outputPath;
-			status.text = "Saved binary " + directory + "/" + level.name + ".bin";
+			var outputPath = directory + "/" + level.name + ".ellawy";
+			File.saveContent(outputPath, source);
+			status.text = "Saved Ellawy level: " + outputPath;
 			reloadEditor();
-		} catch (e:Dynamic) {
-			status.text = "Binary save failed: " + Std.string(e);
+			#else
+			status.text = "This platform requires the level export dialog.";
+			#end
 		}
+		catch (e:Dynamic) status.text = "Ellawy save failed: " + Std.string(e);
 		#end
 	}
-
 	private function loadLevelFromBinValue(binObj:BINObject):LevelBin
 	{
 		var loaded = new LevelBin();
