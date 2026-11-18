@@ -33,6 +33,8 @@ class StageData
 	public static var groundSprite:FlxSprite = null;
 	public static var floorCollider:FlxSprite = null;
 	public static var hasPackedLevelAssets:Bool = false;
+	public static var hasLoadedLevelImages:Bool = false;
+	public static var loadedFromEllawy:Bool = false;
 
 	public static function loadDirectory(stageName:String, act:Int = 1):Void
 	{
@@ -166,7 +168,7 @@ class StageData
 	/** Load external image files referenced by the Ellawy level. */
 	public static function addLevelImages(stageName:String, group:FlxTypedGroup<FlxSprite>, levelData:LevelBin = null):FlxSprite
 	{
-		groundSprite = null; floorCollider = null; hasPackedLevelAssets = false;
+		groundSprite = null; floorCollider = null; hasPackedLevelAssets = false; hasLoadedLevelImages = false;
 		if (group == null || levelData == null) return null;
 		for (data in levelData.backgrounds)
 		{
@@ -182,6 +184,7 @@ class StageData
 				sprite.updateHitbox();
 				sprite.allowCollisions = flixel.util.FlxDirectionFlags.NONE;
 				group.add(sprite);
+				hasLoadedLevelImages = true;
 				if (data.isGround && floorCollider == null)
 				{
 					groundSprite = sprite;
@@ -241,7 +244,8 @@ class LevelBin
 	public static function load(stage:String):LevelBin
 	{
 		var scriptLevel = StageData.loadEllawyLevel(stage);
-		if (scriptLevel != null) return scriptLevel;
+		if (scriptLevel != null) { StageData.loadedFromEllawy = true; return scriptLevel; }
+		StageData.loadedFromEllawy = false;
 		// Legacy fallback: read old BIN-authored levels only when no .ellawy level exists.
 		var relative = "levels/" + stage + "/" + stage + ".bin";
 		var path = StageData.getLevelAssetPath(stage, StageData.currentAct, stage + ".bin");
@@ -307,6 +311,7 @@ class LevelBin
 			sprite.updateHitbox();
 			sprite.allowCollisions = flixel.util.FlxDirectionFlags.NONE;
 			group.add(sprite);
+			StageData.hasLoadedLevelImages = true;
 		}
 	}
 
