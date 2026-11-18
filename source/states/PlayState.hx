@@ -237,29 +237,28 @@ class PlayState extends GameState
 			deadzoneHeight
 		);
 
-		// Classic Sonic-style HUD: compact, transparent, top-left and camera-fixed.
 		var hudX:Float = 16;
 		var hudY:Float = 12;
 		var hudLineHeight:Float = 19;
-		timer = new FlxText(hudX, hudY + hudLineHeight, 150, "TIME  00:00", 16);
-		timer.setFormat(null, 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
-		timer.scrollFactor.set(0, 0);
-		timer.cameras = [FlxG.camera];
-		debugGroup.add(timer);
 
-		score = new FlxText(hudX, hudY, 150, "SCORE  0", 16);
+		score = new FlxText(hudX, hudY, 150, "SCORE:  0", 16);
 		score.setFormat(null, 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		score.scrollFactor.set(0, 0);
 		score.cameras = [FlxG.camera];
 		debugGroup.add(score);
 
-		flash = new FlxText(hudX, hudY + hudLineHeight * 2, 150, "RINGS  0", 16);
+		timer = new FlxText(hudX, hudY + hudLineHeight, 150, "TIME:  0'00''00", 16);
+		timer.setFormat(null, 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+		timer.scrollFactor.set(0, 0);
+		timer.cameras = [FlxG.camera];
+		debugGroup.add(timer);
+
+		flash = new FlxText(hudX, hudY + hudLineHeight * 2, 150, "FLASH:  0", 16);
 		flash.setFormat(null, 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		flash.scrollFactor.set(0, 0);
 		flash.cameras = [FlxG.camera];
 		debugGroup.add(flash);
 
-		// Boost is an extra game-specific meter, styled like a small Genesis-era HUD gauge.
 		var boostX:Float = FlxG.width - 154;
 		boostBarBack = new FlxSprite(boostX, 25);
 		boostBarBack.makeGraphic(138, 14, 0xFF101820);
@@ -422,7 +421,7 @@ class PlayState extends GameState
 
 	private function updateFlashHud():Void
 	{
-		if (flash != null) flash.text = 'RINGS  $flashCount';
+		if (flash != null) flash.text = 'FLASH: $flashCount';
 	}
 
 	private function updateBoostHud():Void
