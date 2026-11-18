@@ -479,6 +479,10 @@ class PlayState extends GameState
 
 	override public function update(elapsed:Float):Void
 	{
+		// create() can redirect to the menu when a level is missing or invalid.
+		// Do not run gameplay update on a partially initialized state.
+		if (player == null) return;
+
 		elapsedTime += elapsed;
 		rpcTimer += elapsed;
 
