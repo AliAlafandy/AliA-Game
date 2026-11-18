@@ -19,7 +19,7 @@
 	<define name="ELLAWY_ALLOWED" if="desktop || mobile"/>
 	<!--<define name="ACHIEVEMENTS_ALLOWED"/>-->
 	<define name="DISCORD_ALLOWED" if="desktop"/>
-	<define name="VIDEOS_ALLOWED" unless="32bits"/> 
+	<define name="VIDEOS_ALLOWED" if="mobile || (desktop &amp;&amp; !32bits)"/> 
 	<define name="HSCRIPT_ALLOWED"/>
 
 	<!-- Window Settings -->
@@ -63,7 +63,9 @@
 	<haxelib name="tjson"/>
 
 	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED"/>
-	<haxelib name="hxvlc" if="VIDEOS_ALLOWED"/>
+	<section if="cpp">
+		<haxelib name="hxvlc" if="VIDEOS_ALLOWED"/>
+	</section>
 	<haxelib name="ellawy" if="ELLAWY_ALLOWED"/>
 	<haxelib name="SScript" if="HSCRIPT_ALLOWED"/>
 	<library name="format"/>
