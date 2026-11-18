@@ -53,6 +53,12 @@ class Player extends FlxSprite
 
 	public var moveSpeed:Float = 260;
 	public var maxMoveSpeed:Float = 260;
+	public var boostEnergy:Float = 100;
+	public var maxBoostEnergy:Float = 100;
+	public var isBoosting:Bool = false;
+	public var boostDrainRate:Float = 34;
+	public var boostRechargeRate:Float = 22;
+	public var boostSpeedMultiplier:Float = 1.65;
 	public var moveAcceleration:Float = 1800;
 	public var moveFriction:Float = 2200;
 
@@ -233,10 +239,13 @@ class Player extends FlxSprite
 		allowCollisions = FlxDirectionFlags.ANY;
 	}
 
-	public function moveCharacter(direction:Float, jumpPressed:Bool, upPressed:Bool, downPressed:Bool):Void
+	public function moveCharacter(direction:Float, jumpPressed:Bool, upPressed:Bool, downPressed:Bool, boostPressed:Bool = false):Void
 	{
 		if (!canMove)
 		{
+			isBoosting = false;
+			boostEnergy = Math.min(maxBoostEnergy, boostEnergy + boostRechargeRate * FlxG.elapsed);
+			maxVelocity.x = maxMoveSpeed;
 			stopHorizontalMovement();
 			updateMovementAnimation(upPressed, downPressed, jumpPressed);
 			return;
@@ -250,6 +259,14 @@ class Player extends FlxSprite
 
 		if (direction < 0) { moveDirection = -1; flipX = true; }
 		else if (direction > 0) { moveDirection = 1; flipX = false; }
+
+		isBoosting = boostPressed && direction != 0 && boostEnergy > 0;
+		if (isBoosting)
+			boostEnergy = Math.max(0, boostEnergy - boostDrainRate * FlxG.elapsed);
+		else
+			boostEnergy = Math.min(maxBoostEnergy, boostEnergy + boostRechargeRate * FlxG.elapsed);
+		var targetMoveSpeed:Float = isBoosting ? maxMoveSpeed * boostSpeedMultiplier : moveSpeed;
+		maxVelocity.x = isBoosting ? maxMoveSpeed * boostSpeedMultiplier : maxMoveSpeed;
 
 		var isOnGround:Bool = grounded || isTouching(FlxDirectionFlags.FLOOR);
 		if (isOnGround && Math.abs(velocity.x) <= 20)
@@ -290,8 +307,8 @@ class Player extends FlxSprite
 		{
 			if (direction != 0)
 			{
-				var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * FlxG.elapsed / Math.max(moveSpeed, 1));
-				velocity.x = FlxMath.lerp(velocity.x, direction * moveSpeed, accelerationBlend);
+				var accelerationBlend:Float = 1 - Math.exp(-moveAcceleration * FlxG.elapsed / Math.max(targetMoveSpeed, 1));
+				velocity.x = FlxMath.lerp(velocity.x, direction * targetMoveSpeed, accelerationBlend);
 			} else {
 				if (velocity.x > 0) {
 					velocity.x -= moveFriction * FlxG.elapsed;
