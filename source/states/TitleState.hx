@@ -88,15 +88,36 @@ class TitleState extends GameState
 
     public function startVideo(name:String, canSkip:Bool = true, loop:Bool = false):Void
     {
-        #if VIDEOS_ALLOWED
-        if (introStarted || titleReady || videoCutscene != null) return;
-
         var fileName:String = Paths.video(name);
-        var source:String = resolveVideoSource(fileName);
+        trace('[TitleState] startVideo("$name") -> $fileName');
 
+        #if VIDEOS_ALLOWED
+        trace('[TitleState] VIDEOS_ALLOWED: ON');
+        #else
+        trace('[TitleState] VIDEOS_ALLOWED: OFF -> video code compiled out, fix Project.xml');
+        #end
+        #if hxvlc
+        trace('[TitleState] hxvlc: ON');
+        #else
+        trace('[TitleState] hxvlc: OFF -> hxvlc haxelib not linked');
+        #end
+        #if sys
+        trace('[TitleState] exists on disk: ' + FileSystem.exists(fileName));
+        #end
+        trace('[TitleState] exists as asset: ' + OpenFlAssets.exists(fileName));
+
+        #if VIDEOS_ALLOWED
+        if (introStarted || titleReady || videoCutscene != null)
+        {
+            trace('[TitleState] aborted: introStarted=$introStarted titleReady=$titleReady');
+            return;
+        }
+
+        var source:String = resolveVideoSource(fileName);
+        trace('[TitleState] VLC source: $source');
         if (source == null)
         {
-            FlxG.log.warn("[TitleState] Could not find intro video: " + fileName);
+            trace('[TitleState] no playable source -> skipping video');
             startIntro();
             return;
         }
@@ -108,45 +129,34 @@ class TitleState extends GameState
             videoCutscene.onSkip = onVideoEnd;
             add(videoCutscene);
 
-            videoCutscene.videoSprite.bitmap.onEncounteredError.add(function(msg:String):Void
+            var bmp = videoCutscene.videoSprite.bitmap;
+            bmp.onOpening.add(function():Void { trace('[TitleState] VLC opening'); });
+            bmp.onPlaying.add(function():Void { trace('[TitleState] VLC playing'); });
+            bmp.onEncounteredError.add(function(msg:String):Void
             {
-                FlxG.log.error("[TitleState] VLC error: " + msg);
+                trace('[TitleState] VLC ERROR: ' + msg);
                 finishVideo();
                 startIntro();
             });
 
-            // Optional: stretch like the old TitleState did (runs after the wrapper's
-            // own onFormatSetup, so it overrides its sizing).
-            /*
-            videoCutscene.videoSprite.bitmap.onFormatSetup.add(function():Void
-            {
-                var spr = videoCutscene.videoSprite;
-                spr.setGraphicSize(FlxG.width, FlxG.height);
-                spr.updateHitbox();
-                spr.screenCenter();
-            });
-            */
-
             new FlxTimer().start(0.05, function(_:FlxTimer):Void
             {
-                if (videoCutscene != null && !introStarted && !titleReady)
-                    videoCutscene.play();
+                if (videoCutscene == null || introStarted || titleReady) return;
+                var ok:Bool = videoCutscene.videoSprite.play();
+                trace('[TitleState] play() = $ok');
+                if (!ok) { finishVideo(); startIntro(); }
             });
 
             new FlxTimer().start(3, function(_:FlxTimer):Void
             {
                 if (videoCutscene == null || introStarted || titleReady) return;
-                if (!videoCutscene.videoSprite.bitmap.isPlaying)
-                {
-                    FlxG.log.warn("[TitleState] Intro never started playing, skipping it.");
-                    finishVideo();
-                    startIntro();
-                }
+                trace('[TitleState] watchdog isPlaying=' + videoCutscene.videoSprite.bitmap.isPlaying);
+                if (!videoCutscene.videoSprite.bitmap.isPlaying) { finishVideo(); startIntro(); }
             });
         }
         catch (e:Dynamic)
         {
-            FlxG.log.error("[TitleState] Could not play intro video: " + Std.string(e));
+            trace('[TitleState] EXCEPTION: ' + Std.string(e));
             finishVideo();
             startIntro();
         }
