@@ -19,7 +19,9 @@
 	<define name="ELLAWY_ALLOWED" if="desktop || mobile"/>
 	<!--<define name="ACHIEVEMENTS_ALLOWED"/>-->
 	<define name="DISCORD_ALLOWED" if="desktop"/>
-	<define name="VIDEOS_ALLOWED" if="mobile || (desktop &amp;&amp; !32bits)"/> 
+	<define name="VIDEOS_ALLOWED" if="mobile || desktop" unless="32bits"/>
+	<section if="VIDEOS_ALLOWED"><echo value="VIDEOS_ALLOWED: ON"/></section>
+	<section unless="VIDEOS_ALLOWED"><echo value="VIDEOS_ALLOWED: OFF"/></section>
 	<define name="HSCRIPT_ALLOWED"/>
 
 	<!-- Window Settings -->
@@ -75,7 +77,8 @@
 	<haxedef name="HXCPP_M32" if="32bits" />
 
 	<haxelib name="hxcpp-debug-server" if="debug"/>
-	<!-- <haxedef name="HXC_LIBVLC_LOGGING" if="VIDEOS_ALLOWED debug"/> -->
+	<haxedef name="HXC_LIBVLC_LOGGING" if="VIDEOS_ALLOWED debug"/>
+	<haxedef name="HXVLC_NO_SHARE_DIRECTORY" if="VIDEOS_ALLOWED"/>
 
 	<!-- Haxedefines -->
 	<!--<haxedef name="FLX_RECORD"/>
