@@ -101,10 +101,20 @@ class StageData
 			#end
 			if (source == null && Assets.exists(path)) source = Assets.getText(path);
 			if (source == null) return null;
-			var script = new GameEllawyScript(relative, source);
+			return parseEllawyLevel(stage, source);
+		}
+		catch (e:Dynamic) { trace("[StageData] Ellawy level error in " + relative + ": " + Std.string(e)); }
+		return null;
+	}
+
+	public static function parseEllawyLevel(stage:String, source:String):LevelBin
+	{
+		try
+		{
+			var script = new GameEllawyScript("levels/" + stage + "/" + stage + ".ellawy", source);
 			var raw:Dynamic = script.get("level");
 			if (raw == null) raw = script.call("onLoadLevel");
-			if (raw == null) throw "Ellawy level must define local level = {...} or function onLoadLevel().";
+			if (raw == null) throw "Define local level = {...} in the Ellawy file.";
 			var result = new LevelBin();
 			result.name = Std.string(field(raw, "name", stage));
 			result.stage = Std.string(field(raw, "stage", stage));
@@ -125,7 +135,7 @@ class StageData
 			if (items != null) for (item in items) result.flashes.push({x:Std.int(field(item, "x", 0)), y:Std.int(field(item, "y", 0)), value:Std.int(field(item, "value", 1))});
 			return result;
 		}
-		catch (e:Dynamic) { trace("[StageData] Ellawy level error in " + relative + ": " + Std.string(e)); }
+		catch (e:Dynamic) { trace("[StageData] Could not parse Ellawy level " + stage + ": " + Std.string(e)); }
 		return null;
 	}
 	public static function getStageFile(stageName:String, act:Int):BINValue
