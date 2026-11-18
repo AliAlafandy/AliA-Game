@@ -21,10 +21,10 @@ using StringTools;
  * Stage and level asset access.
  *
  * Each level uses one BIN data file:
- * assets/levels/<LevelName>/<LevelName>.bin
- * Each stage BIN may be a packed image archive or a binary LevelBin document.
- * PlayState loads visuals from this file, never generated scenery.
- * Act<act>.bin remains separate stage metadata.
+ * assets/levels/<LevelName>/<LevelName>.ellawy
+ * External PNGs are referenced by path and are never embedded in level files.
+ * Legacy .bin level documents are read only when no .ellawy file exists.
+ * Act<act>.bin remains legacy act metadata.
  */
 class StageData
 {
@@ -188,7 +188,7 @@ class StageData
 				if (data.isGround && floorCollider == null)
 				{
 					groundSprite = sprite;
-					floorCollider = new FlxSprite(sprite.x, sprite.y + sprite.height - 12);
+					floorCollider = new FlxSprite(sprite.x, sprite.y);
 					floorCollider.makeGraphic(1, 12, FlxColor.TRANSPARENT);
 					floorCollider.setSize(Std.int(Math.max(1, sprite.width)), 12);
 					floorCollider.visible = false; floorCollider.immovable = true;
