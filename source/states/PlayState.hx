@@ -92,6 +92,9 @@ class PlayState extends GameState
 	private var flashGroup:FlxTypedGroup<FlxSprite>;
 	private var levelData:LevelBin;
 	private var flashCount:Int = 0;
+	private var scoreValue:Int = 0;
+	public var lives:Int = 3;
+	private var livesHud:FlxText;
 	private var stageCompletionStarted:Bool = false;
 	private var worldWidth:Float = 1920;
 
@@ -253,11 +256,18 @@ class PlayState extends GameState
 		timer.cameras = [FlxG.camera];
 		debugGroup.add(timer);
 
-		flash = new FlxText(hudX, hudY + hudLineHeight * 2, 150, "FLASH:  0", 16);
+		flash = new FlxText(hudX, hudY + hudLineHeight * 2, 150, "RINGS  0", 16);
 		flash.setFormat(null, 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		flash.scrollFactor.set(0, 0);
 		flash.cameras = [FlxG.camera];
 		debugGroup.add(flash);
+
+		// Sonic-style lives counter, anchored to the lower-left of the screen.
+		livesHud = new FlxText(16, FlxG.height - 28, 150, "LIVES  x 3", 14);
+		livesHud.setFormat(null, 14, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+		livesHud.scrollFactor.set(0, 0);
+		livesHud.cameras = [FlxG.camera];
+		add(livesHud);
 
 		var boostX:Float = FlxG.width - 154;
 		boostBarBack = new FlxSprite(boostX, 25);
@@ -414,14 +424,39 @@ class PlayState extends GameState
 	{
 		var item:FlxSprite = cast flashSprite;
 		if (item == null || !item.exists) return;
-		flashCount += item.ID > 0 ? item.ID : 1;
+		var collected:Int = item.ID > 0 ? item.ID : 1;
+		flashCount += collected;
+		scoreValue += collected * 100;
 		item.kill();
 		updateFlashHud();
+		updateScoreHud();
 	}
 
 	private function updateFlashHud():Void
 	{
-		if (flash != null) flash.text = 'FLASH: $flashCount';
+		if (flash != null) flash.text = 'RINGS  $flashCount';
+	}
+
+	private function updateScoreHud():Void
+	{
+		if (score != null) score.text = 'SCORE  $scoreValue';
+	}
+
+	private function updateTimeHud():Void
+	{
+		if (timer == null) return;
+		var totalCentiseconds:Int = Std.int(elapsedTime * 100);
+		var minutes:Int = Std.int(totalCentiseconds / 6000);
+		var seconds:Int = Std.int((totalCentiseconds % 6000) / 100);
+		var centiseconds:Int = totalCentiseconds % 100;
+		var secText:String = seconds < 10 ? '0$seconds' : Std.string(seconds);
+		var centiText:String = centiseconds < 10 ? '0$centiseconds' : Std.string(centiseconds);
+		timer.text = 'TIME  $minutes\'$secText"$centiText';
+	}
+
+	private function updateLivesHud():Void
+	{
+		if (livesHud != null) livesHud.text = 'LIVES  x $lives';
 	}
 
 	private function updateBoostHud():Void
@@ -533,8 +568,11 @@ class PlayState extends GameState
 		// Do not run gameplay update on a partially initialized state.
 		if (player == null) return;
 
-		elapsedTime += elapsed;
+		if (!paused) elapsedTime += elapsed;
 		rpcTimer += elapsed;
+		updateTimeHud();
+		updateScoreHud();
+		updateLivesHud();
 
 		// Clamp before input/physics so the player cannot gain momentum outside the level.
 		clampPlayerToWorld();
