@@ -89,7 +89,7 @@ class StageData
 		return value == null ? fallback : value;
 	}
 
-	private static function loadEllawyLevel(stage:String):LevelBin
+	public static function loadEllawyLevel(stage:String):LevelBin
 	{
 		var relative = "levels/" + stage + "/" + stage + ".ellawy";
 		var path = StageData.getLevelAssetPath(stage, StageData.currentAct, stage + ".ellawy");
