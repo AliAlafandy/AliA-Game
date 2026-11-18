@@ -215,8 +215,8 @@ class PlayState extends GameState
 			partner.grounded = true;
 			partner.touching = FlxDirectionFlags.FLOOR;
 			
-			partner.moveSpeed *= 1.5;
-			partner.maxMoveSpeed *= 2;
+			partner.moveSpeed *= 0.80;
+			partner.maxMoveSpeed *= 0.80;
 			partner.maxVelocity.x = partner.maxMoveSpeed;
 			
 			add(partner);
@@ -333,8 +333,8 @@ class PlayState extends GameState
 					partner.velocity.set(0, 0);
 					partner.grounded = true;
 					partner.touching = FlxDirectionFlags.FLOOR;
-					partner.moveSpeed *= 1.5;
-					partner.maxMoveSpeed *= 2;
+					partner.moveSpeed *= 0.80;
+					partner.maxMoveSpeed *= 0.80;
 					partner.maxVelocity.x = partner.maxMoveSpeed;
 					add(partner);
 					addTextToDebug("Ellawy selected partner: " + partnerName, FlxColor.GREEN);
