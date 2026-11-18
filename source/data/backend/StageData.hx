@@ -89,6 +89,15 @@ class StageData
 		return value == null ? fallback : value;
 	}
 
+	public static function hasEllawyLevelFile(stage:String):Bool
+	{
+		var path = StageData.getLevelAssetPath(stage, StageData.currentAct, stage + ".ellawy");
+		#if sys
+		if (FileSystem.exists(path)) return true;
+		#end
+		return Assets.exists(path);
+	}
+
 	public static function loadEllawyLevel(stage:String):LevelBin
 	{
 		var relative = "levels/" + stage + "/" + stage + ".ellawy";
@@ -243,10 +252,13 @@ class LevelBin
 
 	public static function load(stage:String):LevelBin
 	{
+		var hasEllawyFile = StageData.hasEllawyLevelFile(stage);
 		var scriptLevel = StageData.loadEllawyLevel(stage);
 		if (scriptLevel != null) { StageData.loadedFromEllawy = true; return scriptLevel; }
 		StageData.loadedFromEllawy = false;
-		// Legacy fallback: read old BIN-authored levels only when no .ellawy level exists.
+		// Never hide a broken primary Ellawy file by silently loading an unrelated legacy BIN.
+		if (hasEllawyFile) { trace("[LevelBin] Ellawy level exists but could not be parsed: " + stage); return null; }
+		// Legacy fallback is only for stages that do not have an Ellawy source file.
 		var relative = "levels/" + stage + "/" + stage + ".bin";
 		var path = StageData.getLevelAssetPath(stage, StageData.currentAct, stage + ".bin");
 		var result = new LevelBin();
