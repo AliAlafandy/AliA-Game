@@ -28,7 +28,20 @@ import lime.graphics.Image;
 	#define GAMEMODE_AUTO
 ')
 #end
-
+#if windows
+@:buildXml('
+<target id="haxe">
+	<lib name="wininet.lib" if="windows" />
+	<lib name="dwmapi.lib" if="windows" />
+</target>
+')
+@:cppFileCode('
+#include <windows.h>
+#include <winuser.h>
+#pragma comment(lib, "Shell32.lib")
+extern "C" HRESULT WINAPI SetCurrentProcessExplicitAppUserModelID(PCWSTR AppID);
+')
+#end
 class Main extends Sprite {
     var game = {
 		width: 1280, // WINDOW width
