@@ -7,7 +7,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import openfl.display.BitmapData;
 import openfl.utils.Assets;
 import data.scripts.GameEllawyScript;
 import haxe.io.Bytes;
@@ -34,7 +33,6 @@ class StageData
 	public static var groundSprite:FlxSprite = null;
 	public static var floorCollider:FlxSprite = null;
 	public static var hasPackedLevelAssets:Bool = false;
-	private static var decodedImages:Map<String, BitmapData> = new Map();
 
 	public static function loadDirectory(stageName:String, act:Int = 1):Void
 	{
@@ -198,26 +196,7 @@ class StageData
 		}
 		return floorCollider;
 	}
-	public static function getLevelImage(stageName:String, imageName:String):BitmapData
-	{
-		return decodedImages.get(stageName + "/" + imageName);
-	}
 
-	public static function clearLevelImages(stageName:String):Void
-	{
-		for (key in decodedImages.keys())
-		{
-			if (key.startsWith(stageName + "/"))
-			{
-				var bitmap = decodedImages.get(key);
-				if (bitmap != null) bitmap.dispose();
-				decodedImages.remove(key);
-			}
-		}
-		groundSprite = null;
-		floorCollider = null;
-		hasPackedLevelAssets = false;
-	}
 }
 
 
@@ -277,7 +256,7 @@ class LevelBin
 			#end
 			if (bytes == null && Assets.exists(path)) bytes = Assets.getBytes(path);
 			if (bytes == null) { trace("[LevelBin] Missing " + relative); return null; }
-			// Legacy binary data only; new levels load from .ellawy first.
+			// Legacy .bin contains only the old binary level document.
 			var parsed = BIN.parse(bytes);
 			if (parsed == null || !parsed.isObject()) throw "Unsupported stage BIN format";
 			var root = parsed.asObject();
@@ -320,9 +299,9 @@ class LevelBin
 		for (data in backgrounds)
 		{
 			var sprite = new FlxSprite(data.x, data.y);
-			var packedImage = StageData.getLevelImage(stage, data.image);
-			if (packedImage != null) sprite.loadGraphic(packedImage);
-			else sprite.loadGraphic(Paths.image(data.image));
+			var imageKey = data.image;
+			if (imageKey.toLowerCase().endsWith(".png")) imageKey = imageKey.substr(0, imageKey.length - 4);
+			sprite.loadGraphic(Paths.image(imageKey));
 			sprite.scrollFactor.set(data.scrollX / 1000, data.scrollY / 1000);
 			sprite.scale.set(Math.max(0.01, data.scaleX / 1000), Math.max(0.01, data.scaleY / 1000));
 			sprite.updateHitbox();
