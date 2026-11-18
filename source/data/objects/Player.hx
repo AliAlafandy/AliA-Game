@@ -95,6 +95,16 @@ class Player extends FlxSprite
 			maxFallSpeed = 1150;
 			setupPhysics();
 		}
+		else if (curCharacter.toLowerCase() == 'hamedo')
+		{
+			moveSpeed = 720;
+			maxMoveSpeed = 720;
+			moveAcceleration = 2800;
+			moveFriction = 1050;
+			jumpSpeed = 620;
+			maxFallSpeed = 1150;
+			setupPhysics();
+		}
 	}
 
 	private function loadCharacter():Void
