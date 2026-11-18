@@ -9,6 +9,7 @@ import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import openfl.display.BitmapData;
 import openfl.utils.Assets;
+import data.scripts.GameEllawyScript;
 import haxe.crypto.Base64;
 import haxe.io.Bytes;
 
@@ -81,6 +82,52 @@ class StageData
 		var index = order.indexOf(stageName);
 		if (index < 0 || index + 1 >= order.length) return "";
 		return order[index + 1];
+	}
+	private static inline function field(data:Dynamic, name:String, fallback:Dynamic):Dynamic
+	{
+		if (data == null || !Reflect.hasField(data, name)) return fallback;
+		var value = Reflect.field(data, name);
+		return value == null ? fallback : value;
+	}
+
+	private static function loadEllawyLevel(stage:String):LevelBin
+	{
+		var relative = "levels/" + stage + "/" + stage + ".ellawy";
+		var path = StageData.getLevelAssetPath(stage, StageData.currentAct, stage + ".ellawy");
+		var source:String = null;
+		try
+		{
+			#if sys
+			if (FileSystem.exists(path)) source = File.getContent(path);
+			#end
+			if (source == null && Assets.exists(path)) source = Assets.getText(path);
+			if (source == null) return null;
+			var script = new GameEllawyScript(relative, source);
+			var raw:Dynamic = script.get("level");
+			if (raw == null) raw = script.call("onLoadLevel");
+			if (raw == null) throw "Ellawy level must define local level = {...} or function onLoadLevel().";
+			var result = new LevelBin();
+			result.name = Std.string(field(raw, "name", stage));
+			result.stage = Std.string(field(raw, "stage", stage));
+			result.worldWidth = Std.int(field(raw, "worldWidth", 1920));
+			result.groundY = Std.int(field(raw, "groundY", 520));
+			result.music = Std.string(field(raw, "music", ""));
+			result.cameraZoom = Std.int(field(raw, "cameraZoom", 1000));
+			result.cameraDeadzoneWidth = Std.int(field(raw, "cameraDeadzoneWidth", 200));
+			result.cameraDeadzoneHeight = Std.int(field(raw, "cameraDeadzoneHeight", 200));
+			result.nextStage = Std.string(field(raw, "nextStage", ""));
+			var player = field(raw, "player", null);
+			result.playerX = Std.int(field(player, "x", 160));
+			result.playerY = Std.int(field(player, "y", -1));
+			var backgrounds:Array<Dynamic> = cast field(raw, "backgrounds", []);
+			if (backgrounds != null) for (item in backgrounds)
+				result.backgrounds.push({image:Std.string(field(item, "image", "")), x:Std.int(field(item, "x", 0)), y:Std.int(field(item, "y", 0)), scrollX:Std.int(field(item, "scrollX", 1000)), scrollY:Std.int(field(item, "scrollY", 1000)), scaleX:Std.int(field(item, "scaleX", 1000)), scaleY:Std.int(field(item, "scaleY", 1000)), isGround:field(item, "isGround", false) == true});
+			var items:Array<Dynamic> = cast field(raw, "items", []);
+			if (items != null) for (item in items) result.flashes.push({x:Std.int(field(item, "x", 0)), y:Std.int(field(item, "y", 0)), value:Std.int(field(item, "value", 1))});
+			return result;
+		}
+		catch (e:Dynamic) { trace("[StageData] Ellawy level error in " + relative + ": " + Std.string(e)); }
+		return null;
 	}
 	public static function getStageFile(stageName:String, act:Int):BINValue
 	{
@@ -284,6 +331,9 @@ class LevelBin
 
 	public static function load(stage:String):LevelBin
 	{
+		var scriptLevel = StageData.loadEllawyLevel(stage);
+		if (scriptLevel != null) return scriptLevel;
+		// Legacy fallback: read old BIN-authored levels only when no .ellawy level exists.
 		var relative = "levels/" + stage + "/" + stage + ".bin";
 		var path = StageData.getLevelAssetPath(stage, StageData.currentAct, stage + ".bin");
 		var result = new LevelBin();
