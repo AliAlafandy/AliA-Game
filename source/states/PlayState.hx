@@ -237,38 +237,44 @@ class PlayState extends GameState
 			deadzoneHeight
 		);
 
-		var spaceY:Float = 40;
-		timer = new FlxText(20, 20, FlxG.width, "TIME: ", 32);
-		timer.setFormat(null, 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
+		// Classic Sonic-style HUD: compact, transparent, top-left and camera-fixed.
+		var hudX:Float = 16;
+		var hudY:Float = 12;
+		var hudLineHeight:Float = 19;
+		timer = new FlxText(hudX, hudY + hudLineHeight, 150, "TIME  00:00", 16);
+		timer.setFormat(null, 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		timer.scrollFactor.set(0, 0);
+		timer.cameras = [FlxG.camera];
 		debugGroup.add(timer);
 
-		score = new FlxText(timer.x, timer.y + spaceY, timer.width, "SCORE: ", 32);
-		score.setFormat(null, 32, FlxColor.WHITE, LEFT); // , OUTLINE, FlxColor.BLACK
+		score = new FlxText(hudX, hudY, 150, "SCORE  0", 16);
+		score.setFormat(null, 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		score.scrollFactor.set(0, 0);
+		score.cameras = [FlxG.camera];
 		debugGroup.add(score);
 
-		flash = new FlxText(timer.x, score.y + spaceY, timer.width, "FLASH: ", 32);
-		flash.setFormat(null, 32, FlxColor.WHITE, LEFT);
+		flash = new FlxText(hudX, hudY + hudLineHeight * 2, 150, "RINGS  0", 16);
+		flash.setFormat(null, 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		flash.scrollFactor.set(0, 0);
+		flash.cameras = [FlxG.camera];
 		debugGroup.add(flash);
 
-		// Sonic-inspired boost meter, fixed to the camera.
-		var boostX:Float = FlxG.width - 250;
-		boostBarBack = new FlxSprite(boostX, 28);
-		boostBarBack.makeGraphic(220, 22, 0xFF101820);
+		// Boost is an extra game-specific meter, styled like a small Genesis-era HUD gauge.
+		var boostX:Float = FlxG.width - 154;
+		boostBarBack = new FlxSprite(boostX, 25);
+		boostBarBack.makeGraphic(138, 14, 0xFF101820);
 		boostBarBack.scrollFactor.set(0, 0);
 		boostBarBack.cameras = [FlxG.camera];
 		add(boostBarBack);
 
-		boostBarFill = new FlxSprite(boostX + 4, 32);
-		boostBarFill.makeGraphic(212, 14, 0xFF00D9FF);
+		boostBarFill = new FlxSprite(boostX + 2, 27);
+		boostBarFill.makeGraphic(134, 10, 0xFFFFD52A);
 		boostBarFill.scrollFactor.set(0, 0);
 		boostBarFill.cameras = [FlxG.camera];
 		add(boostBarFill);
 
-		boostLabel = new FlxText(boostX, 4, 220, "BOOST", 16);
-		boostLabel.setFormat(null, 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		boostLabel = new FlxText(boostX, 5, 138, "BOOST", 12);
+		boostLabel.setFormat(null, 12, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		boostLabel.scrollFactor.set(0, 0);
 		boostLabel.cameras = [FlxG.camera];
 		add(boostLabel);
@@ -416,7 +422,7 @@ class PlayState extends GameState
 
 	private function updateFlashHud():Void
 	{
-		if (flash != null) flash.text = 'FLASH: $flashCount';
+		if (flash != null) flash.text = 'RINGS  $flashCount';
 	}
 
 	private function updateBoostHud():Void
