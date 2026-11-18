@@ -18,14 +18,13 @@ import sys.io.File;
 import lime.system.System;
 
 #if VIDEOS_ALLOWED
-import hxvlc.flixel.FlxVideoSprite as VideoHandler;
+import data.objects.VideoSprite;
 #end
 
 class TitleState extends GameState
 {
     public static var initialized:Bool = false;
 
-    // Keep the sound hotkeys available to ClientPrefs across state transitions.
     public static var muteKeys:Array<FlxKey> = [];
     public static var volumeDownKeys:Array<FlxKey> = [];
     public static var volumeUpKeys:Array<FlxKey> = [];
@@ -33,10 +32,9 @@ class TitleState extends GameState
     private var introStarted:Bool = false;
     private var titleReady:Bool = false;
     private var transitioning:Bool = false;
-    private var skippedIntro:Bool = false;
 
     #if VIDEOS_ALLOWED
-    private var video:VideoHandler;
+    public var videoCutscene:VideoSprite = null;
     #end
 
     override public function create():Void
@@ -46,11 +44,10 @@ class TitleState extends GameState
         Paths.clearStoredMemory();
         ClientPrefs.loadPrefs();
 
-        // Do not replay the publisher/video intro when returning to this state.
         if (initialized)
             startTitleScreen();
         else
-            new FlxTimer().start(0.25, function(_:FlxTimer):Void // 1
+            new FlxTimer().start(0.25, function(_:FlxTimer):Void
             {
                 startVideo("alafandy_intro");
             });
@@ -58,7 +55,6 @@ class TitleState extends GameState
 
     private function hasInput():Bool
     {
-        // Shared skip/start input for desktop and mobile.
         var pressed:Bool = FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed;
         #if FLX_TOUCH
         if (!pressed)
@@ -74,7 +70,6 @@ class TitleState extends GameState
 
         if (!titleReady && !introStarted && hasInput())
         {
-            // Allow the player to skip the video without leaving the title state.
             finishVideo();
             startIntro();
             return;
@@ -84,118 +79,74 @@ class TitleState extends GameState
         {
             transitioning = true;
             FlxG.sound.play(Paths.sound("confirm_sound"));
-            new FlxTimer().start(0.35, function(_:FlxTimer):Void // 1
+            new FlxTimer().start(0.35, function(_:FlxTimer):Void
             {
                 GameState.switchState(new MenuState());
             });
         }
     }
 
-    public function startVideo(name:String):Void
+    public function startVideo(name:String, canSkip:Bool = true, loop:Bool = false):Void
     {
         #if VIDEOS_ALLOWED
-        if (introStarted || titleReady) return;
+        if (introStarted || titleReady || videoCutscene != null) return;
 
-        var filepath:String = Paths.video(name);
-        var exists:Bool = false;
+        var fileName:String = Paths.video(name);
+        var source:String = resolveVideoSource(fileName);
 
-        #if sys
-        exists = FileSystem.exists(filepath);
-        #end
-        if (!exists) exists = OpenFlAssets.exists(filepath);
-
-        if (!exists)
+        if (source == null)
         {
-            FlxG.log.warn("Could not find intro video: " + filepath);
+            FlxG.log.warn("[TitleState] Could not find intro video: " + fileName);
             startIntro();
             return;
         }
 
         try
         {
-            // FlxVideoSprite is the HaxeFlixel display wrapper. FlxVideo alone
-            // is an OpenFL display object and is not rendered by FlxState.add().
-            video = new VideoHandler();
-            video.antialiasing = true;
-            add(video);
+            videoCutscene = new VideoSprite(source, false, canSkip, loop);
+            videoCutscene.finishCallback = onVideoEnd;
+            videoCutscene.onSkip = onVideoEnd;
+            add(videoCutscene);
 
-            video.bitmap.onEndReached.add(function():Void
+            videoCutscene.videoSprite.bitmap.onEncounteredError.add(function(msg:String):Void
             {
+                FlxG.log.error("[TitleState] VLC error: " + msg);
                 finishVideo();
                 startIntro();
-            }, true);
-
-            video.bitmap.onFormatSetup.add(function():Void
-            {
-                if (video != null && video.bitmap != null && video.bitmap.bitmapData != null)
-                {
-                    video.setGraphicSize(FlxG.width, FlxG.height);
-                    video.updateHitbox();
-                    video.setPosition(0, 0);
-                }
             });
 
-            // VLC needs a real file path. In packaged builds Lime embeds the
-            // MP4 in the "videos" asset library, so feed its Bytes directly
-            // instead of passing a virtual assets/videos/... path to VLC.
-            var loaded:Bool = false;
-            #if sys
-            if (FileSystem.exists(filepath))
-                loaded = video.load(filepath);
-            #end
-
-            if (!loaded && OpenFlAssets.exists(filepath))
+            // Optional: stretch like the old TitleState did (runs after the wrapper's
+            // own onFormatSetup, so it overrides its sizing).
+            /*
+            videoCutscene.videoSprite.bitmap.onFormatSetup.add(function():Void
             {
-                var videoBytes = OpenFlAssets.getBytes(filepath);
-                if (videoBytes != null && videoBytes.length > 0)
+                var spr = videoCutscene.videoSprite;
+                spr.setGraphicSize(FlxG.width, FlxG.height);
+                spr.updateHitbox();
+                spr.screenCenter();
+            });
+            */
+
+            new FlxTimer().start(0.05, function(_:FlxTimer):Void
+            {
+                if (videoCutscene != null && !introStarted && !titleReady)
+                    videoCutscene.play();
+            });
+
+            new FlxTimer().start(3, function(_:FlxTimer):Void
+            {
+                if (videoCutscene == null || introStarted || titleReady) return;
+                if (!videoCutscene.videoSprite.bitmap.isPlaying)
                 {
-                    #if (mobile && sys)
-                    // VLC on mobile needs a real file path, not an embedded asset URI.
-                    var cachedVideoPath = System.applicationStorageDirectory + "/alafandy_intro.mp4";
-                    try
-                    {
-                        if (!FileSystem.exists(cachedVideoPath) || FileSystem.stat(cachedVideoPath).size != videoBytes.length)
-                            File.saveBytes(cachedVideoPath, videoBytes);
-                        loaded = video.load(cachedVideoPath);
-                        FlxG.log.notice("[TitleState] Mobile intro cached at: " + cachedVideoPath);
-                    }
-                    catch (e:Dynamic)
-                    {
-                        FlxG.log.error("[TitleState] Could not cache mobile intro: " + Std.string(e));
-                    }
-                    #else
-                    loaded = video.load(videoBytes);
-                    #end
+                    FlxG.log.warn("[TitleState] Intro never started playing, skipping it.");
+                    finishVideo();
+                    startIntro();
                 }
-            }
-
-            FlxG.log.notice('[TitleState] Intro video source ' + (loaded ? 'loaded' : 'not loaded') + ': ' + filepath);
-
-            if (loaded)
-            {
-                new FlxTimer().start(0.05, function(_:FlxTimer):Void
-                {
-                    if (video != null && !introStarted && !titleReady)
-                    {
-                        if (!video.play())
-                        {
-                            FlxG.log.warn('[TitleState] VLC could not start intro playback: ' + filepath);
-                            finishVideo();
-                            startIntro();
-                        }
-                    }
-                });
-            }
-            else
-            {
-                FlxG.log.warn("Could not load intro video from path or embedded bytes: " + filepath);
-                finishVideo();
-                startIntro();
-            }
+            });
         }
         catch (e:Dynamic)
         {
-            FlxG.log.error("Could not play intro video: " + Std.string(e));
+            FlxG.log.error("[TitleState] Could not play intro video: " + Std.string(e));
             finishVideo();
             startIntro();
         }
@@ -204,23 +155,63 @@ class TitleState extends GameState
         #end
     }
 
+    #if VIDEOS_ALLOWED
+    private function onVideoEnd():Void
+    {
+        videoCutscene = null;
+        startIntro();
+    }
+
+    private function resolveVideoSource(fileName:String):String
+    {
+        #if sys
+        if (FileSystem.exists(fileName)) return fileName;
+        #end
+
+        if (!OpenFlAssets.exists(fileName)) return null;
+
+        #if sys
+        try
+        {
+            var bytes = OpenFlAssets.getBytes(fileName);
+            if (bytes == null || bytes.length == 0) return null;
+
+            var dir:String = System.applicationStorageDirectory;
+            if (!FileSystem.exists(dir)) FileSystem.createDirectory(dir);
+
+            var cachePath:String = haxe.io.Path.join([dir, haxe.io.Path.withoutDirectory(fileName)]);
+            if (!FileSystem.exists(cachePath) || FileSystem.stat(cachePath).size != bytes.length)
+                File.saveBytes(cachePath, bytes);
+
+            FlxG.log.notice("[TitleState] Intro cached at: " + cachePath);
+            return cachePath;
+        }
+        catch (e:Dynamic)
+        {
+            FlxG.log.error("[TitleState] Could not cache intro video: " + Std.string(e));
+            return null;
+        }
+        #else
+        return null;
+        #end
+    }
+    #end
+
     private function finishVideo():Void
     {
         #if VIDEOS_ALLOWED
-        if (video != null)
+        if (videoCutscene != null)
         {
-            var oldVideo = video;
-            video = null;
-            remove(oldVideo, true);
-            oldVideo.destroy();
+            var old:VideoSprite = videoCutscene;
+            videoCutscene = null;
+            old.finishCallback = null;
+            old.onSkip = null;
+            if (old.videoSprite != null) old.videoSprite.stop();
+            remove(old, true);
         }
         #end
     }
 
-    /**
-     * Fade any FlxSprite-based UI element (including FlxText and image sprites)
-     * without touching the intro video layer.
-     */
     private function fadeInElement(target:FlxSprite, duration:Float = 0.7):Void
     {
         if (target == null) return;
@@ -246,7 +237,6 @@ class TitleState extends GameState
         add(present);
         fadeInElement(present, 0.75);
 
-        // Hold the credit briefly, then fade it away before showing the title.
         new FlxTimer().start(1.55, function(_:FlxTimer):Void
         {
             FlxTween.tween(person, {alpha: 0}, 0.45, {ease: FlxEase.quadIn});
