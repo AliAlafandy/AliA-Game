@@ -167,6 +167,69 @@ class Paths
 		return getPath('scripts/$key.ellawy', TEXT, library);
 	}
 
+	static public function findAsset(path:String):String
+	{
+		if (OpenFlAssets.exists(path)) return path;
+
+		@:privateAccess
+		for (library in lime.utils.Assets.libraries.keys())
+		{
+			var id:String = '$library:$path';
+			if (OpenFlAssets.exists(id)) return id;
+		}
+
+		var name:String = path.substr(path.lastIndexOf('/') + 1).toLowerCase();
+		for (id in OpenFlAssets.list())
+		{
+			var lower:String = id.toLowerCase();
+			if (lower == name || lower.endsWith('/' + name)) return id;
+		}
+		return null;
+	}
+
+	static public function videoFile(key:String):String
+	{
+		var path:String = video(key);
+
+		#if sys
+		if (FileSystem.existsOnDisk(path)) return FileSystem.realPath(path);
+		#end
+
+		var id:String = findAsset(path);
+		if (id == null)
+		{
+			trace('[Paths] videoFile: nothing found for $path');
+			return null;
+		}
+
+		#if sys
+		try
+		{
+			var bytes:haxe.io.Bytes = File.getBytes(id);
+			if (bytes == null || bytes.length == 0) return null;
+
+			var dir:String = #if mobile StorageUtil.getStorageDirectory() + 'cache/'
+							 #else lime.system.System.applicationStorageDirectory #end;
+			dir = haxe.io.Path.addTrailingSlash(dir);
+			if (!FileSystem.isDirectory(dir)) FileSystem.createDirectory(dir);
+
+			var out:String = dir + key + '.' + VIDEO_EXT;
+			if (!FileSystem.existsOnDisk(out) || FileSystem.stat(out).size != bytes.length)
+				File.saveBytes(out, bytes);
+
+			trace('[Paths] videoFile: $id -> $out (${bytes.length} bytes)');
+			return out;
+		}
+		catch (e:Dynamic)
+		{
+			trace('[Paths] videoFile: could not extract $id: $e');
+			return null;
+		}
+		#else
+		return null;
+		#end
+	}
+
 	static public function video(key:String):String
 	{
 		#if MODS_ALLOWED
