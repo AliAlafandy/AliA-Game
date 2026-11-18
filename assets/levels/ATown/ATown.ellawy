@@ -1,0 +1,24 @@
+# ATown - Act 1
+# Artwork stays in separate PNG files under assets/images/levels/ATown/.
+
+local level = {
+  name: "ATown",
+  stage: "ATown",
+  worldWidth: 1920,
+  groundY: 520,
+  music: "levels/ATown/aTown_theme",
+  cameraZoom: 1000,
+  cameraDeadzoneWidth: 200,
+  cameraDeadzoneHeight: 200,
+  nextStage: "",
+  player: { x: 160, y: -1 },
+  backgrounds: [
+    { image: "levels/ATown/sky", x: 0, y: 0, scrollX: 50, scrollY: 50, scaleX: 1000, scaleY: 1000, isGround: false },
+    { image: "levels/ATown/sun", x: 1100, y: 20, scrollX: 250, scrollY: 250, scaleX: 1000, scaleY: 1000, isGround: false },
+    { image: "levels/ATown/clouds", x: 0, y: 40, scrollX: 250, scrollY: 250, scaleX: 1000, scaleY: 1000, isGround: false },
+    { image: "levels/ATown/buildings", x: 0, y: 150, scrollX: 250, scrollY: 250, scaleX: 1000, scaleY: 1000, isGround: false },
+    { image: "levels/ATown/sidewalk", x: 0, y: 420, scrollX: 250, scrollY: 250, scaleX: 1000, scaleY: 1000, isGround: false },
+    { image: "levels/ATown/street", x: 0, y: 520, scrollX: 1000, scrollY: 1000, scaleX: 1000, scaleY: 1000, isGround: true }
+  ],
+  items: []
+}
