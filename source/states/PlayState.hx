@@ -505,6 +505,14 @@ class PlayState extends GameState
 
 		super.update(elapsed);
 
+		// Keep the player inside the level's horizontal world bounds.
+		if (player != null)
+		{
+			if (player.x < 0) { player.x = 0; if (player.velocity.x < 0) player.velocity.x = 0; }
+			var rightLimit = Math.max(0, worldWidth - player.width);
+			if (player.x > rightLimit) { player.x = rightLimit; if (player.velocity.x > 0) player.velocity.x = 0; }
+		}
+
 		if (!paused && player != null && groundSegments != null)
 		{
 			FlxG.collide(player, groundSegments);
