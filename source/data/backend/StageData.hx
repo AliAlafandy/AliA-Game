@@ -10,7 +10,6 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import openfl.display.BitmapData;
 import openfl.utils.Assets;
 import data.scripts.GameEllawyScript;
-import haxe.crypto.Base64;
 import haxe.io.Bytes;
 
 #if sys
@@ -156,118 +155,39 @@ class StageData
 		return null;
 	}
 
-	/** Load all image layers for a level from its single packed .bin file. */
-	/** Load packed artwork and apply per-image position, scale and ground metadata from the level BIN. */
+	/** Load external image files referenced by the Ellawy level. */
 	public static function addLevelImages(stageName:String, group:FlxTypedGroup<FlxSprite>, levelData:LevelBin = null):FlxSprite
 	{
-		groundSprite = null;
-		floorCollider = null;
-		hasPackedLevelAssets = false;
-		if (group == null) return null;
-
-		var relative = "levels/" + stageName + "/" + stageName + ".bin";
-		var path = getLevelAssetPath(stageName, currentAct, stageName + ".bin");
-		var content:String = null;
-
-		try
+		groundSprite = null; floorCollider = null; hasPackedLevelAssets = false;
+		if (group == null || levelData == null) return null;
+		for (data in levelData.backgrounds)
 		{
-			#if sys
-			if (FileSystem.exists(path)) content = File.getContent(path);
-			#end
-			if (content == null && Assets.exists(path)) content = Assets.getBytes(path).toString();
-			if (content == null)
+			var imageKey = data.image;
+			if (imageKey == null || imageKey.length == 0) continue;
+			if (imageKey.toLowerCase().endsWith(".png")) imageKey = imageKey.substr(0, imageKey.length - 4);
+			try
 			{
-				trace("[StageData] Packed level images not found: " + relative);
-				return null;
-			}
-
-			var lines = content.split("\n");
-			if (lines.length == 0 || lines[0].trim() != "LEVELASSETS|1")
-				throw "Invalid packed level image archive header";
-			hasPackedLevelAssets = true;
-
-			for (lineIndex in 1...lines.length)
-			{
-				var line = lines[lineIndex].trim();
-				if (line.length == 0 || line.startsWith("LEVELDATA|")) continue;
-				var separator = line.indexOf("|");
-				if (separator <= 0) continue;
-				var imageName = line.substr(0, separator);
-				var encoded = line.substr(separator + 1);
-				if (!imageName.toLowerCase().endsWith(".png")) continue;
-				var bitmap = BitmapData.fromBytes(Base64.decode(encoded));
-				if (bitmap == null) continue;
-				var cacheKey = stageName + "/" + imageName;
-				if (decodedImages.exists(cacheKey)) decodedImages.get(cacheKey).dispose();
-				decodedImages.set(cacheKey, bitmap);
-			}
-
-			var order = ["sky.png", "sun.png", "clouds.png", "buildings.png", "sidewalk.png", "street.png"];
-			var groundCreated = false;
-			for (imageName in order)
-			{
-				var bitmap = decodedImages.get(stageName + "/" + imageName);
-				if (bitmap == null) continue;
-
-				var layerData:LevelBackgroundData = null;
-				if (levelData != null)
-				{
-					for (candidate in levelData.backgrounds)
-					{
-						var candidateName = candidate.image.split("/").pop();
-						if (candidateName == imageName) { layerData = candidate; break; }
-					}
-				}
-
-				var sprite = new FlxSprite();
-				sprite.loadGraphic(bitmap);
-				sprite.x = 0;
-				switch (imageName)
-				{
-					case "sky.png": sprite.y = 0; sprite.scrollFactor.set(0.05, 0.05);
-					case "sun.png": sprite.y = 60; sprite.scrollFactor.set(0.25, 0.25);
-					case "clouds.png": sprite.y = 40; sprite.scrollFactor.set(0.25, 0.25);
-					case "buildings.png": sprite.y = 150; sprite.scrollFactor.set(0.25, 0.25);
-					case "sidewalk.png": sprite.y = FlxG.height - bitmap.height - 48; sprite.scrollFactor.set(0.25, 0.25);
-					case "street.png": sprite.y = FlxG.height - bitmap.height; sprite.scrollFactor.set(1, 1);
-				}
-
-				if (layerData != null)
-				{
-					sprite.x = layerData.x;
-					sprite.y = layerData.y;
-					sprite.scrollFactor.set(layerData.scrollX / 1000, layerData.scrollY / 1000);
-					sprite.scale.set(Math.max(0.01, layerData.scaleX / 1000), Math.max(0.01, layerData.scaleY / 1000));
-				}
+				var sprite = new FlxSprite(data.x, data.y);
+				sprite.loadGraphic(Paths.image(imageKey));
+				sprite.scrollFactor.set(data.scrollX / 1000, data.scrollY / 1000);
+				sprite.scale.set(Math.max(0.01, data.scaleX / 1000), Math.max(0.01, data.scaleY / 1000));
 				sprite.updateHitbox();
-				// Artwork is never a collider. Only the explicit BIN ground option creates one.
 				sprite.allowCollisions = flixel.util.FlxDirectionFlags.NONE;
 				group.add(sprite);
-
-				if (layerData != null && layerData.isGround && !groundCreated)
+				if (data.isGround && floorCollider == null)
 				{
-					groundCreated = true;
 					groundSprite = sprite;
-					var groundWidth = sprite.width;
-					if (imageName == "street.png" && levelData != null)
-						groundWidth = Math.max(groundWidth, levelData.worldWidth);
-					floorCollider = new FlxSprite(sprite.x, sprite.y);
+					floorCollider = new FlxSprite(sprite.x, sprite.y + sprite.height - 12);
 					floorCollider.makeGraphic(1, 12, FlxColor.TRANSPARENT);
-					floorCollider.setSize(Std.int(Math.max(1, groundWidth)), 12);
-					floorCollider.visible = false;
-					floorCollider.immovable = true;
+					floorCollider.setSize(Std.int(Math.max(1, sprite.width)), 12);
+					floorCollider.visible = false; floorCollider.immovable = true;
 					floorCollider.allowCollisions = flixel.util.FlxDirectionFlags.UP;
 				}
 			}
-		}
-		catch (e:Dynamic)
-		{
-			hasPackedLevelAssets = false;
-			trace("[StageData] Failed to load " + relative + ": " + Std.string(e));
+			catch (e:Dynamic) trace("[StageData] Missing level image " + imageKey + ": " + Std.string(e));
 		}
 		return floorCollider;
 	}
-
 	public static function getLevelImage(stageName:String, imageName:String):BitmapData
 	{
 		return decodedImages.get(stageName + "/" + imageName);
@@ -347,22 +267,7 @@ class LevelBin
 			#end
 			if (bytes == null && Assets.exists(path)) bytes = Assets.getBytes(path);
 			if (bytes == null) { trace("[LevelBin] Missing " + relative); return null; }
-			// Keep packed artwork and embed editable level data in the same BIN.
-			var archiveLines = bytes.toString().split("\n");
-			if (archiveLines.length > 0 && archiveLines[0].trim() == "LEVELASSETS|1")
-			{
-				var levelDataBytes:Bytes = null;
-				for (line in archiveLines)
-				{
-					if (line.startsWith("LEVELDATA|"))
-					{
-						levelDataBytes = Base64.decode(line.substr("LEVELDATA|".length));
-						break;
-					}
-				}
-				if (levelDataBytes == null) return result;
-				bytes = levelDataBytes;
-			}
+			// Legacy binary data only; new levels load from .ellawy first.
 			var parsed = BIN.parse(bytes);
 			if (parsed == null || !parsed.isObject()) throw "Unsupported stage BIN format";
 			var root = parsed.asObject();
