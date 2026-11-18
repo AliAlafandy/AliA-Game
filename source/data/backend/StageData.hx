@@ -20,7 +20,7 @@ using StringTools;
 /**
  * Stage and level asset access.
  *
- * Each level uses one BIN data file:
+ * Each level uses one Ellawy source file:
  * assets/levels/<LevelName>/<LevelName>.ellawy
  * External PNGs are referenced by path and are never embedded in level files.
  * Legacy .bin level documents are read only when no .ellawy file exists.
