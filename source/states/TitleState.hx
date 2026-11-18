@@ -13,7 +13,9 @@ import openfl.utils.Assets as OpenFlAssets;
 
 #if sys
 import sys.FileSystem;
+import sys.io.File;
 #end
+import lime.system.System;
 
 #if VIDEOS_ALLOWED
 import hxvlc.flixel.FlxVideoSprite as VideoHandler;
@@ -56,10 +58,12 @@ class TitleState extends GameState
 
     private function hasInput():Bool
     {
+        // Shared skip/start input for desktop and mobile.
         var pressed:Bool = FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed;
         #if FLX_TOUCH
-        for (touch in FlxG.touches.list)
-            if (touch.justPressed) pressed = true;
+        if (!pressed)
+            for (touch in FlxG.touches.list)
+                if (touch.justPressed) { pressed = true; break; }
         #end
         return pressed;
     }
@@ -144,7 +148,25 @@ class TitleState extends GameState
             {
                 var videoBytes = OpenFlAssets.getBytes(filepath);
                 if (videoBytes != null && videoBytes.length > 0)
+                {
+                    #if (mobile && sys)
+                    // VLC on mobile needs a real file path, not an embedded asset URI.
+                    var cachedVideoPath = System.applicationStorageDirectory + "/alafandy_intro.mp4";
+                    try
+                    {
+                        if (!FileSystem.exists(cachedVideoPath) || FileSystem.stat(cachedVideoPath).size != videoBytes.length)
+                            File.saveBytes(cachedVideoPath, videoBytes);
+                        loaded = video.load(cachedVideoPath);
+                        FlxG.log.notice("[TitleState] Mobile intro cached at: " + cachedVideoPath);
+                    }
+                    catch (e:Dynamic)
+                    {
+                        FlxG.log.error("[TitleState] Could not cache mobile intro: " + Std.string(e));
+                    }
+                    #else
                     loaded = video.load(videoBytes);
+                    #end
+                }
             }
 
             FlxG.log.notice('[TitleState] Intro video source ' + (loaded ? 'loaded' : 'not loaded') + ': ' + filepath);
