@@ -271,20 +271,20 @@ class PlayState extends GameState
 		boostBarBack.makeGraphic(138, 14, 0xFF101820);
 		boostBarBack.scrollFactor.set(0, 0);
 		boostBarBack.cameras = [FlxG.camera];
-		debugGroup.add(boostBarBack);
+		add(boostBarBack);
 
 		boostBarFill = new FlxSprite(boostX + 2, 27);
 		boostBarFill.makeGraphic(134, 10, 0xFFFFD52A);
 		boostBarFill.scrollFactor.set(0, 0);
 		boostBarFill.cameras = [FlxG.camera];
-		debugGroup.add(boostBarFill);
+		add(boostBarFill);
 
 		boostLabel = new FlxText(boostX, 5, 138, "BOOST", 12);
 		boostLabel.setFormat(null, 12, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		boostLabel.scrollFactor.set(0, 0);
 		boostLabel.cameras = [FlxG.camera];
-		add(boostLabel);
-		debugGroup.updateBoostHud();
+		debugGroup.add(boostLabel);
+		updateBoostHud();
 
 		flashGroup = new FlxTypedGroup<FlxSprite>();
 		add(flashGroup);
