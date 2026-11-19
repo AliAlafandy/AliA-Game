@@ -253,7 +253,7 @@ class Player extends FlxSprite
 		if (direction < 0) { moveDirection = -1; flipX = true; }
 		else if (direction > 0) { moveDirection = 1; flipX = false; }
 
-		isBoosting = boostPressed && direction != 0 && boostEnergy > 0;
+		isBoosting = powerPressed && direction != 0 && boostEnergy > 0;
 		if (isBoosting)
 			boostEnergy = Math.max(0, boostEnergy - boostDrainRate * FlxG.elapsed);
 		else
